@@ -19,7 +19,7 @@
 ;asEStart=0
 ;asEEnd=1
 
-;--------GITHUB TEST-----------
+
 
 
 ;---------For altitude compare case 090713---------
