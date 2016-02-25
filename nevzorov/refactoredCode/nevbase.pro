@@ -7,16 +7,16 @@ cope=1
 
 
 
-if flightDay eq '0709' then nclPath='/Volumes/sfaber1/research/nevzorov/070913/20130709.c1.nc'
-if flightDay eq '0710' then nclPath='/Volumes/sfaber1/research/nevzorov/20130710.c1.nc'
-if flightDay eq '0725' then nclPath='/Volumes/sfaber1/research/nevzorov/072513/20130725.c1.nc' ;tons of level ca
-if flightDay eq '0727' then nclPath='/Volumes/sfaber1/research/nevzorov/072713/20130727.c1.nc'
-if flightDay eq '0728' then nclPath='/Volumes/sfaber1/research/nevzorov/072813/20130728.c1.nc'
-if flightDay eq '0729' then nclPath='/Volumes/sfaber1/research/nevzorov/072913/20130729.c1.nc'
-if flightDay eq '0807' then nclPath='/Volumes/sfaber1/research/nevzorov/080713/20130807.c1.nc'
-if flightDay eq '0814' then nclPath='/Volumes/sfaber1/research/nevzorov/081413/20130814.c1.nc'
-if flightDay eq '0815' then nclPath='/Volumes/sfaber1/research/nevzorov/081513/20130815.c1.nc'
-if flightDay eq '0803' then nclPath='/Volumes/sfaber1/research/nevzorov/080313/20130803.c1.nc'
+if flightDay eq '0709' then nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
+if flightDay eq '0710' then nclPath='/Volumes/sfaber1/research/nevzorov/data/20130710.c1.nc'
+if flightDay eq '0725' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072513/20130725.c1.nc' ;tons of level ca
+if flightDay eq '0727' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072713/20130727.c1.nc'
+if flightDay eq '0728' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072813/20130728.c1.nc'
+if flightDay eq '0729' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072913/20130729.c1.nc'
+if flightDay eq '0807' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080713/20130807.c1.nc'
+if flightDay eq '0814' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081413/20130814.c1.nc'
+if flightDay eq '0815' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081513/20130815.c1.nc'
+if flightDay eq '0803' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080313/20130803.c1.nc'
 
 
 
@@ -133,10 +133,10 @@ endif
 if flightDay eq '0807' then begin
   ;ENTIRE FLIGHT
   flightString='08-07-13'
-;  aStart=where(timeForm eq 124100)
-;  aEnd=where(timeForm eq 155400)
-aStart=where(timeForm eq 135700)
-aEnd=where(timeForm eq 152740)
+  aStart=where(timeForm eq 124100)
+  aEnd=where(timeForm eq 155400)
+;aStart=where(timeForm eq 135700)
+;aEnd=where(timeForm eq 152740)
 endif
 
 if flightDay eq '0814' then begin
@@ -360,13 +360,12 @@ lwcAsCorrDiff = lwcNev1 - lwc
 
 
 
+plot1=scatterplot(as,lwc)
+lin=linfit(as,lwc)
+line=(lin[1])*as+lin[0]
+plot2=plot(as,line,'r',/overplot)
+plot2.yrange=[-.1,.1]
 
-
-;aStart = aStart[0]
-;aEnd = aEnd[0]
-
-pmbshift=shift(pmb,-1)
-pmbdiff=pmb-pmbshift
 
 
 
@@ -472,30 +471,6 @@ for i=0, aSpan do begin
 endfor
 
 for i=0, aSpan do begin
-  if (abs(pmbdiff[i]) gt .3) and (baselineI[i] eq 1) then begin
-    baselinePmbDiffI[i]=1
-  endif
-endfor
-
-for i=0, aSpan do begin
-  if (abs(pmbdiff[i]) lt .3) and (baselineI[i] eq 1) then begin
-    baselinePmbDiffNonI[i]=1
-  endif
-endfor
-
-for i=0, aSpan do begin
-  if (abs(pmbdiff[i]) lt .3) and (baselineI[i] eq 1) and (baseLineIB[i] eq 1) then begin
-    baselinePmbDiffNonLevelI[i]=1
-  endif
-endfor
-
-for i=0, aSpan do begin
-  if (abs(pmbdiff[i]) gt .3) and (baselineI[i] eq 1) and (baseLineIB[i] eq 1) then begin
-    baselinePmbDiffLevelI[i]=1
-  endif
-endfor
-
-for i=0, aSpan do begin
   if (baselineI[i] eq 1) and (abs(hivs[i]) lt .8) then begin
     baselineHivsI[i]=1
   endif
@@ -515,10 +490,7 @@ clearAirLargeErr=where(baselineIC eq 1)
 clearAirLargeErrex=where(baselineIE eq 1)
 levelClearAirLargeErrex=where(baselineIF eq 1)
 signal=where(baselineID eq 1)
-pmbdiffTime=where(baselinePmbDiffI eq 1)
-pmbdiffTimeNon=where(baselinePmbDiffNonI eq 1)
-pmbdifflevel=where(baselinePmbDiffLevelI eq 1)
-pmbdiffTimeNonlevel=where(baselinePmbDiffNonLevelI eq 1)
+
 lowhivs=where(baselineHivsI eq 1)
 highhivs=where(baselineHivsI eq 0)
 lowhivslevel=where(baselineHivsLevelI eq 1)
@@ -532,7 +504,7 @@ baselineClimbTimesNon=0.
 baselineClimbTimesNonLevel=0.
 linPresCorSteepClimbCor=0.
 LINPRESCORSTEEPCLIMB=0.
-if flightDay eq '0807' then begin
+if flightDay eq 'null' then begin
   for i=0, aSpan do begin
     if ((timeForm[i] gt 132658) and (timeForm[i] lt 135740)) and (baselineI[i] eq 1) then begin
       baselineClimbTimeI[i]=1
@@ -566,8 +538,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   flightString:flightString, signal:signal, kLiq:kLiq, clearAirLargeErr:clearAirLargeErr, $
   clearAirLargeErrex:clearAirLargeErrex, levelClearAirLargeErrex:levelClearAirLargeErrex, $
   aiasMs:aiasMs, tas:tas, hivs:hivs, baselineClimbTimes:baselineClimbTimes,baselineClimbTimesNon:baselineClimbTimesNon, $
-  linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, pmbdiffTime:pmbdiffTime, $
-  pmbdifflevel:pmbdifflevel,pmbdiffTimeNon:pmbdiffTimeNon, pmbdiff:pmbdiff,pmbdiffTimeNonlevel:pmbdiffTimeNonlevel, lowhivs:lowhivs, $
+  linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
+  lowhivs:lowhivs, $
   highhivs:highhivs, lowhivslevel:lowhivslevel}
 
 return
