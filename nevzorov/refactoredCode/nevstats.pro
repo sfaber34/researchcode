@@ -4,6 +4,9 @@ function nevstats, var
 
 var=abs(var)
 
+varmean=mean(var)
+varstddev=stddev(var)
+
 middlei=(n_elements(var)/2.)
 maxi=(n_elements(var)-1)
 
@@ -21,9 +24,9 @@ varhalfb=var[middlei:maxi]
 quart1=median(varhalfa)
 quart2=median(varhalfb)
     
-;s={minvar:minvar, quart1:quart1, medvar:medvar, quart2:quart2, maxvar:maxvar}    
+s={minvar:minvar, quart1:quart1, medvar:medvar, quart2:quart2, maxvar:maxvar, varmean:varmean, varstddev:varstddev}    
 
 
-return,mean(var)
+return,s
 
 end

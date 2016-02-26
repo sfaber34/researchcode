@@ -8,29 +8,28 @@ stats2=[]
 for j=0,2 do begin
  concatval=[]
  pconcatval=[]
-;for i=0,n_elements(days)-1 do begin
+for i=0,n_elements(days)-1 do begin
   
-nevBase, '0725','indicated',levels[j]
+nevBase, days[i],'indicated',levels[j]
 
 
 
 common g, g
 clearAir=g.clearAir
-pmb=g.pmb
+pmb=g.pmb[clearair]
 lwc=g.lwc
 time=g.time
 timeForm=g.timeForm
 as=g.as
-baselineprefilter=g.baselineprefilter
 levelClearAir=g.levelClearAir
 avroll=g.avroll
 avpitch=g.avpitch
 pLiq=g.pLiq
-lwc=g.lwc
+lwc=g.lwc[clearair]
 lwcnev1=g.lwcnev1
 lwcAsCorrDiff=g.lwcAsCorrDiff
 lwcPresCorDiff=g.lwcPresCorDiff
-lwcPresCor=g.lwcPresCor[baselineprefilter]
+lwcPresCor=g.lwcPresCor[clearair]
 linPresCor=g.linPresCor
 flightString=g.flightString
 kLiq=g.kLiq
@@ -45,18 +44,38 @@ lowhivs=g.lowhivs
 highhivs=g.highhivs
 lowhivslevel=g.lowhivslevel
 
-;s= nevstats(lwcPresCor)
-plot1=scatterplot(pmb[baselineprefilter],lwcPresCor,sym_color=colors[j],/overplot)
 
-;print, levels[j],'-',days[i],' ',n_elements(concatval)
+;set stat var
+var=lwc
+
+
+
+if j eq 0 then plot1=scatterplot(pmb,var,sym_color=colors[j],dimensions=[1200,900])
+if j gt 0 then plot1=scatterplot(pmb,var,sym_color=colors[j],/overplot)
+
+plot1.yrange=[-.08,.08]
+
+;stats[j,*]=[s.QUART1,s.QUART1,s.MEDVAR,s.QUART2,s.QUART2]
+
+;stats[j,*]=[s.varmean-s.varstddev,s.varmean-s.varstddev,s.varmean,s.varmean+s.varstddev,s.varmean+s.varstddev]
+
+print, days[i],' ',levels[j]
+
+concatval=[concatval, var]
+
 
 endfor
 
-;s= nevstats(levelsb[j],concatval)
-;stats[j,*]=[s.minvar,s.QUART1,s.MEDVAR,s.QUART2,s.maxvar]
-;stats2=[stats2,s]
 
-;endfor
+
+s= nevstats(var)
+
+stats[j,*]=[s.varmean-s.varstddev,s.varmean-s.varstddev,s.varmean,s.varmean+s.varstddev,s.varmean+s.varstddev]
+
+endfor
+
+
+
 
 ticks=days
 plot1=boxplot(stats)

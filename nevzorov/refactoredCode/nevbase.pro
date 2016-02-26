@@ -541,8 +541,8 @@ endfor
 
 
 
-clearAir=where(baselineI eq 1)
-;clearAir=where(errI eq 1)
+;clearAir=where(baselineI eq 1)
+clearAir=where(errI eq 1)
 levelClearAir=where(baselineIB eq 1)
 clearAirLargeErr=where(baselineIC eq 1)
 clearAirLargeErrex=where(baselineIE eq 1)
