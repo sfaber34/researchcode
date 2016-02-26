@@ -4,7 +4,7 @@ common g, g
 
 cope=1
 
-
+baselinediagnostics=0
 
 
 if flightDay eq '0709' then nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
@@ -404,40 +404,51 @@ endfor
 
 baselineprefilter=where(baselineprefilterI eq 1)
 
-plot1=scatterplot(as,lwc)
-plot2=scatterplot(as[baselineprefilter],lwc[baselineprefilter],/overplot,sym_color='green')
-plot2.title=string(flightday)
+
+if baselinediagnostics eq 1 then begin
+  plot1=scatterplot(as,lwc)
+  plot2=scatterplot(as[baselineprefilter],lwc[baselineprefilter],/overplot,sym_color='green')
+  plot2.title=string(flightday)
+  lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
+  line=(lin[1])*as+lin[0]
+  plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
+  plot2.yrange=[-.1,.1]
+endif
+
+
 lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
-line=(lin[1])*as+lin[0]
-plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
-plot2.yrange=[-.1,.1]
+meanerrline=(lin[1])*as+lin[0]
 
-filterederr=abs(lwc - line[baselineprefilter])
 
-filterederrsort=sort(filterederr)
-filterederrsort=filterederr[filterederrsort]
+filterederr=abs(lwc[baselineprefilter] - meanerrline[baselineprefilter])
 
-thirdquart=n_elements(filterederrsort)*.95
-thirdquart=filterederrsort[thirdquart]
+filterederrsortlwc=sort(filterederr)
+filterederrsort=filterederr[filterederrsortlwc]
+
+thirdquart=filterederrsort[n_elements(filterederrsort)*.8]
+
+
+lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
+meanbaselinefilterline=(lin[1])*as+lin[0]
 
 
 for i=0, aSpan do begin
-  if (abs(lwc[i] - line[i]) lt thirdquart) then begin
+  if (abs(lwc[i] - meanbaselinefilterline[i]) lt .02) then begin
     errI[i]=1
   endif
 endfor
 
 thirdquartfilter=where(errI eq 1)
 
-
-plot1=scatterplot(as[baselineprefilter],lwc[baselineprefilter])
-plot2=scatterplot(as[thirdquartfilter],lwc[thirdquartfilter],/overplot,sym_color='purple')
-plot2.title=string(flightday)
-lin=linfit(as[thirdquartfilter],lwc[thirdquartfilter])
-line=(lin[1])*as+lin[0]
-plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
-plot2.yrange=[-.1,.1]
-
+if baselinediagnostics eq 1 then begin
+  plot1=scatterplot(as[baselineprefilter],lwc[baselineprefilter])
+  plot2=scatterplot(as[thirdquartfilter],lwc[thirdquartfilter],/overplot,sym_color='purple')
+  plot2.title=string(flightday)
+  lin=linfit(as[thirdquartfilter],lwc[thirdquartfilter])
+  line=(lin[1])*as+lin[0]
+  plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
+  plot2.yrange=[-.1,.1]
+endif
 
 
 for i=0, aSpan do begin

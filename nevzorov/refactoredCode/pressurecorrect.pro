@@ -1,6 +1,6 @@
 pro pressurecorrect
 
-nevBase, '0710','indicated','400'
+nevBase, '0803','indicated','400'
 
 common g, g
 pmb=g.pmb
@@ -79,14 +79,14 @@ plot1.ytitle='LWC [g/m^3]'
 
 
 
-plot3=scatterplot(pmb[clearair],lwcPresCor[clearair],symbol='+',sym_size=.45,dimensions=[1200,900],name='No Correction')
-;plot3b=scatterplot(pmb[clearair],lwcPresCor[clearair],symbol='+',sym_size=.45,sym_color='blue',/overplot,name='With Correction')
-;leg3=legend(target=[plot3,plot3b])
+plot3=scatterplot(pmb[clearair],lwc[clearair],symbol='+',sym_size=.45,dimensions=[1200,900],name='No Correction')
+plot3b=scatterplot(pmb[clearair],lwcPresCor[clearair],symbol='+',sym_size=.45,sym_color='blue',/overplot,name='With Correction')
+leg3=legend(target=[plot3,plot3b])
 plot3.xrange=[lin1Left,lin1Right]
 plot3.yrange=[-.05,.05]
 
 
-lin3=linfit(pmb[clearair],lwcPresCor[clearair])
+lin3=linfit(pmb[clearair],lwc[clearair])
 linYLeftC=(lin3[1])*(lin1Left)+lin3[0]
 linYRightC=(lin3[1])*(lin1Right)+lin3[0]
 
@@ -100,10 +100,10 @@ lin3b=linfit(pmb[clearair],lwcPresCor[clearair])
 linYLeftD=(lin3b[1])*(lin1Left)+lin3b[0]
 linYRightD=(lin3b[1])*(lin1Right)+lin3b[0]
 
-;plot3lin=plot([lin1Left,lin1Right],[linYLeftD,linYRightD],/overplot,'b', name='Level Clear Air Point linfit', thick=2)
+plot3lin=plot([lin1Left,lin1Right],[linYLeftD,linYRightD],/overplot,'b', name='Level Clear Air Point linfit', thick=2)
 
 text3b=string(lin3b)
-;text3c=text(300, 30, text3b,color='blue', /device)
+text3c=text(300, 30, text3b,color='blue', /device)
 
 plot3.title='Clear Air LWC ('+flightString+')'
 plot3.xtitle='Pressure [mb]'
