@@ -33,6 +33,7 @@ pro error0807investigation
     baselineClimbTimesNon=g.baselineClimbTimesNon
     lowhivs=g.lowhivs
 
+    stats=nevstats(lwc)
 
     baselineClimbI=dindgen(n_elements(pmb[clearAir]),start=0,increment=0)
     

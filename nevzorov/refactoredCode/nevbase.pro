@@ -433,7 +433,7 @@ meanbaselinefilterline=(lin[1])*as+lin[0]
 
 
 for i=0, aSpan do begin
-  if (abs(lwc[i] - meanbaselinefilterline[i]) lt .02) then begin
+  if (abs(lwc[i] - meanbaselinefilterline[i]) lt .03) then begin
     errI[i]=1
   endif
 endfor
@@ -541,8 +541,8 @@ endfor
 
 
 
-;clearAir=where(baselineI eq 1)
-clearAir=where(errI eq 1)
+clearAir=where(baselineI eq 1)
+;clearAir=where(errI eq 1)
 levelClearAir=where(baselineIB eq 1)
 clearAirLargeErr=where(baselineIC eq 1)
 clearAirLargeErrex=where(baselineIE eq 1)
@@ -588,8 +588,6 @@ endif
 
 
 
-
-
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcPresCor:lwcPresCor, lwcAsCorrDiff:lwcAsCorrDiff, $
   lwcPresCorDiff:lwcPresCorDiff, clearAir:clearAir, levelClearAir:levelClearAir, linPresCor:linPresCor, $
@@ -598,7 +596,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   aiasMs:aiasMs, tas:tas, hivs:hivs, baselineClimbTimes:baselineClimbTimes,baselineClimbTimesNon:baselineClimbTimesNon, $
   linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
   lowhivs:lowhivs, $
-  highhivs:highhivs, lowhivslevel:lowhivslevel}
+  highhivs:highhivs, lowhivslevel:lowhivslevel, baselineprefilter:baselineprefilter}
+
 
 return
 
