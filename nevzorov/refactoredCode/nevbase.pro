@@ -360,11 +360,11 @@ lwcAsCorrDiff = lwcNev1 - lwc
 
 
 
-plot1=scatterplot(as,lwc)
-lin=linfit(as,lwc)
-line=(lin[1])*as+lin[0]
-plot2=plot(as,line,'r',/overplot)
-plot2.yrange=[-.1,.1]
+;plot1=scatterplot(as,lwc)
+;lin=linfit(as,lwc)
+;line=(lin[1])*as+lin[0]
+;plot2=plot(as,line,'r',/overplot)
+;plot2.yrange=[-.1,.1]
 
 
 
@@ -393,6 +393,52 @@ baselinePmbDiffLevelI=dindgen(n_elements(pmb),start=0,increment=0)
 baselinePmbDiffNonLevelI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineHivsI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineHivsLevelI=dindgen(n_elements(pmb),start=0,increment=0)
+baselineprefilterI=dindgen(n_elements(pmb),start=0,increment=0)
+errI=dindgen(n_elements(pmb),start=0,increment=0)
+
+for i=0, aSpan do begin
+  if (abs(lwc[i]) lt .05) then begin
+    baselineprefilterI[i]=1
+  endif
+endfor
+
+baselineprefilter=where(baselineprefilterI eq 1)
+
+plot1=scatterplot(as,lwc)
+plot2=scatterplot(as[baselineprefilter],lwc[baselineprefilter],/overplot,sym_color='green')
+plot2.title=string(flightday)
+lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
+line=(lin[1])*as+lin[0]
+plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
+plot2.yrange=[-.1,.1]
+
+filterederr=abs(lwc - line[baselineprefilter])
+
+filterederrsort=sort(filterederr)
+filterederrsort=filterederr[filterederrsort]
+
+thirdquart=n_elements(filterederrsort)*.95
+thirdquart=filterederrsort[thirdquart]
+
+
+for i=0, aSpan do begin
+  if (abs(lwc[i] - line[i]) lt thirdquart) then begin
+    errI[i]=1
+  endif
+endfor
+
+thirdquartfilter=where(errI eq 1)
+
+
+plot1=scatterplot(as[baselineprefilter],lwc[baselineprefilter])
+plot2=scatterplot(as[thirdquartfilter],lwc[thirdquartfilter],/overplot,sym_color='purple')
+plot2.title=string(flightday)
+lin=linfit(as[thirdquartfilter],lwc[thirdquartfilter])
+line=(lin[1])*as+lin[0]
+plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
+plot2.yrange=[-.1,.1]
+
+
 
 for i=0, aSpan do begin
   if (abs(avRoll[i]) lt 5) then begin
@@ -484,7 +530,8 @@ endfor
 
 
 
-clearAir=where(baselineI eq 1)
+;clearAir=where(baselineI eq 1)
+clearAir=where(errI eq 1)
 levelClearAir=where(baselineIB eq 1)
 clearAirLargeErr=where(baselineIC eq 1)
 clearAirLargeErrex=where(baselineIE eq 1)
