@@ -7,17 +7,29 @@ cope=1
 baselinediagnostics=0
 
 
-if flightDay eq '0709' then nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
-if flightDay eq '0710' then nclPath='/Volumes/sfaber1/research/nevzorov/data/20130710.c1.nc'
-if flightDay eq '0725' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072513/20130725.c1.nc' ;tons of level ca
-if flightDay eq '0727' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072713/20130727.c1.nc'
-if flightDay eq '0728' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072813/20130728.c1.nc'
-if flightDay eq '0729' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072913/20130729.c1.nc'
-if flightDay eq '0807' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080713/20130807.c1.nc'
-if flightDay eq '0814' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081413/20130814.c1.nc'
-if flightDay eq '0815' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081513/20130815.c1.nc'
-if flightDay eq '0803' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080313/20130803.c1.nc'
-
+if !version.OS_FAMILY eq 'Windows' then begin
+  if flightDay eq '0709' then nclPath='Z:\research\nevzorov\data\070913\20130709.c1.nc'
+  if flightDay eq '0710' then nclPath='Z:\research\nevzorov\data\20130710.c1.nc'
+  if flightDay eq '0725' then nclPath='Z:\research\nevzorov\data\072513\20130725.c1.nc' ;tons of level ca
+  if flightDay eq '0727' then nclPath='Z:\research\nevzorov\data\072713\20130727.c1.nc'
+  if flightDay eq '0728' then nclPath='Z:\research\nevzorov\data\072813\20130728.c1.nc'
+  if flightDay eq '0729' then nclPath='Z:\research\nevzorov\data\072913\20130729.c1.nc'
+  if flightDay eq '0807' then nclPath='Z:\research\nevzorov\data\080713\20130807.c1.nc'
+  if flightDay eq '0814' then nclPath='Z:\research\nevzorov\data\081413\20130814.c1.nc'
+  if flightDay eq '0815' then nclPath='Z:\research\nevzorov\data\081513\20130815.c1.nc'
+  if flightDay eq '0803' then nclPath='Z:\research\nevzorov\data\080313\20130803.c1.nc'
+endif else begin
+  if flightDay eq '0709' then nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
+  if flightDay eq '0710' then nclPath='/Volumes/sfaber1/research/nevzorov/data/20130710.c1.nc'
+  if flightDay eq '0725' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072513/20130725.c1.nc' ;tons of level ca
+  if flightDay eq '0727' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072713/20130727.c1.nc'
+  if flightDay eq '0728' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072813/20130728.c1.nc'
+  if flightDay eq '0729' then nclPath='/Volumes/sfaber1/research/nevzorov/data/072913/20130729.c1.nc'
+  if flightDay eq '0807' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080713/20130807.c1.nc'
+  if flightDay eq '0814' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081413/20130814.c1.nc'
+  if flightDay eq '0815' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081513/20130815.c1.nc'
+  if flightDay eq '0803' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080313/20130803.c1.nc'
+endelse
 
 
 
@@ -405,10 +417,11 @@ endfor
 baselineprefilter=where(baselineprefilterI eq 1)
 
 
+
 if baselinediagnostics eq 1 then begin
   plot1=scatterplot(as,lwc)
   plot2=scatterplot(as[baselineprefilter],lwc[baselineprefilter],/overplot,sym_color='green')
-  plot2.title=string(flightday)
+  ;plot2.title=string(flightday)
   lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
   line=(lin[1])*as+lin[0]
   plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
@@ -433,7 +446,7 @@ meanbaselinefilterline=(lin[1])*as+lin[0]
 
 
 for i=0, aSpan do begin
-  if (abs(lwc[i] - meanbaselinefilterline[i]) lt .03) then begin
+  if (abs(lwc[i] - meanbaselinefilterline[i]) lt .04) then begin
     errI[i]=1
   endif
 endfor
@@ -443,7 +456,7 @@ thirdquartfilter=where(errI eq 1)
 if baselinediagnostics eq 1 then begin
   plot1=scatterplot(as[baselineprefilter],lwc[baselineprefilter])
   plot2=scatterplot(as[thirdquartfilter],lwc[thirdquartfilter],/overplot,sym_color='purple')
-  plot2.title=string(flightday)
+  ;plot2.title=string(flightday)
   lin=linfit(as[thirdquartfilter],lwc[thirdquartfilter])
   line=(lin[1])*as+lin[0]
   plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
