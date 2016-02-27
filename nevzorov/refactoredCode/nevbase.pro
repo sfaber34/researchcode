@@ -355,7 +355,6 @@ kLiq=kLiqAirspeed
 
 
 
-
 ;HEAT LOSS LIQUID
 pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
 
@@ -598,7 +597,6 @@ if flightDay eq 'null' then begin
    linPresCorSteepClimbCor=linfit(pmb[levelClearAir],lwc[levelClearAir])
    linPresCorSteepClimb=lwc - (linPresCorSteepClimbCor[1])*pmb - linPresCorSteepClimbCor[0]
 endif   
-
 
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $

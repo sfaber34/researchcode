@@ -1,7 +1,8 @@
 pro pressurecorrect
 
+flightday='0727'
 
-nevBase, '0803','indicated','400'
+nevBase, flightday,'indicated','400'
 
 
 
@@ -30,15 +31,17 @@ levelClearAirLargeErrex=g.levelClearAirLargeErrex
 linPresCorSteepClimb=g.linPresCorSteepClimb
 baselineClimbTimesNon=g.baselineClimbTimesNon
 baselineClimbTimesNonLevel=g.baselineClimbTimesNonLevel
-pmbdifftime=g.pmbdifftime
-pmbdiffTimeNon=g.pmbdiffTimeNon
-pmbdiff=g.pmbdiff
-pmbdiffTimeNonlevel=g.pmbdiffTimeNonlevel
-pmbdifflevel=g.pmbdifflevel
+;pmbdifftime=g.pmbdifftime
+;pmbdiffTimeNon=g.pmbdiffTimeNon
+;pmbdiff=g.pmbdiff
+;pmbdiffTimeNonlevel=g.pmbdiffTimeNonlevel
+;pmbdifflevel=g.pmbdifflevel
 hivs=g.hivs
 lowhivs=g.lowhivs
 highhivs=g.highhivs
 lowhivslevel=g.lowhivslevel
+
+clearair = loadclearairindexes(flightday)
 
 
 ;lwc640660=where(((pmb lt 640) or (pmb gt 660)) and lwc lt .05 and ((pmb lt 669) or (pmb gt 675)) and ((pmb lt 680) or (pmb gt 691)) and (abs(avRoll) lt 5) and (avpitch lt (mean(avpitch) + 2) and avpitch gt (mean(avpitch) - 2)))
