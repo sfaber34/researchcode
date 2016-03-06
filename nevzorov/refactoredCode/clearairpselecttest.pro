@@ -3,7 +3,6 @@
 pro clearairpselecttest
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight=['0729','0803','0807','0814','0815']
   kLevel=['400','600','900']
   ktype=['indicated','true']
   colors=['red','blue','black']
@@ -33,7 +32,8 @@ pro clearairpselecttest
         lwcnev1con=[]
         vlwccolcondelsmooth=[]
         clearairb=[]
-        
+        timecon=[]
+        clearairlwcnevcon=[]
 
         for j=0,n_elements(flight)-1 do begin
           nevBase, flight[j],'indicated','400'
@@ -76,36 +76,43 @@ pro clearairpselecttest
           vlwccolcon=[vlwccolcon,vlwccol]
           ilwccolcon=[ilwccolcon,ilwccol]
           lwcnev1con=[lwcnev1con,lwcnev1]
-          
+          timecon=[timecon,time]
+          clearairlwcnevcon=[clearairlwcnevcon,lwcnev1[clearair]]
+
+
+          if j eq 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200])
+          if j ne 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200],/overplot)
+          plot1.title='vlwccol'
+          plot1.yrange=[-.03,.03]
+          ;plot1.xrange=[1.7756d7,1.7757d7]
+          plot2=scatterplot(pmb[clearair],lwcnev1[clearair],dimensions=[1600,1200],sym_color='red',symbol='+',/overplot)
+          ;plot2.title='vlwccolcondel'
           
         endfor
 
 
   endif
+  stop
   
-  
-  vlwccolconshift=shift(vlwccolcon,1)
-  vlwccolcondel=vlwccolcon-vlwccolconshift
-  
-  vlwccolcondelshift=shift(vlwccolcondel,1)
-  vlwccolcondelshift2=shift(vlwccolcondel,2)
-  vlwccolcondelshift3=shift(vlwccolcondel,3)
-  vlwccolcondelshift4=shift(vlwccolcondel,4)
+;  vlwccolconshift=shift(vlwccolcon,1)
+;  vlwccolcondel=vlwccolcon-vlwccolconshift
+;  
+;  vlwccolcondelshift=shift(vlwccolcondel,1)
+;  vlwccolcondelshift2=shift(vlwccolcondel,2)
+;  vlwccolcondelshift3=shift(vlwccolcondel,3)
+;  vlwccolcondelshift4=shift(vlwccolcondel,4)
   
   
 
 
   x=dindgen(n_elements(pmbcon))
   xclearair=dindgen(n_elements(clearaircon))
+            
+  ;clearairb=where(abs(vlwccolcondel) lt .01 and abs(vlwccolcondelshift) lt .01 and abs(vlwccolcondelshift2) lt .01 and abs(vlwccolcondelshift3) lt .01)
   
-  clearairb=where(abs(vlwccolcondel) lt .01 and abs(vlwccolcondelshift) lt .01 and abs(vlwccolcondelshift2) lt .01 and abs(vlwccolcondelshift3) lt .01)
   
-  plot1=plot(x,lwcnev1con,dimensions=[1600,1200])
-  plot1.title='vlwccol'
-
-  plot2=plot(x[clearairb],lwcnev1con[clearairb],dimensions=[1600,1200],'r',/overplot)
-  plot2.title='vlwccolcondel'
-  plot2.yrange=[-.03,.03]
+  
+  stop
 stop
 
 

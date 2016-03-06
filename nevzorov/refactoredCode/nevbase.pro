@@ -161,11 +161,11 @@ endif
 if flightDay eq '0710' then begin
   ;ENTIRE FLIGHT
   flightString='07-10-13'
-  aStart=where(timeForm eq 112600)
-  aEnd=where(timeForm eq 141100)
+;  aStart=where(timeForm eq 112600)
+;  aEnd=where(timeForm eq 141100)
 
-;aStart=where(timeForm eq 113100)
-;aEnd=where(timeForm eq 141100)
+aStart=where(timeForm eq 113100)
+aEnd=where(timeForm eq 141100)
 endif
 
 if flightDay eq '0725' then begin
@@ -276,6 +276,13 @@ endif
 
 
 
+;-----CLEAR AIR DETECTION-----
+vlwccolshift=shift(vlwccol,1)
+vlwccoldel=vlwccol-vlwccolshift
+
+vlwccoldelshift=shift(vlwccoldel,1)
+vlwccoldelshift2=shift(vlwccoldel,2)
+vlwccoldelshift3=shift(vlwccoldel,3)
 
 
 
@@ -387,7 +394,6 @@ lwcAsCorrDiff = lwcNev1 - lwc
 aSpan = n_elements(pmb) - 1
 
 baselineNevI=dindgen(n_elements(pmb),start=0,increment=0)
-baselineI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineIB=dindgen(n_elements(pmb),start=0,increment=0)
 baselineIC=dindgen(n_elements(pmb),start=0,increment=0)
 baselineID=dindgen(n_elements(pmb),start=0,increment=0)
@@ -410,6 +416,15 @@ baselineHivsI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineHivsLevelI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineprefilterI=dindgen(n_elements(pmb),start=0,increment=0)
 errI=dindgen(n_elements(pmb),start=0,increment=0)
+baselineI=dindgen(n_elements(pmb),start=0,increment=0)
+
+
+
+for i=0, aSpan do begin
+  if (abs(vlwccoldel[i]) lt .01 and abs(vlwccoldelshift[i]) lt .01 and abs(vlwccoldelshift2[i]) lt .01 and abs(vlwccoldelshift3[i]) lt .01) then begin
+    errI[i]=1
+  endif
+endfor
 
 for i=0, aSpan do begin
   if (abs(lwc[i]) lt .05) then begin
@@ -448,11 +463,7 @@ lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
 meanbaselinefilterline=(lin[1])*as+lin[0]
 
 
-for i=0, aSpan do begin
-  if (abs(lwc[i] - meanbaselinefilterline[i]) lt .04) then begin
-    errI[i]=1
-  endif
-endfor
+
 
 thirdquartfilter=where(errI eq 1)
 
@@ -557,7 +568,7 @@ endfor
 
 
 
-;clearAir=where(baselineI eq 1)
+
 clearAir=where(errI eq 1)
 levelClearAir=where(baselineIB eq 1)
 clearAirLargeErr=where(baselineIC eq 1)
