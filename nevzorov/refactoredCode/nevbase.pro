@@ -161,11 +161,11 @@ endif
 if flightDay eq '0710' then begin
   ;ENTIRE FLIGHT
   flightString='07-10-13'
-;  aStart=where(timeForm eq 112600)
-;  aEnd=where(timeForm eq 141100)
+  aStart=where(timeForm eq 112600)
+  aEnd=where(timeForm eq 141100)
 
-aStart=where(timeForm eq 113100)
-aEnd=where(timeForm eq 141100)
+;aStart=where(timeForm eq 113100)
+;aEnd=where(timeForm eq 141100)
 endif
 
 if flightDay eq '0725' then begin
@@ -184,8 +184,12 @@ if flightDay eq '0727' then begin
 ;  aStart=where(timeForm eq 115500)
 ;  aEnd=where(timeForm eq 135600)
 
-aStart=where(timeForm eq 114917)
-aEnd=where(timeForm eq 135000)
+;aStart=where(timeForm eq 114917)
+;aEnd=where(timeForm eq 135000)
+
+;REMOVE
+aStart=where(timeForm eq 123817)
+aEnd=where(timeForm eq 124411)
 endif
 
 if flightDay eq '0728' then begin
@@ -606,7 +610,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   clearAirLargeErrex:clearAirLargeErrex, levelClearAirLargeErrex:levelClearAirLargeErrex, $
   aiasMs:aiasMs, tas:tas, hivs:hivs, baselineClimbTimes:baselineClimbTimes,baselineClimbTimesNon:baselineClimbTimesNon, $
   linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
-  lowhivs:lowhivs, $
+  lowhivs:lowhivs, vlwccol:vlwccol, ilwccol:ilwccol, $
   highhivs:highhivs, lowhivslevel:lowhivslevel, baselineprefilter:baselineprefilter}
 
 
