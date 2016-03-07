@@ -55,7 +55,7 @@ pro clearairpselecttest
           avroll=g.avroll
           avpitch=g.avpitch
           pLiq=g.pLiq
-          lwcnev1=g.lwcnev1
+          lwcnev1=g.lwcnev1[clearair]
           lwcAsCorrDiff=g.lwcAsCorrDiff
           lwcPresCorDiff=g.lwcPresCorDiff
           lwcPresCor=g.lwcPresCor
@@ -80,12 +80,12 @@ pro clearairpselecttest
           clearairlwcnevcon=[clearairlwcnevcon,lwcnev1[clearair]]
 
 
-          if j eq 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200])
-          if j ne 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200],/overplot)
-          plot1.title='vlwccol'
-          plot1.yrange=[-.03,.03]
+          ;if j eq 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200])
+          ;if j ne 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200],/overplot)
+          ;plot1.title='vlwccol'
+          ;plot1.yrange=[-.03,.03]
           ;plot1.xrange=[1.7756d7,1.7757d7]
-          plot2=scatterplot(pmb[clearair],lwcnev1[clearair],dimensions=[1600,1200],sym_color='red',symbol='+',/overplot)
+          plot2=scatterplot(pmb[clearair],lwcnev1,dimensions=[1600,1200],sym_color='red',symbol='+',/overplot)
           ;plot2.title='vlwccolcondel'
           
         endfor

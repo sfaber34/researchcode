@@ -1,6 +1,6 @@
 pro pressurecorrect
 
-flightday='0727'
+flightday='0807'
 
 nevBase, flightday,'indicated','400'
 

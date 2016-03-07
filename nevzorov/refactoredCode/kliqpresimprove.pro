@@ -8,7 +8,7 @@ pro kliqpresimprove
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
-  runcalc=0
+  runcalc=1
 
   mean400=[]
   stdev400=[]
@@ -30,6 +30,7 @@ pro kliqpresimprove
       
         lwccon=[]
         pmbcon=[]
+        ascon=[]
         
         for j=0,n_elements(flight)-1 do begin
         nevBase, flight[j],ktype[k],kLevel[i]
@@ -41,18 +42,18 @@ pro kliqpresimprove
   
           common g, g
           clearAir=g.clearAir
-          pmb=g.pmb[clearair]
+          pmb=g.pmb
           lwc=g.lwc[clearair]
           time=g.time
           timeForm=g.timeForm
-          as=g.as
-          aiasMs=g.aiasMs
-          tas=g.tas      
+          as=g.as[clearair]
+          aiasMs=g.aiasMs[clearair]
+          tas=g.tas[clearair]      
           levelClearAir=g.levelClearAir
           avroll=g.avroll
           avpitch=g.avpitch
           pLiq=g.pLiq
-          lwcnev1=g.lwcnev1
+          lwcnev1=g.lwcnev1[clearair]
           lwcAsCorrDiff=g.lwcAsCorrDiff
           lwcPresCorDiff=g.lwcPresCorDiff
           lwcPresCor=g.lwcPresCor[clearair]
@@ -65,11 +66,13 @@ pro kliqpresimprove
           
           pmbcon=[pmbcon,pmb]
           lwccon=[lwccon,lwc]
+          ascon=[ascon,as]
+         
           
-          if j eq 0 then plot1=scatterplot(pmbcon,lwccon, sym_size=.2)
-          if j gt 0 then plot1=scatterplot(pmbcon,lwccon,/overplot, sym_size=.2)
+          if j eq 0 then plot1=scatterplot(ascon,lwccon, sym_size=.2)
+          if j gt 0 then plot1=scatterplot(ascon,lwccon,/overplot, sym_size=.2)
         endfor
-  
+   stop
   
         lwcmean=mean(abs(lwccon))
         dev=stddev(lwccon)
@@ -116,25 +119,30 @@ pro kliqpresimprove
     
    if runcalc eq 0 then restore, 'kAsLwcMeansB'
   
-   callevel=['','900 mb Ind','600 mb Ind','400 mb Ind','900 mb True','600 mb True','400 mb True','']
-   holder=dindgen(n_elements(callevel))
-   kmeans=[' ',lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,' ']
-   devs=[' ',lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true,' ']
+   callevel=['400 mb Ind','600 mb Ind','900 mb Ind','400 mb True','600 mb True','900 mb True']
+   holder=dindgen(n_elements(callevel),start=0,increment=1)
+   kmeans=[lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true]
+   devs=[lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true]
 
    plot1=scatterplot(holder,kmeans,dimensions=[1200,900], name='% Slope Correction')
    ;plot1.xrange=[0,10]
    ;plot1.yrange=[40,150]
-   plot1.xtickname=flights
-   plot1.title='Percent Correction After Pres Correction Averaged All Flights'
-   plot1.ytitle='Percent Correction'
-   plot1.xtitle='Flight Day'
+   plot1.xtickname=callevel
+   plot1.sym_filled=1
+   plot1.font_size=16
+   plot1.title='All Flights Clear Air LWC Mean Error'
+   plot1.ytitle='Absolute Mean Error g m!U-3!N'
+   plot1.xtitle='k Regression Flight Level and Airspeed Type'
    
    ;leg1=legend(target=[plot1,plot2],shadow=0)
    
-   plot2=errorplot(holder,kmeans, devs,/overplot)
+   plot2=errorplot(holder,kmeans, devs,/overplot,linestyle=6)
    
-   
+   plot2.xTICKVALUES=[0,1,2,3,4,5,6]
+   plot2.xrange=[-1,6]
+   plot2.xminor=0
 
+   plot2.Save,'meanerros.ps'
 
 
 
