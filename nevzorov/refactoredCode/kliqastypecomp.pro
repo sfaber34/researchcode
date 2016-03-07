@@ -31,7 +31,7 @@ pro kliqastypecomp
     clearAirLargeErr=g.clearAirLargeErr
     clearAirLargeErrex=g.clearAirLargeErrex
     levelClearAirLargeErrex=g.levelClearAirLargeErrex
-
+stop
 
     plot1=scatterplot(pmb[clearair],lwc[clearair],/overplot)
     plot1.sym_color=colors[i]

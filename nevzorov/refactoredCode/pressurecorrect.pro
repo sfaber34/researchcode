@@ -41,7 +41,7 @@ lowhivs=g.lowhivs
 highhivs=g.highhivs
 lowhivslevel=g.lowhivslevel
 
-clearair = loadclearairindexes(flightday)
+;clearair = loadclearairindexes(flightday)
 
 
 ;lwc640660=where(((pmb lt 640) or (pmb gt 660)) and lwc lt .05 and ((pmb lt 669) or (pmb gt 675)) and ((pmb lt 680) or (pmb gt 691)) and (abs(avRoll) lt 5) and (avpitch lt (mean(avpitch) + 2) and avpitch gt (mean(avpitch) - 2)))
@@ -156,8 +156,7 @@ plot4.xtitle='Indicated Airspeed [m/s]'
 plot4.ytitle='LWC [g/m^3]'
 
 
-
-
+stop
 
 
 

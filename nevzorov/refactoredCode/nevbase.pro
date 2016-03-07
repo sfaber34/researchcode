@@ -184,12 +184,12 @@ if flightDay eq '0727' then begin
 ;  aStart=where(timeForm eq 115500)
 ;  aEnd=where(timeForm eq 135600)
 
-;aStart=where(timeForm eq 114917)
-;aEnd=where(timeForm eq 135000)
+aStart=where(timeForm eq 114917)
+aEnd=where(timeForm eq 135000)
 
 ;REMOVE
-aStart=where(timeForm eq 123817)
-aEnd=where(timeForm eq 124411)
+;aStart=where(timeForm eq 123817)
+;aEnd=where(timeForm eq 124411)
 endif
 
 if flightDay eq '0728' then begin
@@ -426,57 +426,6 @@ for i=0, aSpan do begin
   endif
 endfor
 
-for i=0, aSpan do begin
-  if (abs(lwc[i]) lt .05) then begin
-    baselineprefilterI[i]=1
-  endif
-endfor
-
-baselineprefilter=where(baselineprefilterI eq 1)
-
-
-
-if baselinediagnostics eq 1 then begin
-  plot1=scatterplot(as,lwc)
-  plot2=scatterplot(as[baselineprefilter],lwc[baselineprefilter],/overplot,sym_color='green')
-  ;plot2.title=string(flightday)
-  lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
-  line=(lin[1])*as+lin[0]
-  plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
-  plot2.yrange=[-.1,.1]
-endif
-
-
-lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
-meanerrline=(lin[1])*as+lin[0]
-
-
-filterederr=abs(lwc[baselineprefilter] - meanerrline[baselineprefilter])
-
-filterederrsortlwc=sort(filterederr)
-filterederrsort=filterederr[filterederrsortlwc]
-
-thirdquart=filterederrsort[n_elements(filterederrsort)*.8]
-
-
-lin=linfit(as[baselineprefilter],lwc[baselineprefilter])
-meanbaselinefilterline=(lin[1])*as+lin[0]
-
-
-
-
-thirdquartfilter=where(errI eq 1)
-
-if baselinediagnostics eq 1 then begin
-  plot1=scatterplot(as[baselineprefilter],lwc[baselineprefilter])
-  plot2=scatterplot(as[thirdquartfilter],lwc[thirdquartfilter],/overplot,sym_color='purple')
-  ;plot2.title=string(flightday)
-  lin=linfit(as[thirdquartfilter],lwc[thirdquartfilter])
-  line=(lin[1])*as+lin[0]
-  plot2=plot(as[baselineprefilter],line[baselineprefilter],'r',/overplot)
-  plot2.yrange=[-.1,.1]
-endif
-
 
 for i=0, aSpan do begin
   if (abs(avRoll[i]) lt 5) then begin
@@ -622,7 +571,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   aiasMs:aiasMs, tas:tas, hivs:hivs, baselineClimbTimes:baselineClimbTimes,baselineClimbTimesNon:baselineClimbTimesNon, $
   linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
   lowhivs:lowhivs, vlwccol:vlwccol, ilwccol:ilwccol, $
-  highhivs:highhivs, lowhivslevel:lowhivslevel, baselineprefilter:baselineprefilter}
+  highhivs:highhivs, lowhivslevel:lowhivslevel}
 
 
 return
