@@ -3,8 +3,8 @@
 pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  kLevel=['400','600','900']
-  ktype=['indicated','true']
+  kLevel=['400']
+  ktype=['indicated']
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
@@ -18,7 +18,10 @@ pro kliqpresimprove
   stdev900=[]
   meanlwcdiff400=[]
   slopePerCorComp=[]
+  lwc100con=[]
   interceptPerCorComp=[]
+  lwcPresCorcon=[]
+  lwcnev1con=[]
   column=dindgen(10,n_elements(flight))
   
   if runcalc eq 1 then begin
@@ -31,49 +34,74 @@ pro kliqpresimprove
         lwccon=[]
         pmbcon=[]
         ascon=[]
+        cdpdbar_NRBcon=[]
+        cdpconc_NRBcon=[]
+        lwcPresCorDiffcon=[]
+        trfcon=[]
+        clearaircon=[]
         
         for j=0,n_elements(flight)-1 do begin
-        nevBase, flight[j],ktype[k],kLevel[i]
-  
+       g= nevBase(flight[j],ktype[k],kLevel[i])
+  stop
           print,''
           print,'-------------------------------------------'
           print, flight[j]
           print, kLevel[i]
   
-          common g, g
+          ;common g, g
           clearAir=g.clearAir
           pmb=g.pmb
-          lwc=g.lwc[clearair]
+          lwc=g.lwc
           time=g.time
           timeForm=g.timeForm
-          as=g.as[clearair]
-          aiasMs=g.aiasMs[clearair]
-          tas=g.tas[clearair]      
+          as=g.as
+          aiasMs=g.aiasMs
+          tas=g.tas      
           levelClearAir=g.levelClearAir
           avroll=g.avroll
           avpitch=g.avpitch
           pLiq=g.pLiq
-          lwcnev1=g.lwcnev1[clearair]
+          lwcnev1=g.lwcnev1
           lwcAsCorrDiff=g.lwcAsCorrDiff
           lwcPresCorDiff=g.lwcPresCorDiff
-          lwcPresCor=g.lwcPresCor[clearair]
+          lwcPresCor=g.lwcPresCor
           linPresCor=g.linPresCor
           flightString=g.flightString
           kLiq=g.kLiq
           clearAirLargeErr=g.clearAirLargeErr
           clearAirLargeErrex=g.clearAirLargeErrex
           levelClearAirLargeErrex=g.levelClearAirLargeErrex
+          cdpdbar_NRB=g.cdpdbar_NRB
+          cdpconc_NRB=g.cdpconc_NRB
+          trf=g.trf
+          lwc100=g.lwc100
+          
           
           pmbcon=[pmbcon,pmb]
           lwccon=[lwccon,lwc]
           ascon=[ascon,as]
+          cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
+          cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
+          lwcPresCorDiffcon=[lwcPresCorDiffcon,lwcPresCorDiff]
+          trfcon=[trfcon,trf]
+          lwc100con=[lwc100con,lwc100]
+          lwcPresCorcon=[lwcPresCorcon,lwcPresCor]
+          lwcnev1con=[lwcnev1con,lwcnev1]
+          clearaircon=[clearaircon,clearair]
          
           
-          if j eq 0 then plot1=scatterplot(ascon,lwccon, sym_size=.2)
-          if j gt 0 then plot1=scatterplot(ascon,lwccon,/overplot, sym_size=.2)
+          if j eq 0 then plot1=scatterplot(pmb[clearair],lwcnev1[clearair], sym_size=.2)
+          if j gt 0 then plot1=scatterplot(pmb[clearair],lwcnev1[clearair],/overplot, sym_size=.2)
         endfor
-   stop
-  
+        
+        if j eq 0 then plot1=scatterplot(ascon,lwccon, sym_size=.2)
+   
+        plot1=scatterplot(lwc100con,lwcPresCorcon, sym_size=.2,dimensions=[1200,1200])
+        plot2=scatterplot(lwc100con,lwcnev1con, sym_size=.2,sym_color='red',/overplot)
+        plot2.xrange=[0,4]
+        plot2.yrange=[0,4]
+        plot3=plot([0,4],[0,4],'g',/overplot)
+        stop
         lwcmean=mean(abs(lwccon))
         dev=stddev(lwccon)
         

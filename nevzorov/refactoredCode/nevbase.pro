@@ -1,4 +1,4 @@
-pro nevbase, flightDay, airspeedType, level
+function nevbase, flightDay, airspeedType, level
 common g, g
 
 
@@ -300,6 +300,7 @@ aTot=5d-5
 ;liquid collection efficiency
 colELiq=1.
 
+
 ;total collection efficiency
 colETot=1.
 
@@ -373,6 +374,7 @@ pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
 
 ;EXPANDED HEAT FOR LIQUID
 lLiqStar=((sensorTemp-trf)*cLiq)+lLiq
+
 
 
 ;WATER CONTENT LIQUID
@@ -570,10 +572,12 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   clearAirLargeErrex:clearAirLargeErrex, levelClearAirLargeErrex:levelClearAirLargeErrex, $
   aiasMs:aiasMs, tas:tas, hivs:hivs, baselineClimbTimes:baselineClimbTimes,baselineClimbTimesNon:baselineClimbTimesNon, $
   linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
-  lowhivs:lowhivs, vlwccol:vlwccol, ilwccol:ilwccol, $
-  highhivs:highhivs, lowhivslevel:lowhivslevel}
+  lowhivs:lowhivs, vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
+  highhivs:highhivs, lowhivslevel:lowhivslevel, lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2}
+;g.as=as
+;g.pmb=pmb
 
 
-return
+return,g
 
 end
