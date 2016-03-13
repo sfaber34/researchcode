@@ -3,6 +3,7 @@
 pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight=['0803']
   kLevel=['400']
   ktype=['indicated']
   colors=['red','blue','black']
@@ -22,6 +23,12 @@ pro kliqpresimprove
   interceptPerCorComp=[]
   lwcPresCorcon=[]
   lwcnev1con=[]
+  lwcnev10con=[]
+  avpitchcon=[]
+  avrollcon=[]
+  betabcon=[]
+  avyawcon=[]
+  betaBcon=[]
   column=dindgen(10,n_elements(flight))
   
   if runcalc eq 1 then begin
@@ -39,10 +46,12 @@ pro kliqpresimprove
         lwcPresCorDiffcon=[]
         trfcon=[]
         clearaircon=[]
+        hivscon=[]
+        asdelcon=[]
         
         for j=0,n_elements(flight)-1 do begin
        g= nevBase(flight[j],ktype[k],kLevel[i])
-  stop
+
           print,''
           print,'-------------------------------------------'
           print, flight[j]
@@ -75,6 +84,12 @@ pro kliqpresimprove
           cdpconc_NRB=g.cdpconc_NRB
           trf=g.trf
           lwc100=g.lwc100
+          lwcnev10=g.lwcnev10
+          hivs=g.hivs
+          avyaw=g.avyaw
+          betaB=g.betaB
+          asdel=g.asdel
+          
           
           
           pmbcon=[pmbcon,pmb]
@@ -88,11 +103,58 @@ pro kliqpresimprove
           lwcPresCorcon=[lwcPresCorcon,lwcPresCor]
           lwcnev1con=[lwcnev1con,lwcnev1]
           clearaircon=[clearaircon,clearair]
+          lwcnev10con=[lwcnev10con,lwcnev10]
+          avpitchcon=[avpitchcon,avpitch]
+          avrollcon=[avrollcon,avroll]
+          hivscon=[hivscon,hivs]
+          ;betabcon=[betabcon,betab]
+          avyawcon=[avyawcon,avyaw]
+          betaBcon=[betabcon,betab]
+          asdelcon=[asdelcon,asdel]
          
           
-          if j eq 0 then plot1=scatterplot(pmb[clearair],lwcnev1[clearair], sym_size=.2)
-          if j gt 0 then plot1=scatterplot(pmb[clearair],lwcnev1[clearair],/overplot, sym_size=.2)
+          if j eq 0 then plot1=scatterplot(asdel[clearair],lwc[clearair], sym_size=.2,sym_color='black')
+          if j gt 0 then plot1=scatterplot(asdel[clearair],lwc[clearair],sym_color='black',/overplot, sym_size=.2)
+
+          
+          
+          
+          ;if mean(lwcnev10) gt 0 then plot1=scatterplot(hivs[lwcnev10],lwc[lwcnev10],sym_color='red',/overplot, sym_size=.2)
         endfor
+        
+        var=asdelcon
+        xleft=min(var)-min(var)*.1
+        xright=max(var)+max(var)*.1
+        ytop=max(var[clearair])+max(var[clearair])*.1
+        ybottom=min(var[clearair])-min(var[clearair])*.1
+        
+        fit=linfit(var[clearair],lwccon[clearair])
+        
+        unitvec=dindgen(200000,start=-1000.,increment=.01)
+        line=unitvec*(fit[1])+(fit[0])
+        print,fit
+        plotline=plot(unitvec,line,'r',/overplot)
+        plotline.xrange=[xleft,xright]
+        plotline.yrange=[-.04,.04]
+        
+        stop
+        
+        bins=[]
+        xbins=[]
+        
+        for i=-20,20 do begin
+          n=0
+          xbins=[xbins,i]
+          for j=0,n_elements(lwcnev10con)-1 do begin
+            if (hivscon[lwcnev10con[j]] gt i) and (hivscon[lwcnev10con[j]] lt i+1)  then begin
+              n=n+1
+            endif
+          endfor
+          bins=[bins,n]
+        endfor
+        
+        plot1=scatterplot(xbins,bins)
+        
         
         if j eq 0 then plot1=scatterplot(ascon,lwccon, sym_size=.2)
    
@@ -101,7 +163,7 @@ pro kliqpresimprove
         plot2.xrange=[0,4]
         plot2.yrange=[0,4]
         plot3=plot([0,4],[0,4],'g',/overplot)
-        stop
+        
         lwcmean=mean(abs(lwccon))
         dev=stddev(lwccon)
         

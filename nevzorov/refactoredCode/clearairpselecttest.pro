@@ -3,8 +3,9 @@
 pro clearairpselecttest
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight=['copecal900','copecal600','copecal400','larcal900','larcal600','larcal400']
   kLevel=['400','600','900']
-  ktype=['indicated','true']
+  ktype=['indicated']
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
@@ -36,13 +37,12 @@ pro clearairpselecttest
         clearairlwcnevcon=[]
 
         for j=0,n_elements(flight)-1 do begin
-          nevBase, flight[j],'indicated','400'
+          g=nevBasektest(flight[j],'indicated','400')
 
-          print,''
-          print,'-------------------------------------------'
-          print, flight[j]
+;          print,''
+;          print,'-------------------------------------------'
+;          print, flight[j]
 
-          common g, g
           clearAir=g.clearAir
           pmb=g.pmb
           lwc=g.lwc
@@ -55,9 +55,9 @@ pro clearairpselecttest
           avroll=g.avroll
           avpitch=g.avpitch
           pLiq=g.pLiq
-          lwcnev1=g.lwcnev1[clearair]
-          lwcAsCorrDiff=g.lwcAsCorrDiff
-          lwcPresCorDiff=g.lwcPresCorDiff
+          ;lwcnev1=g.lwcnev1[clearair]
+          ;lwcAsCorrDiff=g.lwcAsCorrDiff
+          ;lwcPresCorDiff=g.lwcPresCorDiff
           lwcPresCor=g.lwcPresCor
           linPresCor=g.linPresCor
           flightString=g.flightString
@@ -67,6 +67,9 @@ pro clearairpselecttest
           levelClearAirLargeErrex=g.levelClearAirLargeErrex
           vlwccol=g.vlwccol
           ilwccol=g.ilwccol
+          kliqcalc=g.kliqcalc
+          
+
           
 
           pmbcon=[pmbcon,pmb]
@@ -75,9 +78,9 @@ pro clearairpselecttest
           timecon=[timecon,time]
           vlwccolcon=[vlwccolcon,vlwccol]
           ilwccolcon=[ilwccolcon,ilwccol]
-          lwcnev1con=[lwcnev1con,lwcnev1]
+          ;lwcnev1con=[lwcnev1con,lwcnev1]
           timecon=[timecon,time]
-          clearairlwcnevcon=[clearairlwcnevcon,lwcnev1[clearair]]
+          ;clearairlwcnevcon=[clearairlwcnevcon,lwcnev1[clearair]]
 
 
           ;if j eq 0 then plot1=scatterplot(pmb,lwcnev1,dimensions=[1600,1200])
@@ -85,9 +88,14 @@ pro clearairpselecttest
           ;plot1.title='vlwccol'
           ;plot1.yrange=[-.03,.03]
           ;plot1.xrange=[1.7756d7,1.7757d7]
-          plot2=scatterplot(pmb[clearair],lwcnev1,dimensions=[1600,1200],sym_color='red',symbol='+',/overplot)
+          ;plot2=scatterplot(pmb[clearair],lwcnev1,dimensions=[1600,1200],sym_color='red',symbol='+',/overplot)
           ;plot2.title='vlwccolcondel'
           
+          print,''
+          print,'----------------------------------------'
+          print,flight[j]
+          print,'TRUE AS-',mean(tas)
+          print,'IND AS-',mean(aiasms)
         endfor
 
 
@@ -110,15 +118,10 @@ pro clearairpselecttest
             
   ;clearairb=where(abs(vlwccolcondel) lt .01 and abs(vlwccolcondelshift) lt .01 and abs(vlwccolcondelshift2) lt .01 and abs(vlwccolcondelshift3) lt .01)
   
-  
-  
-  stop
-stop
 
 
-
-  if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansB'
-  if runcalc eq 1 then stop
+  ;if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansB'
+  ;if runcalc eq 1 then stop
 
 
   if runcalc eq 0 then restore, 'kAsLwcMeansB'

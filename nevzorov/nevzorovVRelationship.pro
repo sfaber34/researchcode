@@ -4,7 +4,7 @@ pro nevzorovVRelationship
 airspeedType='indicated'
 
 ;select flight level (900,600,400)
-flightLevel='400'
+flightLevel='900'
 
 ;select plots
 genplots='airspeedCon'
@@ -19,7 +19,7 @@ regression='geometric'
 
 ;path to ncl file
 ;nclPath='/Volumes/sfaber1/research/nevzorov/121715/20151217.c1.nc'
-nclPath='/Volumes/sfaber1/research/nevzorov/070913/20130709.c1.nc'
+nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
 
 
 
@@ -409,20 +409,22 @@ if genplots eq 'airspeedCon' then begin
       if regression eq 'geometric' then begin
         ;geoFit=comfit(asCon,liqKCon,[1,-.00289,1.4095],yfit=yfit,/geometric)
         ;geoFit=comfit(asCon,liqKCon,[511.5,-1.29,1.48],yfit=yfit,/geometric) ;400 indicated
-        geoFit=comfit(asCon,liqKCon,[150.5,-1.89,2.48],yfit=yfit,/geometric) ;400 true
+        geofitb=poly_fit(asCon,liqKCon,2)
+        geoFit=comfit(asCon,liqKCon,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its) ;400 true        
         ;geoFit=comfit(asCon,liqKCon,[2.5,-.19,-2.48],yfit=yfit,/geometric) ;600 indicated
         ;geoFit=comfit(asCon,liqKCon,[2.5,-.19,-2.48],yfit=yfit,/geometric) ;600 true
         ;geoFit=comfit(asCon,liqKCon,[1.5,-.99,-1.48],yfit=yfit,/geometric) ;900 indicated
         ;geoFit=comfit(asCon,liqKCon,[1.5,-.59,-8.48],yfit=yfit,/geometric) ;900 true
         regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
+        ;regLine=(geoFit[0])+unitVector*(geoFit[1])+(geoFit[2])*unitVector^2.
         plot1b=plot(unitVector,regLine,'r',/overplot)
+        print, its
+;        text1=string(geoFit)
+;        text1A=text(50,10,text1,/device)
         
-        text1=string(geoFit)
-        text1A=text(50,10,text1,/device)
-        
-        yFitErrorMean=mean(abs(liqKCon-yFit))
-        text2=string('Mean Y Fit Error=',yFitErrorMean)
-        text2a=text(250,10,text2,/device)
+;        yFitErrorMean=mean(abs(liqKCon-yFit))
+;        text2=string('Mean Y Fit Error=',yFitErrorMean)
+;        text2a=text(250,10,text2,/device)
       endif
       
       plot1.xrange=[xLeft,xRight]

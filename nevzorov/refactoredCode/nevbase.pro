@@ -347,7 +347,8 @@ if airspeedType eq 'indicated' then begin
 endif
 
 
-
+asshift=shift(as,1)
+asdel=as-asshift
 
 
 ;K LIQUID
@@ -355,6 +356,7 @@ endif
 if (airspeedType eq 'indicated') and (level eq '900') then kLiqAirspeed=(2.47292)*aiasMs^(-0.273777)+(0.399143) ;900 indicated
 if (airspeedType eq 'indicated') and (level eq '600') then kLiqAirspeed=(3.73599)*aiasMs^(-0.0628865)+(-1.67763) ;600 indicated
 if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(36.0089)*aiasMs^(-1.26173)+(1.03362) ;400 indicated
+;if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(5.0326133)*aiasMs^(-0.63926429)+(0.87103879) ;400 indicated
 
 if (airspeedType eq 'true') and (level eq '900') then kLiqAirspeed=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
 if (airspeedType eq 'true') and (level eq '600') then kLiqAirspeed=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
@@ -396,6 +398,7 @@ lwcAsCorrDiff = lwcNev1 - lwc
 aSpan = n_elements(pmb) - 1
 
 baselineNevI=dindgen(n_elements(pmb),start=0,increment=0)
+baselineNev0I=dindgen(n_elements(pmb),start=0,increment=0)
 baselineIB=dindgen(n_elements(pmb),start=0,increment=0)
 baselineIC=dindgen(n_elements(pmb),start=0,increment=0)
 baselineID=dindgen(n_elements(pmb),start=0,increment=0)
@@ -517,6 +520,12 @@ for i=0, aSpan do begin
   endif
 endfor
 
+for i=0, aSpan do begin
+  if (abs(lwcnev1[i]) eq 0.) then begin
+    baselinenev0i[i]=1
+  endif
+endfor
+
 
 
 
@@ -530,6 +539,7 @@ signal=where(baselineID eq 1)
 lowhivs=where(baselineHivsI eq 1)
 highhivs=where(baselineHivsI eq 0)
 lowhivslevel=where(baselineHivsLevelI eq 1)
+lwcnev10=where(baselinenev0i eq 1)
 
 linPresCor=linfit(pmb[levelClearAir],lwc[levelClearAir])
 lwcPresCor=lwc - (linPresCor[1])*pmb - linPresCor[0]
@@ -573,7 +583,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   aiasMs:aiasMs, tas:tas, hivs:hivs, baselineClimbTimes:baselineClimbTimes,baselineClimbTimesNon:baselineClimbTimesNon, $
   linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
   lowhivs:lowhivs, vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
-  highhivs:highhivs, lowhivslevel:lowhivslevel, lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2}
+  highhivs:highhivs, lowhivslevel:lowhivslevel, lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, $
+  lwcnev10:lwcnev10, avyaw:avyawr,betaB:betaB,asdel:asdel}
 ;g.as=as
 ;g.pmb=pmb
 
