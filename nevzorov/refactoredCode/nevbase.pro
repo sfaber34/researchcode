@@ -102,8 +102,11 @@ pvmlwc=loadvar('pvmlwc', filename=nclPath)
 ;liquid water content from lwc100 probe [g/m^3]
 lwc100=loadvar('lwc100', filename=nclPath)
 
-;liquid water content from CDP [g/m^3]
+;CDP hydrometeor concentration
 cdpconc_NRB=loadvar('cdpconc_NRB', filename=nclPath)
+
+;liquid water content from CDP [g/m^3]
+cdplwc_NRB=loadvar('cdplwc_NRB', filename=nclPath)
 
 ;CDP accepted particles
 cdpacc=loadvar('cdpacc_NRB', filename=nclPath)
@@ -266,6 +269,7 @@ hivs=hivs[aStart:aEnd]
 betaB=betaB[aStart:aEnd]
 avyawr=avyawr[aStart:aEnd]
 alpha=alpha[aStart:aEnd]
+cdplwc_NRB=cdplwc_NRB[aStart:aEnd]
 
 if cope eq 1 then begin
 
@@ -479,7 +483,7 @@ for i=0, aSpan do begin
 endfor
 
 for i=0, aSpan do begin
-  if (baselineI[i] eq 1) and (baselineRollI[i] eq 1) and (baselinePitchI[i] eq 1) then begin
+  if (baselineI[i] eq 1) and (baselineRollI[i] eq 1) and (baselinePitchI[i] eq 1) and (baselineYawI[i]=1) then begin
     baselineIB[i]=1
   endif
 endfor
@@ -584,7 +588,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   linPresCorSteepClimb:linPresCorSteepClimb, baselineClimbTimesNonLevel:baselineClimbTimesNonLevel, $
   lowhivs:lowhivs, vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
   highhivs:highhivs, lowhivslevel:lowhivslevel, lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, $
-  lwcnev10:lwcnev10, avyaw:avyawr,betaB:betaB,asdel:asdel}
+  lwcnev10:lwcnev10, avyaw:avyawr,betaB:betaB,asdel:asdel,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB}
 ;g.as=as
 ;g.pmb=pmb
 

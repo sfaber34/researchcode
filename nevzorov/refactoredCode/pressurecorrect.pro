@@ -2,11 +2,11 @@ pro pressurecorrect
 
 flightday='0803'
 
-nevBase, flightday,'indicated','400'
+g=nevBase(flightday,'indicated','400')
 
 
 
-common g, g
+
 pmb=g.pmb
 lwc=g.lwc
 time=g.time
@@ -44,8 +44,7 @@ lwc100=g.lwc100
 cdpdbar_NRB=g.cdpdbar_NRB
 cdpconc_NRB=g.cdpconc_NRB
 
-;clearair = loadclearairindexes(flightday)
-stop
+;clearair = loadclearairindexes(flightday)stop
 
 ;lwc640660=where(((pmb lt 640) or (pmb gt 660)) and lwc lt .05 and ((pmb lt 669) or (pmb gt 675)) and ((pmb lt 680) or (pmb gt 691)) and (abs(avRoll) lt 5) and (avpitch lt (mean(avpitch) + 2) and avpitch gt (mean(avpitch) - 2)))
 lwc640660=where(((timeform gt 142000) and (timeform lt 152400)) and lwc lt .05)
