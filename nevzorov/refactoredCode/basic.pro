@@ -71,14 +71,49 @@ endif
 
 
 if stuff eq 2 then begin
+  mean400=[]
+  stdev400=[]
+  mean600=[]
+  stdev600=[]
+  mean900=[]
+  stdev900=[]
+  meanlwcdiff400=[]
+  slopePerCorComp=[]
+  lwc100con=[]
+  interceptPerCorComp=[]
+  lwcPresCorcon=[]
+  lwcnev1con=[]
+  lwcnev10con=[]
+  avpitchcon=[]
+  avrollcon=[]
+  betabcon=[]
+  avyawcon=[]
+  betaBcon=[]
+  lwccon=[]
+  pmbcon=[]
+  ascon=[]
+  cdpdbar_NRBcon=[]
+  cdpconc_NRBcon=[]
+  lwcPresCorDiffcon=[]
+  trfcon=[]
+  clearaircon=[]
+  hivscon=[]
+  asdelcon=[]
+  errorcon=[]
   
-plot1=plot(timeForm,cdplwc_NRB-lwcPresCor, dimensions=[1000,800])
+  
+  
+  
+  
+  
+  
+plot1=plot(timeForm,lwcPresCor, dimensions=[1000,800])
 
-plot2=plot(timeForm,cdplwc_NRB-lwcnev1, 'green', dimensions=[1000,800],/overplot)
+plot2=plot(timeForm,lwcnev1, 'green', dimensions=[1000,800],/overplot)
 
 ;plot2=plot(timeForm,cdplwc_NRB, 'red', dimensions=[1000,800],/overplot)  
   
-plot2.xrange=[1.302d5,1.304d5]
+;plot2.xrange=[1.302d5,1.304d5]
 endif
 
 
