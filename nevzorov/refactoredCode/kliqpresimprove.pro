@@ -3,7 +3,7 @@
 pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight=['0803']
+  flight=['0710','0725','0727','0728','0729']
   kLevel=['400']
   ktype=['indicated']
   colors=['red','blue','black']
@@ -113,8 +113,8 @@ pro kliqpresimprove
           asdelcon=[asdelcon,asdel]
          
           
-          if j eq 0 then plot1=scatterplot(asdel[clearair],lwc[clearair], sym_size=.2,sym_color='black')
-          if j gt 0 then plot1=scatterplot(asdel[clearair],lwc[clearair],sym_color='black',/overplot, sym_size=.2)
+          if j eq 0 then plot1=scatterplot(pmb[clearair],lwc[clearair], sym_size=.2,sym_color='black')
+          if j gt 0 then plot1=scatterplot(pmb[clearair],lwc[clearair],sym_color='black',/overplot, sym_size=.2)
 
           
           
@@ -122,13 +122,13 @@ pro kliqpresimprove
           ;if mean(lwcnev10) gt 0 then plot1=scatterplot(hivs[lwcnev10],lwc[lwcnev10],sym_color='red',/overplot, sym_size=.2)
         endfor
         
-        var=asdelcon
+        var=pmbcon
         xleft=min(var)-min(var)*.1
         xright=max(var)+max(var)*.1
-        ytop=max(var[clearair])+max(var[clearair])*.1
-        ybottom=min(var[clearair])-min(var[clearair])*.1
+        ytop=max(var[clearaircon])+max(var[clearaircon])*.1
+        ybottom=min(var[clearaircon])-min(var[clearaircon])*.1
         
-        fit=linfit(var[clearair],lwccon[clearair])
+        fit=linfit(var[clearaircon],lwccon[clearaircon])
         
         unitvec=dindgen(200000,start=-1000.,increment=.01)
         line=unitvec*(fit[1])+(fit[0])
