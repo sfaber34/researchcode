@@ -284,7 +284,7 @@ aiasMs=aias*.514444
 
 
 
-;-----------------------------------------CALCULATIONS---------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------Kliq---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 if airspeedType eq 'true' then begin
@@ -300,9 +300,9 @@ endif
 ;K LIQUID
 
 if cope eq 1 then begin
-  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*tas^(-0.273777)+(0.399143) ;900 indicated
-  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*tas^(-0.0628865)+(-1.67763) ;600 indicated
-  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(36.0089)*tas^(-1.26173)+(1.03362) ;400 indicated
+  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasMs^(-0.273777)+(0.399143) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*aiasMs^(-0.0628865)+(-1.67763) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(36.0089)*aiasMs^(-1.26173)+(1.03362) ;400 indicated
   
   if (airspeedType eq 'true') and (level eq '900') then kLiq=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
   if (airspeedType eq 'true') and (level eq '600') then kLiq=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
@@ -317,19 +317,6 @@ if cope eq 2 then begin
   if (airspeedType eq 'indicated') and (level eq '500') then kLiq=(-0.135222)*tas^(0.375551)+(2.43805)
   if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(-0.0810470)*tas^(0.436789)+(2.28769)
 endif
-
-
-;HEAT LOSS LIQUID
-pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
-
-
-;EXPENDED HEAT FOR LIQUID
-lLiqStar=2589.
-
-
-;WATER CONTENT LIQUID
-lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
-lwcNoPresCor=lwc
 
 
 
@@ -402,14 +389,37 @@ clearAir=where(baselineI eq 1)
 levelClearAir=where(baselineIB eq 1)
 
 
+
+;EXPENDED HEAT FOR LIQUID
+lLiqStar=2589.
+
+
+
+;HEAT LOSS LIQUID
+pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
+pLiqNoPresCor=pLiq
+
+
+lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
+
 ;-----------------------------------------PRESSURE CORRECTION---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-linPresCor=linfit(pmb[levelClearAir],lwc[levelClearAir])
-lwc=lwcNoPresCor - (linPresCor[1])*pmb - linPresCor[0]
+linPresCor=linfit(pmb[clearair],pLiq[clearair])
+
+poly=poly_fit(pmb[clearair],pLiq[clearair],2)
+pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
 
 
+
+
+;-----------------------------------------CALCULATIONS---------------------------------------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+;WATER CONTENT LIQUID
+lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 
@@ -418,12 +428,12 @@ lwc=lwcNoPresCor - (linPresCor[1])*pmb - linPresCor[0]
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
-  clearAir:clearAir, levelClearAir:levelClearAir, linPresCor:linPresCor, $
+  clearAir:clearAir, levelClearAir:levelClearAir,$
   flightString:flightString, kLiq:kLiq, $
   aiasMs:aiasMs, tas:tas, $
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, $
-  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB}
+  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor}
 
 
 return,g

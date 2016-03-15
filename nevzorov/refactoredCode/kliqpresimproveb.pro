@@ -28,6 +28,7 @@ pro kliqpresimproveB
   betabcon=[]
   avyawcon=[]
   betaBcon=[]
+  lwcNoPresCorcon=[]
   column=dindgen(10,n_elements(flight))
 
   if runcalc eq 1 or runcalc eq 2 then begin
@@ -59,8 +60,8 @@ pro kliqpresimproveB
 
           ;common g, g
           clearAir=g.clearAir
-          pmb=g.pmb[clearair]
-          lwc=g.lwc[clearair]
+          pmb=g.pmb
+          lwc=g.lwc
           time=g.time
           timeForm=g.timeForm
           as=g.as
@@ -71,25 +72,14 @@ pro kliqpresimproveB
           avpitch=g.avpitch
           pLiq=g.pLiq
           lwcnev1=g.lwcnev1
-          lwcAsCorrDiff=g.lwcAsCorrDiff
-          lwcPresCorDiff=g.lwcPresCorDiff
-          lwcPresCor=g.lwcPresCor[clearair]
-          linPresCor=g.linPresCor[clearair]
           flightString=g.flightString
           kLiq=g.kLiq
-          clearAirLargeErr=g.clearAirLargeErr
-          clearAirLargeErrex=g.clearAirLargeErrex
-          levelClearAirLargeErrex=g.levelClearAirLargeErrex
           cdpdbar_NRB=g.cdpdbar_NRB
           cdpconc_NRB=g.cdpconc_NRB
           trf=g.trf
           lwc100=g.lwc100
-          lwcnev10=g.lwcnev10
-          hivs=g.hivs
           avyaw=g.avyaw
-          betaB=g.betaB
-          asdel=g.asdel
-
+          lwcNoPresCor=g.lwcNoPresCor
 
 
           pmbcon=[pmbcon,pmb]
@@ -97,30 +87,24 @@ pro kliqpresimproveB
           ascon=[ascon,as]
           cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
           cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
-          lwcPresCorDiffcon=[lwcPresCorDiffcon,lwcPresCorDiff]
           trfcon=[trfcon,trf]
           lwc100con=[lwc100con,lwc100]
-          lwcPresCorcon=[lwcPresCorcon,lwcPresCor]
           lwcnev1con=[lwcnev1con,lwcnev1]
-          clearaircon=[clearaircon,clearair]
-          lwcnev10con=[lwcnev10con,lwcnev10]
+          clearaircon=[clearaircon,clearair]          
           avpitchcon=[avpitchcon,avpitch]
           avrollcon=[avrollcon,avroll]
-          hivscon=[hivscon,hivs]
-          ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
-          betaBcon=[betabcon,betab]
-          asdelcon=[asdelcon,asdel]
+          lwcNoPresCorcon=[lwcNoPresCorcon,lwcNoPresCor]
           
+          error=lwcnev1-lwc
 
+          if j eq 0 then plot1=scatterplot(pmb,error, sym_size=.2,sym_color='black')
+          if j gt 0 then plot1=scatterplot(pmb,error,sym_color='black',/overplot, sym_size=.2)
 
-          if j eq 0 then plot1=scatterplot(pmb,lwcPresCor, sym_size=.2,sym_color='black')
-          if j gt 0 then plot1=scatterplot(pmb,lwcPresCor,sym_color='black',/overplot, sym_size=.2)
+          lwcmean=mean(abs(error))
+          dev=stddev(error)
 
-          lwcmean=mean(abs(lwcPresCor))
-          dev=stddev(lwcPresCor)
-
-          lin=linfit(pmb,lwcPresCor)
+          lin=linfit(pmb,lwc)
           errorweighted=lin[1]
           print, errorweighted
           errorcon=[errorcon,errorweighted]
@@ -175,7 +159,6 @@ pro kliqpresimproveB
         
         errorall=mean(errorcon)*25.
         print, errorall
-stop
         var=pmbcon
         xleft=min(var)-min(var)*.1
         xright=max(var)+max(var)*.1
@@ -193,30 +176,7 @@ stop
 
 
 
-        bins=[]
-        xbins=[]
-
-        for i=-20,20 do begin
-          n=0
-          xbins=[xbins,i]
-          for j=0,n_elements(lwcnev10con)-1 do begin
-            if (hivscon[lwcnev10con[j]] gt i) and (hivscon[lwcnev10con[j]] lt i+1)  then begin
-              n=n+1
-            endif
-          endfor
-          bins=[bins,n]
-        endfor
-
-        plot1=scatterplot(xbins,bins)
-
-
         if j eq 0 then plot1=scatterplot(ascon,lwccon, sym_size=.2)
-
-;        plot1=scatterplot(lwc100con,lwcPresCorcon, sym_size=.2,dimensions=[1200,1200])
-;        plot2=scatterplot(lwc100con,lwccon, sym_size=.2,sym_color='red',/overplot)
-;        plot2.xrange=[0,4]
-;        plot2.yrange=[0,4]
-;        plot3=plot([0,4],[0,4],'g',/overplot)
 
         
 
@@ -229,7 +189,7 @@ stop
  
 
   if runcalc eq 1 then save,lwcmean0710,lwcmean0725,lwcmean0727,lwcmean0728,lwcmean0729,lwcmean0803,lwcmean0807,lwcmean0814,lwcmean0815,lwcdev0710,lwcdev0725,lwcdev0727,$
-    lwcdev0728,lwcdev0729,lwcdev0803,lwcdev0807,lwcdev0814,lwcdev0815 ,filename='kAsLwcMeansB'
+    lwcdev0728,lwcdev0729,lwcdev0803,lwcdev0807,lwcdev0814,lwcdev0815 ,filename='kAsLwcMeansBB'
   if runcalc eq 2 then begin
     
     lwcmean0710C=lwcmean0710
@@ -252,14 +212,14 @@ stop
     lwcdev0815C=lwcdev0815
     
     save,lwcmean0710C,lwcmean0725C,lwcmean0727C,lwcmean0728C,lwcmean0729C,lwcmean0803C,lwcmean0807C,lwcmean0814C,lwcmean0815C,lwcdev0710C,lwcdev0725C,lwcdev0727C,$
-    lwcdev0728C,lwcdev0729C,lwcdev0803C,lwcdev0807C,lwcdev0814C,lwcdev0815C,filename='kAsLwcMeansC'
+    lwcdev0728C,lwcdev0729C,lwcdev0803C,lwcdev0807C,lwcdev0814C,lwcdev0815C,filename='kAsLwcMeansCB'
   endif    
   if runcalc eq 1 then stop
   if runcalc eq 2 then stop
 
 
-  if runcalc eq 0 then restore, 'kAsLwcMeansB',/verbose
-  if runcalc eq 0 then restore, 'kAsLwcMeansC',/verbose
+  if runcalc eq 0 then restore, 'kAsLwcMeansBB',/verbose
+  if runcalc eq 0 then restore, 'kAsLwcMeansCB',/verbose
 
   callevel=['07/10/13','07/25/13','07/27/13','07/28/13','07/29/13','08/03/13','08/07/13','08/14/13','08/15/13']
   holder=dindgen(n_elements(callevel),start=0,increment=1)
@@ -273,9 +233,9 @@ stop
   plot1.sym_filled=1
   plot1.font_size=16
   plot1.title='All Flights Clear Air LWC Mean Error - No Pressure Correction'
-  plot1.ytitle='Absolute Mean Error g m!U-3!N'
+  plot1.ytitle='Absolute Mean LWC Error g m!U-3!N'
   plot1.xtitle='Flight Day'
-  plot1.yrange=[-0.005,0.025]
+  plot1.yrange=[-0.005,0.015]
 
   ;leg1=legend(target=[plot1,plot2],shadow=0)
 
@@ -285,7 +245,7 @@ stop
   plot2.xrange=[-1,9]
   plot2.xminor=0
 
-  plot2.Save,'meanpreserrosB.ps'
+  plot2.Save,'meanpreserrosBB.ps'
   
   
   
@@ -296,20 +256,20 @@ stop
   kmeans=[lwcmean0710C,lwcmean0725C,lwcmean0727C,lwcmean0728C,lwcmean0729C,lwcmean0803C,lwcmean0807C,lwcmean0814C,lwcmean0815C]
   devs=[lwcdev0710C,lwcdev0725C,lwcdev0727C,lwcdev0728C,lwcdev0729C,lwcdev0803C,lwcdev0807C,lwcdev0814C,lwcdev0815C]
 
-  plot2=scatterplot(holder,kmeans,dimensions=[1200,900], name='',sym_color='red',/sym_filled,sym_thick=3)
+  plot2=scatterplot(holder,kmeans,dimensions=[1200,900], name='',sym_color='black',sym_filled=1,sym_thick=3)
   ;plot2.xrange=[0,10]
   ;plot2.yrange=[40,150]
   plot2.xtickname=callevel
   plot2.sym_filled=0
   plot2.font_size=16
   plot2.title='All Flights Clear Air LWC Mean Error - With Pressure Correction'
-  plot2.ytitle='Absolute Mean Error g m!U-3!N'
+  plot2.ytitle='Absolute Mean LWC Error g m!U-3!N'
   plot2.xtitle='Flight Day'
-  plot2.yrange=[-0.005,0.025]
+  plot2.yrange=[-0.005,0.015]
 
   ;leg1=legend(target=[plot1,plot2],shadow=0)
 
-  plot3=errorplot(holder,kmeans, devs,linestyle=6,/overplot,errorbar_color='red',errorbar_thick=2)
+  plot3=errorplot(holder,kmeans, devs,linestyle=6,/overplot,errorbar_color='black',errorbar_thick=2)
 
   plot3.xTICKVALUES=[0,1,2,3,4,5,6,7,8,9]
   plot3.xrange=[-1,9]

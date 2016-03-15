@@ -3,13 +3,13 @@
 pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight=['0710','0725','0727','0728','0729']
-  kLevel=['400']
-  ktype=['indicated']
+  ;flight=['0710','0725','0727','0728','0729']
+  kLevel=['400','600','900']
+  ktype=['indicated','true']
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
-  runcalc=1
+  runcalc=0
 
   mean400=[]
   stdev400=[]
@@ -29,6 +29,7 @@ pro kliqpresimprove
   betabcon=[]
   avyawcon=[]
   betaBcon=[]
+  lwcnoPresCorcon=[]
   column=dindgen(10,n_elements(flight))
   
   if runcalc eq 1 then begin
@@ -43,7 +44,7 @@ pro kliqpresimprove
         ascon=[]
         cdpdbar_NRBcon=[]
         cdpconc_NRBcon=[]
-        lwcPresCorDiffcon=[]
+        lwcnoPresCorDiffcon=[]
         trfcon=[]
         clearaircon=[]
         hivscon=[]
@@ -59,36 +60,26 @@ pro kliqpresimprove
   
           ;common g, g
           clearAir=g.clearAir
-          pmb=g.pmb
-          lwc=g.lwc
-          time=g.time
-          timeForm=g.timeForm
-          as=g.as
-          aiasMs=g.aiasMs
-          tas=g.tas      
+          pmb=g.pmb[clearair]
+          lwc=g.lwc[clearair]
+          time=g.time[clearair]
+          timeForm=g.timeForm[clearair]
+          as=g.as[clearair]
+          aiasMs=g.aiasMs[clearair]
+          tas=g.tas[clearair]
           levelClearAir=g.levelClearAir
-          avroll=g.avroll
-          avpitch=g.avpitch
-          pLiq=g.pLiq
-          lwcnev1=g.lwcnev1
-          lwcAsCorrDiff=g.lwcAsCorrDiff
-          lwcPresCorDiff=g.lwcPresCorDiff
-          lwcPresCor=g.lwcPresCor
-          linPresCor=g.linPresCor
-          flightString=g.flightString
-          kLiq=g.kLiq
-          clearAirLargeErr=g.clearAirLargeErr
-          clearAirLargeErrex=g.clearAirLargeErrex
-          levelClearAirLargeErrex=g.levelClearAirLargeErrex
-          cdpdbar_NRB=g.cdpdbar_NRB
-          cdpconc_NRB=g.cdpconc_NRB
-          trf=g.trf
-          lwc100=g.lwc100
-          lwcnev10=g.lwcnev10
-          hivs=g.hivs
-          avyaw=g.avyaw
-          betaB=g.betaB
-          asdel=g.asdel
+          avroll=g.avroll[clearair]
+          avpitch=g.avpitch[clearair]
+          pLiq=g.pLiq[clearair]
+          lwcnev1=g.lwcnev1[clearair]
+          lwcnoPresCor=g.lwcnoPresCor[clearair]
+          flightString=g.flightString[clearair]
+          kLiq=g.kLiq[clearair]
+          cdpdbar_NRB=g.cdpdbar_NRB[clearair]
+          cdpconc_NRB=g.cdpconc_NRB[clearair]
+          trf=g.trf[clearair]
+          lwc100=g.lwc100[clearair]
+          avyaw=g.avyaw[clearair]
           
           
           
@@ -97,24 +88,19 @@ pro kliqpresimprove
           ascon=[ascon,as]
           cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
           cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
-          lwcPresCorDiffcon=[lwcPresCorDiffcon,lwcPresCorDiff]
           trfcon=[trfcon,trf]
           lwc100con=[lwc100con,lwc100]
-          lwcPresCorcon=[lwcPresCorcon,lwcPresCor]
           lwcnev1con=[lwcnev1con,lwcnev1]
           clearaircon=[clearaircon,clearair]
-          lwcnev10con=[lwcnev10con,lwcnev10]
           avpitchcon=[avpitchcon,avpitch]
           avrollcon=[avrollcon,avroll]
-          hivscon=[hivscon,hivs]
           ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
-          betaBcon=[betabcon,betab]
-          asdelcon=[asdelcon,asdel]
+          lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor]
          
           
-          if j eq 0 then plot1=scatterplot(pmb[clearair],lwc[clearair], sym_size=.2,sym_color='black')
-          if j gt 0 then plot1=scatterplot(pmb[clearair],lwc[clearair],sym_color='black',/overplot, sym_size=.2)
+          if j eq 0 then plot1=scatterplot(pmb,lwcNoPresCor, sym_size=.2,sym_color='black')
+          if j gt 0 then plot1=scatterplot(pmb,lwcNoPresCor,sym_color='black',/overplot, sym_size=.2)
 
           
           
@@ -125,47 +111,22 @@ pro kliqpresimprove
         var=pmbcon
         xleft=min(var)-min(var)*.1
         xright=max(var)+max(var)*.1
-        ytop=max(var[clearaircon])+max(var[clearaircon])*.1
-        ybottom=min(var[clearaircon])-min(var[clearaircon])*.1
+        ytop=max(var)+max(var)*.1
+        ybottom=min(var)-min(var)*.1
         
-        fit=linfit(var[clearaircon],lwccon[clearaircon])
+        ;fit=linfit(var,lwcNoPresCorcon)
+
         
-        unitvec=dindgen(200000,start=-1000.,increment=.01)
-        line=unitvec*(fit[1])+(fit[0])
-        print,fit
-        plotline=plot(unitvec,line,'r',/overplot)
-        plotline.xrange=[xleft,xright]
-        plotline.yrange=[-.04,.04]
-        
-        stop
-        
-        bins=[]
-        xbins=[]
-        
-        for i=-20,20 do begin
-          n=0
-          xbins=[xbins,i]
-          for j=0,n_elements(lwcnev10con)-1 do begin
-            if (hivscon[lwcnev10con[j]] gt i) and (hivscon[lwcnev10con[j]] lt i+1)  then begin
-              n=n+1
-            endif
-          endfor
-          bins=[bins,n]
-        endfor
-        
-        plot1=scatterplot(xbins,bins)
-        
-        
-        if j eq 0 then plot1=scatterplot(ascon,lwccon, sym_size=.2)
+        if j eq 0 then plot1=scatterplot(ascon,lwcNoPresCorcon, sym_size=.2)
    
-        plot1=scatterplot(lwc100con,lwcPresCorcon, sym_size=.2,dimensions=[1200,1200])
-        plot2=scatterplot(lwc100con,lwcnev1con, sym_size=.2,sym_color='red',/overplot)
-        plot2.xrange=[0,4]
-        plot2.yrange=[0,4]
-        plot3=plot([0,4],[0,4],'g',/overplot)
+;        plot1=scatterplot(lwc100con,lwcNoPresCorcon, sym_size=.2,dimensions=[1200,1200])
+;        plot2=scatterplot(lwc100con,lwcnev1con, sym_size=.2,sym_color='red',/overplot)
+;        plot2.xrange=[0,4]
+;        plot2.yrange=[0,4]
+;        plot3=plot([0,4],[0,4],'g',/overplot)
         
-        lwcmean=mean(abs(lwccon))
-        dev=stddev(lwccon)
+        lwcmean=mean(abs(lwcNoPresCorcon))
+        dev=stddev(lwcNoPresCorcon)
         
         if ktype[k] eq 'indicated' and kLevel[i] eq '400' then begin
           lwcmean400ind=lwcmean
@@ -203,11 +164,11 @@ pro kliqpresimprove
     
     endif
     
-   if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansB'
+   if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansBB'
    if runcalc eq 1 then stop
    
     
-   if runcalc eq 0 then restore, 'kAsLwcMeansB'
+   if runcalc eq 0 then restore, 'kAsLwcMeansBB'
   
    callevel=['400 mb Ind','600 mb Ind','900 mb Ind','400 mb True','600 mb True','900 mb True']
    holder=dindgen(n_elements(callevel),start=0,increment=1)
@@ -226,13 +187,13 @@ pro kliqpresimprove
    
    ;leg1=legend(target=[plot1,plot2],shadow=0)
    
-   plot2=errorplot(holder,kmeans, devs,/overplot,linestyle=6)
+   plot2=errorplot(holder,kmeans, devs,/overplot,linestyle=6,errorbar_thick=2)
    
    plot2.xTICKVALUES=[0,1,2,3,4,5,6]
    plot2.xrange=[-1,6]
    plot2.xminor=0
 
-   plot2.Save,'meanerros.ps'
+   plot2.Save,'meanerrosB.ps'
 
 
 
