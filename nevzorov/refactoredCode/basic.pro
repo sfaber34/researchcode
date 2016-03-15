@@ -1,49 +1,109 @@
 pro basic
-g=nevBase('0727','indicated','400')
 
-stuff=2
+stuff=0
 
-pmb=g.pmb
-lwc=g.lwc
-time=g.time
-timeForm=g.timeForm
-as=g.as
-clearAir=g.clearAir
-levelClearAir=g.levelClearAir
-avroll=g.avroll
-avpitch=g.avpitch
-pLiq=g.pLiq
-lwc=g.lwc
-lwcnev1=g.lwcnev1
-lwcAsCorrDiff=g.lwcAsCorrDiff
-lwcPresCorDiff=g.lwcPresCorDiff
-lwcPresCor=g.lwcPresCor
-linPresCor=g.linPresCor
-flightString=g.flightString
-kLiq=g.kLiq
-clearAirLargeErr=g.clearAirLargeErr
-clearAirLargeErrex=g.clearAirLargeErrex
-levelClearAirLargeErrex=g.levelClearAirLargeErrex
-linPresCorSteepClimb=g.linPresCorSteepClimb
-baselineClimbTimesNon=g.baselineClimbTimesNon
-baselineClimbTimesNonLevel=g.baselineClimbTimesNonLevel
-;pmbdifftime=g.pmbdifftime
-;pmbdiffTimeNon=g.pmbdiffTimeNon
-;pmbdiff=g.pmbdiff
-;pmbdiffTimeNonlevel=g.pmbdiffTimeNonlevel
-;pmbdifflevel=g.pmbdifflevel
-hivs=g.hivs
-lowhivs=g.lowhivs
-highhivs=g.highhivs
-lowhivslevel=g.lowhivslevel
-lwc100=g.lwc100
-cdpdbar_NRB=g.cdpdbar_NRB
-cdpconc_NRB=g.cdpconc_NRB
-pvmlwc=g.pvmlwc
-cdplwc_NRB=g.cdplwc_NRB
+flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 
 
+mean400=[]
+stdev400=[]
+mean600=[]
+stdev600=[]
+mean900=[]
+stdev900=[]
+meanlwcdiff400=[]
+slopePerCorComp=[]
+lwc100con=[]
+interceptPerCorComp=[]
+lwcPresCorcon=[]
+lwcnev1con=[]
+lwcnev10con=[]
+avpitchcon=[]
+avrollcon=[]
+betabcon=[]
+avyawcon=[]
+betaBcon=[]
+lwccon=[]
+pmbcon=[]
+ascon=[]
+cdpdbar_NRBcon=[]
+cdpconc_NRBcon=[]
+lwcPresCorDiffcon=[]
+trfcon=[]
+clearaircon=[]
+hivscon=[]
+asdelcon=[]
+errorcon=[]
 
+colors=['black','red','green','blue','magenta','yellow','purple','orange','grey']
+
+if stuff eq 0 then begin
+for i=0,n_elements(flight)-1 do begin
+  
+  g=nevBase(flight[i],'indicated','400')
+
+
+    pmb=g.pmb
+    lwc=g.lwc
+    time=g.time
+    timeForm=g.timeForm
+    as=g.as
+    clearAir=g.clearAir
+    levelClearAir=g.levelClearAir
+    avroll=g.avroll
+    avpitch=g.avpitch
+    pLiq=g.pLiq
+    lwc=g.lwc
+    lwcnev1=g.lwcnev1
+    lwcAsCorrDiff=g.lwcAsCorrDiff
+    lwcPresCorDiff=g.lwcPresCorDiff
+    lwcPresCor=g.lwcPresCor
+    linPresCor=g.linPresCor
+    flightString=g.flightString
+    kLiq=g.kLiq
+    clearAirLargeErr=g.clearAirLargeErr
+    clearAirLargeErrex=g.clearAirLargeErrex
+    levelClearAirLargeErrex=g.levelClearAirLargeErrex
+    linPresCorSteepClimb=g.linPresCorSteepClimb
+    baselineClimbTimesNon=g.baselineClimbTimesNon
+    baselineClimbTimesNonLevel=g.baselineClimbTimesNonLevel
+    hivs=g.hivs
+    lowhivs=g.lowhivs
+    highhivs=g.highhivs
+    lowhivslevel=g.lowhivslevel
+    lwc100=g.lwc100
+    cdpdbar_NRB=g.cdpdbar_NRB
+    cdpconc_NRB=g.cdpconc_NRB
+    pvmlwc=g.pvmlwc
+    cdplwc_NRB=g.cdplwc_NRB
+    trf=g.trf
+  
+  
+    pmbcon=[pmbcon,pmb]
+    lwccon=[lwccon,lwc]
+    ascon=[ascon,as]
+    cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
+    cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
+    lwcPresCorDiffcon=[lwcPresCorDiffcon,lwcPresCorDiff]
+    trfcon=[trfcon,trf]
+    lwc100con=[lwc100con,lwc100]
+    lwcPresCorcon=[lwcPresCorcon,lwcPresCor]
+    lwcnev1con=[lwcnev1con,lwcnev1]
+    clearaircon=[clearaircon,clearair]
+    avpitchcon=[avpitchcon,avpitch]
+    avrollcon=[avrollcon,avroll]
+    hivscon=[hivscon,hivs]
+    
+    print,flight[i]
+    
+    error= lwcPresCor - lwcnev1
+    
+    plot1=scatterplot(pmb[clearair],lwc[clearair],sym_color=colors[i])
+endfor
+
+save,pmbcon,lwcPresCorcon,lwcnev1con,ascon,lwc100con,cdpdbar_NRBcon,filename='consaves.sav'
+
+endif
 
 if stuff eq 1 then begin
 
@@ -71,41 +131,7 @@ endif
 
 
 if stuff eq 2 then begin
-  mean400=[]
-  stdev400=[]
-  mean600=[]
-  stdev600=[]
-  mean900=[]
-  stdev900=[]
-  meanlwcdiff400=[]
-  slopePerCorComp=[]
-  lwc100con=[]
-  interceptPerCorComp=[]
-  lwcPresCorcon=[]
-  lwcnev1con=[]
-  lwcnev10con=[]
-  avpitchcon=[]
-  avrollcon=[]
-  betabcon=[]
-  avyawcon=[]
-  betaBcon=[]
-  lwccon=[]
-  pmbcon=[]
-  ascon=[]
-  cdpdbar_NRBcon=[]
-  cdpconc_NRBcon=[]
-  lwcPresCorDiffcon=[]
-  trfcon=[]
-  clearaircon=[]
-  hivscon=[]
-  asdelcon=[]
-  errorcon=[]
-  
-  
-  
-  
-  
-  
+restore,'consaves.sav',/verbose  
   
 plot1=plot(timeForm,lwcPresCor, dimensions=[1000,800])
 
@@ -114,7 +140,43 @@ plot2=plot(timeForm,lwcnev1, 'green', dimensions=[1000,800],/overplot)
 ;plot2=plot(timeForm,cdplwc_NRB, 'red', dimensions=[1000,800],/overplot)  
   
 ;plot2.xrange=[1.302d5,1.304d5]
+
+
 endif
+
+
+
+if stuff eq 3 then begin
+  
+
+  restore,'consaves.sav',/verbose
+
+  error=lwcPresCorCon - lwcnev1con
+
+  plot1=scatterplot(ascon,error, dimensions=[1000,800],symbol='+',sym_size=.3)
+
+  ;plot2=scatterplot(ascon,lwcnev1con, sym_color='green', dimensions=[1000,800],/overplot,symbol='+',sym_size=.3)
+
+  ;plot2=plot(timeForm,cdplwc_NRB, 'red', dimensions=[1000,800],/overplot)
+
+  ;plot2.xrange=[1.302d5,1.304d5]
+
+
+endif
+
+levels=['700','600','500','400']
+
+if stuff eq 4 then begin
+
+for i=0,n_elements(levels)-1 do begin
+
+  g=nevBase('0307','indicated',levels[i])
+  
+  plot1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
+  print, mean(abs(g.lwc))
+endfor
+
+endif  
 
 
 

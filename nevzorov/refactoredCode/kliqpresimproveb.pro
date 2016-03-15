@@ -8,7 +8,7 @@ pro kliqpresimproveB
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
-  runcalc=1
+  runcalc=0
 
   mean400=[]
   stdev400=[]

@@ -1,6 +1,6 @@
 pro pressurecorrect
 
-flightday='0803'
+flightday='0807'
 
 g=nevBase(flightday,'indicated','400')
 

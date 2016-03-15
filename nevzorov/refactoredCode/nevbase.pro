@@ -1,7 +1,7 @@
 function nevbase, flightDay, airspeedType, level
 common g, g
 
-
+;0=dec 2015 flights, 1=cope, 2=March 2016 flights
 cope=1
 
 baselinediagnostics=0
@@ -29,6 +29,8 @@ endif else begin
   if flightDay eq '0814' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081413/20130814.c1.nc'
   if flightDay eq '0815' then nclPath='/Volumes/sfaber1/research/nevzorov/data/081513/20130815.c1.nc'
   if flightDay eq '0803' then nclPath='/Volumes/sfaber1/research/nevzorov/data/080313/20130803.c1.nc'
+  if flightDay eq '0304' then nclPath='/Volumes/sfaber1/research/nevzorov/data/030416/20160304.c1.nc'
+  if flightDay eq '0307' then nclPath='/Volumes/sfaber1/research/nevzorov/data/030716/20160307.c1.nc'
 endelse
 
 
@@ -121,7 +123,8 @@ avpitch=loadvar('avpitch', filename=nclPath)
 avroll=loadvar('avroll', filename=nclPath)
 
 ;Vertical Speed [m/s]
-hivs=loadvar('hivs', filename=nclPath)
+if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
+if cope ne 1 then hivs=0
 
 ;Sideslip Angle [deg]
 betaB=loadvar('beta', filename=nclPath)
@@ -131,7 +134,8 @@ avyawr=loadvar('avyawr', filename=nclPath)
 
 ;Attack Angle [rad]
 alpha=loadvar('alpha', filename=nclPath)
-
+lwcnev1 = 0
+lwcnev2 = 0
 if cope eq 1 then begin
 
   ;liquid water content from Nevzorov probe [g/m^3]
@@ -141,7 +145,6 @@ if cope eq 1 then begin
   lwcNev2=loadvar('nevlwc2', filename=nclPath)
 
 endif
-
 
 
 
@@ -232,6 +235,20 @@ aStart=where(timeForm eq 113445)
 aEnd=where(timeForm eq 150700)
 endif
 
+if flightDay eq '0304' then begin
+  ;ENTIRE FLIGHT
+  flightString='03-04-16'
+  aStart=where(timeForm eq 170500)
+  aEnd=where(timeForm eq 191600)
+endif
+
+if flightDay eq '0307' then begin
+  ;ENTIRE FLIGHT
+  flightString='03-07-16'
+  aStart=where(timeForm eq 221100)
+  aEnd=where(timeForm eq 000400)
+endif
+
 
 
 
@@ -265,7 +282,7 @@ cdpacc=cdpacc[aStart:aEnd]
 cdpdbar_NRB=cdpdbar_NRB[aStart:aEnd]
 avpitch=avpitch[aStart:aEnd]
 avroll=avroll[aStart:aEnd]
-hivs=hivs[aStart:aEnd]
+if cope eq 1 then hivs=hivs[aStart:aEnd]
 betaB=betaB[aStart:aEnd]
 avyawr=avyawr[aStart:aEnd]
 alpha=alpha[aStart:aEnd]
@@ -290,13 +307,10 @@ vlwccoldelshift3=shift(vlwccoldel,3)
 
 
 
-
-
-
 ;-----CONSTANTS-----
 
 ;surface area liquid sensor [m^2]
-aLiq=3.28d-5
+aLiq=3.17d-5
 
 ;surface area total sensor [m^2]
 aTot=5d-5
@@ -304,26 +318,25 @@ aTot=5d-5
 ;liquid collection efficiency
 colELiq=1.
 
+colELiq=1.
 
 ;total collection efficiency
 colETot=1.
 
 ;liquid water latent heat of vaporization at 100C [J/G]
 lLiq=2260.
-
-
-;L* [J/G]
-;lStar=2589.
+;lLiq=2500.
 
 ;specific heat capacity of liquid water at 110 C [J/G K]
 cLiq=4.223
+
 
 if cope eq 1 then begin
   ;sensor temperature [C]
   sensorTemp=110.
 endif
 
-if cope eq 0 then begin
+if cope eq 0 or cope eq 2 then begin
   ;sensor temperature [C]
   sensorTemp=90.
 endif
@@ -357,16 +370,25 @@ asdel=as-asshift
 
 ;K LIQUID
 
-if (airspeedType eq 'indicated') and (level eq '900') then kLiqAirspeed=(2.47292)*aiasMs^(-0.273777)+(0.399143) ;900 indicated
-if (airspeedType eq 'indicated') and (level eq '600') then kLiqAirspeed=(3.73599)*aiasMs^(-0.0628865)+(-1.67763) ;600 indicated
-if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(36.0089)*aiasMs^(-1.26173)+(1.03362) ;400 indicated
-;if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(5.0326133)*aiasMs^(-0.63926429)+(0.87103879) ;400 indicated
+if cope eq 1 then begin
+  if (airspeedType eq 'indicated') and (level eq '900') then kLiqAirspeed=(2.47292)*tas^(-0.273777)+(0.399143) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiqAirspeed=(3.73599)*tas^(-0.0628865)+(-1.67763) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(36.0089)*tas^(-1.26173)+(1.03362) ;400 indicated
+  ;if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(5.0326133)*aiasMs^(-0.63926429)+(0.87103879) ;400 indicated
+  
+  if (airspeedType eq 'true') and (level eq '900') then kLiqAirspeed=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
+  if (airspeedType eq 'true') and (level eq '600') then kLiqAirspeed=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
+  if (airspeedType eq 'true') and (level eq '400') then kLiqAirspeed=(1280.56)*tas^(-2.00624)+(1.08139) ;400 true
+endif
 
-if (airspeedType eq 'true') and (level eq '900') then kLiqAirspeed=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
-if (airspeedType eq 'true') and (level eq '600') then kLiqAirspeed=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
-if (airspeedType eq 'true') and (level eq '400') then kLiqAirspeed=(1280.56)*tas^(-2.00624)+(1.08139) ;400 true
 
 
+if cope eq 2 then begin
+  if (airspeedType eq 'indicated') and (level eq '700') then kLiqAirspeed=(-0.0126704)*tas^(0.698457)+(2.01460)
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiqAirspeed=(-0.00956550)*tas^(0.753178)+(2.00092)
+  if (airspeedType eq 'indicated') and (level eq '500') then kLiqAirspeed=(-0.135222)*tas^(0.375551)+(2.43805)
+  if (airspeedType eq 'indicated') and (level eq '400') then kLiqAirspeed=(-0.0810470)*tas^(0.436789)+(2.28769)
+endif
 
 
 kLiq=kLiqAirspeed
@@ -380,12 +402,15 @@ pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
 
 ;EXPANDED HEAT FOR LIQUID
 lLiqStar=((sensorTemp-trf)*cLiq)+lLiq
-
+;lLiqStar=2589.
 
 
 ;WATER CONTENT LIQUID
-lwc=pLiq/(colELiq*as*aLiq*lLiqStar)
-lwcAsCorrDiff = lwcNev1 - lwc 
+lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
+
+
+lwcAsCorrDiff = 0
+if cope eq 1 then lwcAsCorrDiff = lwcNev1 - lwc 
 
 
 
@@ -512,29 +537,25 @@ for i=0, aSpan do begin
   endif
 endfor
 
-for i=0, aSpan do begin
-  if (baselineI[i] eq 1) and (abs(hivs[i]) lt .8) then begin
-    baselineHivsI[i]=1
-  endif
-endfor
-
-for i=0, aSpan do begin
-  if (baselineIB[i] eq 1) and (abs(hivs[i]) lt .8) then begin
-    baselineHivsLevelI[i]=1
-  endif
-endfor
-
-for i=0, aSpan do begin
-  if (abs(lwcnev1[i]) eq 0.) then begin
-    baselinenev0i[i]=1
-  endif
-endfor
+if cope eq 1 then begin
+  for i=0, aSpan do begin
+    if (baselineI[i] eq 1) and (abs(hivs[i]) lt .8) then begin
+      baselineHivsI[i]=1
+    endif
+    if (baselineIB[i] eq 1) and (abs(hivs[i]) lt .8) then begin
+      baselineHivsLevelI[i]=1
+    endif
+    if (abs(lwcnev1[i]) eq 0.) then begin
+      baselinenev0i[i]=1
+    endif
+  endfor
+endif
 
 
 
 
 clearAir=where(errI eq 1)
-levelClearAir=where(baselineIB eq 1)
+levelClearAir=where(errI eq 1)
 clearAirLargeErr=where(baselineIC eq 1)
 clearAirLargeErrex=where(baselineIE eq 1)
 levelClearAirLargeErrex=where(baselineIF eq 1)
@@ -547,7 +568,8 @@ lwcnev10=where(baselinenev0i eq 1)
 
 linPresCor=linfit(pmb[levelClearAir],lwc[levelClearAir])
 lwcPresCor=lwc - (linPresCor[1])*pmb - linPresCor[0]
-lwcPresCorDiff = lwcnev1 - lwcPresCor
+LWCPRESCORDIFF=0
+if cope eq 1 then lwcPresCorDiff = lwcnev1 - lwcPresCor
 
 baselineClimbTimes=0.
 baselineClimbTimesNon=0.
