@@ -42,63 +42,25 @@ for i=0,n_elements(flight)-1 do begin
   
   g=nevBase(flight[i],'indicated','400')
 
-
-    pmb=g.pmb
-    lwc=g.lwc
-    time=g.time
-    timeForm=g.timeForm
-    as=g.as
-    clearAir=g.clearAir
-    levelClearAir=g.levelClearAir
-    avroll=g.avroll
-    avpitch=g.avpitch
-    pLiq=g.pLiq
-    lwc=g.lwc
-    lwcnev1=g.lwcnev1
-    lwcAsCorrDiff=g.lwcAsCorrDiff
-    lwcPresCorDiff=g.lwcPresCorDiff
-    lwcPresCor=g.lwcPresCor
-    linPresCor=g.linPresCor
-    flightString=g.flightString
-    kLiq=g.kLiq
-    clearAirLargeErr=g.clearAirLargeErr
-    clearAirLargeErrex=g.clearAirLargeErrex
-    levelClearAirLargeErrex=g.levelClearAirLargeErrex
-    linPresCorSteepClimb=g.linPresCorSteepClimb
-    baselineClimbTimesNon=g.baselineClimbTimesNon
-    baselineClimbTimesNonLevel=g.baselineClimbTimesNonLevel
-    hivs=g.hivs
-    lowhivs=g.lowhivs
-    highhivs=g.highhivs
-    lowhivslevel=g.lowhivslevel
-    lwc100=g.lwc100
-    cdpdbar_NRB=g.cdpdbar_NRB
-    cdpconc_NRB=g.cdpconc_NRB
-    pvmlwc=g.pvmlwc
-    cdplwc_NRB=g.cdplwc_NRB
-    trf=g.trf
   
   
-    pmbcon=[pmbcon,pmb]
-    lwccon=[lwccon,lwc]
-    ascon=[ascon,as]
-    cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
-    cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
-    lwcPresCorDiffcon=[lwcPresCorDiffcon,lwcPresCorDiff]
-    trfcon=[trfcon,trf]
-    lwc100con=[lwc100con,lwc100]
-    lwcPresCorcon=[lwcPresCorcon,lwcPresCor]
-    lwcnev1con=[lwcnev1con,lwcnev1]
-    clearaircon=[clearaircon,clearair]
-    avpitchcon=[avpitchcon,avpitch]
-    avrollcon=[avrollcon,avroll]
-    hivscon=[hivscon,hivs]
+    pmbcon=[pmbcon,g.pmb]
+    lwccon=[lwccon,g.lwc]
+    ascon=[ascon,g.as]
+    cdpdbar_NRBcon=[cdpdbar_NRBcon,g.cdpdbar_NRB]
+    cdpconc_NRBcon=[cdpconc_NRBcon,g.cdpconc_NRB]
+    trfcon=[trfcon,g.trf]
+    lwc100con=[lwc100con,g.lwc100]
+    lwcnev1con=[lwcnev1con,g.lwcnev1]
+    clearaircon=[clearaircon,g.clearair]
+    avpitchcon=[avpitchcon,g.avpitch]
+    avrollcon=[avrollcon,g.avroll]
     
     print,flight[i]
     
-    error= lwcPresCor - lwcnev1
+    error= g.lwc - g.lwcnev1
     
-    plot1=scatterplot(pmb[clearair],lwc[clearair],sym_color=colors[i])
+    plot1=scatterplot(g.lwcnev1,error,sym_color=colors[i],/overplot)
 endfor
 
 save,pmbcon,lwcPresCorcon,lwcnev1con,ascon,lwc100con,cdpdbar_NRBcon,filename='consaves.sav'
