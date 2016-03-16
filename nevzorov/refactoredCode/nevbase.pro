@@ -349,9 +349,9 @@ endif
 ;K LIQUID
 
 if cope eq 1 then begin
-  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasMs^(-0.273777)+(0.399143) ;900 indicated
-  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*aiasMs^(-0.0628865)+(-1.67763) ;600 indicated
-  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(36.0089)*aiasMs^(-1.26173)+(1.03362) ;400 indicated
+  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*tas^(-0.273777)+(0.399143) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*tas^(-0.0628865)+(-1.67763) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(36.0089)*tas^(-1.26173)+(1.03362) ;400 indicated
   
   if (airspeedType eq 'true') and (level eq '900') then kLiq=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
   if (airspeedType eq 'true') and (level eq '600') then kLiq=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true

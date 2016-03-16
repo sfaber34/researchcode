@@ -1,9 +1,12 @@
 pro basic
 
-stuff=5
+stuff=8
 
 flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-flight=['0710']
+flight='0307'
+kLevel=['400','500','600','700']
+ktype=['indicated']
+colors=['black','red','green','blue','magenta','yellow','purple','orange','grey']
 
 mean400=[]
 stdev400=[]
@@ -35,7 +38,34 @@ hivscon=[]
 asdelcon=[]
 errorcon=[]
 
-colors=['black','red','green','blue','magenta','yellow','purple','orange','grey']
+if stuff eq 8 then begin
+  
+  for k=0,n_elements(ktype)-1 do begin
+
+    for i=0,n_elements(kLevel)-1 do begin
+
+      lwccon=[]
+      pmbcon=[]
+      ascon=[]
+      cdpdbar_NRBcon=[]
+      cdpconc_NRBcon=[]
+      lwcnoPresCorDiffcon=[]
+      trfcon=[]
+      clearaircon=[]
+      hivscon=[]
+      asdelcon=[]
+      
+      for j=0,n_elements(flight)-1 do begin
+        g= nevBase(flight[j],ktype[k],kLevel[i])
+        plot1=plot(g.time[g.clearair],g.lwc[g.clearair],dimensions=[1400,1000],color=colors[i],/overplot)
+        
+      endfor
+    endfor
+  endfor
+endif
+
+
+
 
 if stuff eq 0 then begin
 for i=0,n_elements(flight)-1 do begin
@@ -249,6 +279,10 @@ p3.xrange=[1500,2500]
   ;p2=scatterplot(g.timeFlight[g.clearair],g.vlwccol[g.clearair],/overplot,symbol='.',sym_color='red')
 stop
 endif  
+
+
+
+
 
 
 
