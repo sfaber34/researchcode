@@ -200,7 +200,7 @@ if stuff eq 5 then begin
   
   p1=plot(g.time,g.lwc)
   p2=scatterplot(g.time[g.clearair],g.lwc[g.clearair],sym_color='red',/overplot)
-  stop
+
   ratio2=(g.vlwccol*g.ilwccol)-g.kliq*(g.vlwcref*g.ilwcref)
   ;ratio2=(g.vlwccol)/g.vlwcref
   ratioshift=shift(ratio2,1)
