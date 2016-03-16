@@ -1,4 +1,9 @@
 function nevbase, flightDay, airspeedType, level
+
+RESOLVE_ROUTINE, 'convertTime',/is_function,/no_recompile
+RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
+
+
 common t,t
   ;-----------------------------------------SET FILE PATH----------------------------------------------------------------------------------------------------------------------
   ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -369,22 +374,40 @@ endif
 ;------------------------------------------FILTERS---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-vlwccoldel=vlwccol-shift(vlwccol,1)
-
-vlwccoldel2=shift(vlwccol,-2)-shift(vlwccol,-1)
-vlwccoldel3=shift(vlwccol,-3)-shift(vlwccol,-2)
-vlwccoldel4=shift(vlwccol,-4)-shift(vlwccol,-3)
-vlwccoldel9=shift(vlwccol,-5)-shift(vlwccol,-4)
-vlwccoldel13=shift(vlwccol,-6)-shift(vlwccol,-5)
-vlwccoldel14=shift(vlwccol,-7)-shift(vlwccol,-6)
+rawSignal=(vlwccol*ilwccol)/(vlwcref*ilwcref)
 
 
-vlwccoldel5=shift(vlwccol,1)-shift(vlwccol,2)
-vlwccoldel6=shift(vlwccol,2)-shift(vlwccol,3)
-vlwccoldel7=shift(vlwccol,3)-shift(vlwccol,4)
-vlwccoldel10=shift(vlwccol,4)-shift(vlwccol,5)
-vlwccoldel11=shift(vlwccol,5)-shift(vlwccol,6)
-vlwccoldel12=shift(vlwccol,6)-shift(vlwccol,7)
+
+correction=dindgen(n_elements(pmb),increment=0)
+smoothSignal=dindgen(n_elements(pmb),increment=0)
+cleari=dindgen(n_elements(pmb),increment=0)
+int=230
+
+for i=0,n_elements(pmb)-(int+1) do begin
+  correction[i:i+int]=min(rawSignal[i:i+int])
+  i=i+int
+endfor
+
+
+for i=0,n_elements(pmb)-(int+1) do begin
+  smoothSignal[i:i+int]=rawSignal[i:i+int]-correction[i:i+int]
+  i=i+int
+endfor
+smoothSignal=smooth(smoothSignal,20)
+
+smoothSignalsort=sort(smoothSignal)
+smoothSignalsorted=smoothSignal[smoothSignalsort]
+smoothSignalsorted2=smoothSignalsorted[n_elements(smoothSignalsorted)*.54]
+
+for i=0,n_elements(pmb)-1 do begin
+  if smoothSignal[i] lt smoothSignalsorted2 then cleari[i]=1
+endfor
+
+cleari[0:200]=0
+cleari[n_elements(cleari)-200:n_elements(cleari)-1]=0
+
+clearair=where(cleari eq 1)
+
 
 
 
@@ -399,15 +422,9 @@ baselineI=dindgen(n_elements(pmb),start=0,increment=0)
 signalI=dindgen(n_elements(pmb),start=0,increment=0)
 baselinedriftI=dindgen(n_elements(pmb),start=0,increment=0)
 
-cutoff=.012
+
 
 for i=0, aSpan do begin
-  if (vlwccoldel[i] gt 0. and vlwccoldel[i] lt cutoff and abs(vlwccoldel2[i]) lt cutoff and abs(vlwccoldel3[i]) lt cutoff and abs(vlwccoldel4[i]) lt cutoff and abs(vlwccoldel9[i]) lt cutoff and abs(vlwccoldel13[i]) lt cutoff and abs(vlwccoldel14[i]) lt cutoff) then begin
-    baselineI[i]=1
-  endif
-  if (vlwccoldel[i] lt 0. and vlwccoldel[i] gt -(cutoff) and abs(vlwccoldel5[i]) lt cutoff and abs(vlwccoldel6[i]) lt cutoff and abs(vlwccoldel7[i]) lt cutoff and abs(vlwccoldel10[i]) lt cutoff and abs(vlwccoldel11[i]) lt cutoff and abs(vlwccoldel12[i]) lt cutoff) then begin
-    baselineI[i]=1
-  endif
   if (abs(avRoll[i]) lt 5) then begin
     baselineRollI[i]=1
   endif
@@ -429,7 +446,7 @@ endfor
 
 
 
-clearAir=where(baselineI eq 1)
+;clearAir=where(baselineI eq 1)
 levelClearAir=where(baselineIB eq 1)
 signal=where(baselineI eq 0)
 
@@ -460,7 +477,7 @@ pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
 
 
 ;-----------------------------------------CALCULATIONS---------------------------------------------------------------------------------------------------------------------------
-;---------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 ;WATER CONTENT LIQUID

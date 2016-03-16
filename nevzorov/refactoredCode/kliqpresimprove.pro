@@ -3,7 +3,7 @@
 pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight='0729'
+  flight='0304'
 
   ;flight=['0710','0725','0727','0728','0729']
   kLevel=['400','600','500','400']
@@ -34,7 +34,7 @@ pro kliqpresimprove
   lwcnoPresCorcon=[]
   sigcon=[]
   column=dindgen(10,n_elements(flight))
-  cgcleanup
+  ;cgcleanup
   if runcalc eq 1 then begin
   for k=0,n_elements(ktype)-1 do begin
     
@@ -55,7 +55,8 @@ pro kliqpresimprove
         
         for j=0,n_elements(flight)-1 do begin
        g= nevBase(flight[j],ktype[k],kLevel[i])
-          
+       p3=plot(g.time,g.vlwccol)
+       stop   
           print,''
           print,'-------------------------------------------'
           print, flight[j]
@@ -158,7 +159,7 @@ pro kliqpresimprove
         
         csort=sort(c)
         csorted=c[csort]
-        csorted2=csorted[n_elements(csorted)*.54]
+        csorted2=csorted[n_elements(csorted)*.52]
         
         for i=0,n_elements(g.time)-1 do begin
           if c[i] lt csorted2 then cleari[i]=1
@@ -188,7 +189,7 @@ pro kliqpresimprove
         print,'max=',max(g.lwc[clear])
         
         p1=plot(g.time[clear],g.lwc[clear],dimensions=[1400,1000])
-        p2=plot(g.time,c,dimensions=[1400,1000],'r')
+        ;p2=plot(g.time,c,dimensions=[1400,1000],'r')
         
         stop
         endfor

@@ -191,15 +191,31 @@ for i=0,n_elements(levels)-1 do begin
   plot1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
   print, mean(abs(g.lwc))
 endfor
-
+cgcleanup
 endif  
-
+flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815','0307']
 
 if stuff eq 5 then begin
-  g=nevBase('0727','indicated','400')
+  countcon=0
+  for i=0,n_elements(flight)-1 do begin
+    g=nevBase(flight[i],'indicated','400')
+    ;p2=plot(g.time,g.lwc,dimensions=[1400,1000])
+    p3=scatterplot(g.time[g.clearair],g.lwc[g.clearair],sym_color='red',symbol='.')
+    t=(double(n_elements(g.clearair))/double(n_elements(g.time)))*100.
+    t2=string(t)
+    text1=text(100,100,t2,/device)
+    countcon=[countcon+n_elements(g.clearair)]
+    print,countcon
+  endfor  
   
-  p1=plot(g.time,g.lwc)
-  p2=scatterplot(g.time[g.clearair],g.lwc[g.clearair],sym_color='red',/overplot)
+  stop
+  g=nevBase('0815','indicated','400')
+  
+  p1=plot(g.time,s,dimensions=[1400,1000])
+  
+  
+  ;p2=plot(g.time,g.lwc)
+  ;p3=scatterplot(g.time[g.clearair],g.lwc[g.clearair],sym_color='red',symbol='.',/overplot)
 
   ratio2=(g.vlwccol*g.ilwccol)-g.kliq*(g.vlwcref*g.ilwcref)
   ;ratio2=(g.vlwccol)/g.vlwcref
