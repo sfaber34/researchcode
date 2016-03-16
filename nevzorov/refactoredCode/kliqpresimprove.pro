@@ -4,12 +4,12 @@ pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   ;flight=['0710','0725','0727','0728','0729']
-  kLevel=['400','600','900']
-  ktype=['indicated','true']
+  kLevel=['400']
+  ktype=['indicated']
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
-  runcalc=0
+  runcalc=1
 
   mean400=[]
   stdev400=[]
@@ -60,26 +60,26 @@ pro kliqpresimprove
   
           ;common g, g
           clearAir=g.clearAir
-          pmb=g.pmb[clearair]
+          pmb=g.pmb
           lwc=g.lwc[clearair]
-          time=g.time[clearair]
-          timeForm=g.timeForm[clearair]
-          as=g.as[clearair]
-          aiasMs=g.aiasMs[clearair]
-          tas=g.tas[clearair]
+          time=g.time
+          timeForm=g.timeForm
+          as=g.as
+          aiasMs=g.aiasMs
+          tas=g.tas
           levelClearAir=g.levelClearAir
-          avroll=g.avroll[clearair]
-          avpitch=g.avpitch[clearair]
-          pLiq=g.pLiq[clearair]
-          lwcnev1=g.lwcnev1[clearair]
-          lwcnoPresCor=g.lwcnoPresCor[clearair]
-          flightString=g.flightString[clearair]
-          kLiq=g.kLiq[clearair]
-          cdpdbar_NRB=g.cdpdbar_NRB[clearair]
-          cdpconc_NRB=g.cdpconc_NRB[clearair]
-          trf=g.trf[clearair]
-          lwc100=g.lwc100[clearair]
-          avyaw=g.avyaw[clearair]
+          avroll=g.avroll
+          avpitch=g.avpitch
+          pLiq=g.pLiq
+          lwcnev1=g.lwcnev1
+          lwcnoPresCor=g.lwcnoPresCor
+          flightString=g.flightString
+          kLiq=g.kLiq
+          cdpdbar_NRB=g.cdpdbar_NRB
+          cdpconc_NRB=g.cdpconc_NRB
+          trf=g.trf
+          lwc100=g.lwc100
+          avyaw=g.avyaw
           
           
           
@@ -97,17 +97,20 @@ pro kliqpresimprove
           ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
           lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor]
-         
+         print,max(lwc)
+         fraction=(double(n_elements(clearair))/double(n_elements(pmb)))*100.
+         print,fraction
           
           if j eq 0 then plot1=scatterplot(pmb,lwcNoPresCor, sym_size=.2,sym_color='black')
           if j gt 0 then plot1=scatterplot(pmb,lwcNoPresCor,sym_color='black',/overplot, sym_size=.2)
 
           
           
-          
           ;if mean(lwcnev10) gt 0 then plot1=scatterplot(hivs[lwcnev10],lwc[lwcnev10],sym_color='red',/overplot, sym_size=.2)
         endfor
-        
+        ;save,pmbcon,lwccon,ascon,cdpdbar_NRBcon,cdpconc_NRBcon,trfcon,lwc100con,lwcnev1con,clearaircon,avrollcon,avpitchcon,avyawcon,lwcnoPresCorcon,filename='cons.sav'
+        h=histogram(lwccon,binsize=.02)
+        stop
         var=pmbcon
         xleft=min(var)-min(var)*.1
         xright=max(var)+max(var)*.1

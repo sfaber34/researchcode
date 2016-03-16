@@ -1,5 +1,5 @@
 function nevbase, flightDay, airspeedType, level
-
+common t,t
   ;-----------------------------------------SET FILE PATH----------------------------------------------------------------------------------------------------------------------
   ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -123,6 +123,42 @@ avyawr=loadvar('avyawr', filename=nclPath)
 ;Attack Angle [rad]
 alpha=loadvar('alpha', filename=nclPath)
 
+;Flight Time [sec]
+timeFlight=dindgen(n_elements(pmb),start=0,increment=1)
+
+;Hour
+hour=loadvar('HOUR', filename=nclPath)
+
+;Hour
+min=loadvar('MINUTE', filename=nclPath)
+
+;Hour
+sec=loadvar('SECOND', filename=nclPath)
+
+
+;Convert time for axis
+
+hourst=string(hour)
+hourstsp=strsplit(hourst,'.',/extract)
+minst=string(min)
+minstsp=strsplit(minst,'.',/extract)
+secst=string(sec)
+secstsp=strsplit(secst,'.',/extract)
+
+hourstspb=SINDGEN(n_elements(hourst))
+minstspb=SINDGEN(n_elements(hourst))
+secstspb=SINDGEN(n_elements(hourst))
+
+for i=0,n_elements(hourst)-1 do begin
+  hourstspb[i]=hourstsp[i,0]
+  minstspb[i]=minstsp[i,0]
+  secstspb[i]=secstsp[i,0]
+endfor
+hourstspb=strtrim(hourstspb,1)
+minstspb=strtrim(minstspb,1)
+secstspb=strtrim(secstspb,1)
+
+timePretty=hourstspb+':'+minstspb+':'+secstspb
 
 lwcnev1 = 0
 lwcnev2 = 0
@@ -136,7 +172,7 @@ if cope eq 1 then begin
 
 endif
 
-
+t={hour:hour,min:min,sec:sec,timeForm:timeForm}
 
 
 
@@ -144,70 +180,78 @@ endif
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+vtwcrefmean=mean(vtwcref)
+
+
+
+
 if flightDay eq '0807' then begin
   flightString='08-07-13'
-  aStart=where(timeForm eq 124100)
-  aEnd=where(timeForm eq 155400)
+  aStart=convertTime(12,41,00)
+  aEnd=convertTime(15,54,00)
+  
+;  aStart=convertTime(13,25,58)
+;  aEnd=convertTime(14,01,40)
 endif
 
 if flightDay eq '0814' then begin
   flightString='08-14-13'
-  aStart=where(timeForm eq 115400)
-  aEnd=where(timeForm eq 150200)
+  aStart=convertTime(11,54,00)
+  aEnd=convertTime(15,02,00)
 endif
 
 if flightDay eq '0710' then begin
   flightString='07-10-13'
-  aStart=where(timeForm eq 113100)
-  aEnd=where(timeForm eq 141100)
+  aStart=convertTime(11,31,00)
+  aEnd=convertTime(14,11,00)
 endif
 
 if flightDay eq '0725' then begin
   flightString='07-25-13'
-  aStart=where(timeForm eq 102200)
-  aEnd=where(timeForm eq 134800)
+  aStart=convertTime(10,22,00)
+  aEnd=convertTime(13,48,00)
 endif
 
 if flightDay eq '0727' then begin
   flightString='07-27-13'
-  aStart=where(timeForm eq 114917)
-  aEnd=where(timeForm eq 135000)
+  aStart=convertTime(11,49,17)
+  aEnd=convertTime(13,50,00)
 endif
 
 if flightDay eq '0728' then begin
   flightString='07-28-13'
-  aStart=where(timeForm eq 114700)
-  aEnd=where(timeForm eq 150500)
+  aStart=convertTime(11,47,00)
+  aEnd=convertTime(15,05,00)
 endif
 
 if flightDay eq '0729' then begin
   flightString='07-29-13'
-  aStart=where(timeForm eq 114910)
-  aEnd=where(timeForm eq 145700)
+  aStart=convertTime(11,49,10)
+  aEnd=convertTime(14,57,00)
 endif
 
 if flightDay eq '0815' then begin
   flightString='08-15-13'
-  aStart=where(timeForm eq 122500)
-  aEnd=where(timeForm eq 145700)
+  aStart=convertTime(12,25,00)
+  aEnd=convertTime(14,57,00)
 endif
 
 if flightDay eq '0803' then begin
   flightString='08-03-13'
-  aStart=where(timeForm eq 113445)
-  aEnd=where(timeForm eq 150700)
+  aStart=convertTime(11,34,45)
+  aEnd=convertTime(15,07,00)
 endif
 
 if flightDay eq '0304' then begin
   flightString='03-04-16'
-  aStart=where(timeForm eq 170500)
-  aEnd=where(timeForm eq 191600)
+  aStart=convertTime(17,05,00)
+  aEnd=convertTime(19,16,00)
 endif
 
 if flightDay eq '0307' then begin
   flightString='03-07-16'
-  aStart=where(timeForm eq 221100)
-  aEnd=where(timeForm eq 000400)
+  aStart=convertTime(22,11,00)
+  aEnd=convertTime(00,04,00)
 endif
 
 
@@ -243,13 +287,13 @@ avroll=avroll[aStart:aEnd]
 avyawr=avyawr[aStart:aEnd]
 alpha=alpha[aStart:aEnd]
 cdplwc_NRB=cdplwc_NRB[aStart:aEnd]
+timeFlight=timeFlight[aStart:aEnd]
 
 if cope eq 1 then begin
   lwcNev1=lwcNev1[aStart:aEnd]
   lwcNev2=lwcNev2[aStart:aEnd]
   hivs=hivs[aStart:aEnd]
 endif
-
 
 
 
@@ -262,7 +306,7 @@ endif
 aLiq=3.17d-5
 
 ;surface area total sensor [m^2]
-aTot=5d-5
+aTot=5.02d-5
 
 ;liquid collection efficiency
 colELiq=1.
@@ -325,58 +369,57 @@ endif
 ;------------------------------------------FILTERS---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-vlwccolshift=shift(vlwccol,1)
-vlwccoldel=vlwccol-vlwccolshift
+vlwccoldel=vlwccol-shift(vlwccol,1)
 
-vlwccoldelshift=shift(vlwccoldel,1)
-vlwccoldelshift2=shift(vlwccoldel,2)
-vlwccoldelshift3=shift(vlwccoldel,3)
+vlwccoldel2=shift(vlwccol,-2)-shift(vlwccol,-1)
+vlwccoldel3=shift(vlwccol,-3)-shift(vlwccol,-2)
+vlwccoldel4=shift(vlwccol,-4)-shift(vlwccol,-3)
+vlwccoldel9=shift(vlwccol,-5)-shift(vlwccol,-4)
+vlwccoldel13=shift(vlwccol,-6)-shift(vlwccol,-5)
+vlwccoldel14=shift(vlwccol,-7)-shift(vlwccol,-6)
+
+
+vlwccoldel5=shift(vlwccol,1)-shift(vlwccol,2)
+vlwccoldel6=shift(vlwccol,2)-shift(vlwccol,3)
+vlwccoldel7=shift(vlwccol,3)-shift(vlwccol,4)
+vlwccoldel10=shift(vlwccol,4)-shift(vlwccol,5)
+vlwccoldel11=shift(vlwccol,5)-shift(vlwccol,6)
+vlwccoldel12=shift(vlwccol,6)-shift(vlwccol,7)
+
 
 
 aSpan = n_elements(pmb) - 1
 
-baselineBetaI=dindgen(n_elements(pmb),start=0,increment=0)
+BetaI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineIB=dindgen(n_elements(pmb),start=0,increment=0)
 baselineRollI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineYawI=dindgen(n_elements(pmb),start=0,increment=0)
 baselinePitchI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineI=dindgen(n_elements(pmb),start=0,increment=0)
+signalI=dindgen(n_elements(pmb),start=0,increment=0)
+baselinedriftI=dindgen(n_elements(pmb),start=0,increment=0)
 
-
+cutoff=.012
 
 for i=0, aSpan do begin
-  if (abs(vlwccoldel[i]) lt .01 and abs(vlwccoldelshift[i]) lt .01 and abs(vlwccoldelshift2[i]) lt .01 and abs(vlwccoldelshift3[i]) lt .01) then begin
+  if (vlwccoldel[i] gt 0. and vlwccoldel[i] lt cutoff and abs(vlwccoldel2[i]) lt cutoff and abs(vlwccoldel3[i]) lt cutoff and abs(vlwccoldel4[i]) lt cutoff and abs(vlwccoldel9[i]) lt cutoff and abs(vlwccoldel13[i]) lt cutoff and abs(vlwccoldel14[i]) lt cutoff) then begin
     baselineI[i]=1
   endif
-endfor
-
-
-for i=0, aSpan do begin
+  if (vlwccoldel[i] lt 0. and vlwccoldel[i] gt -(cutoff) and abs(vlwccoldel5[i]) lt cutoff and abs(vlwccoldel6[i]) lt cutoff and abs(vlwccoldel7[i]) lt cutoff and abs(vlwccoldel10[i]) lt cutoff and abs(vlwccoldel11[i]) lt cutoff and abs(vlwccoldel12[i]) lt cutoff) then begin
+    baselineI[i]=1
+  endif
   if (abs(avRoll[i]) lt 5) then begin
     baselineRollI[i]=1
   endif
-endfor
-
-for i=0, aSpan do begin
   if (avpitch[i] lt (mean(avpitch) + 2) and avpitch[i] gt (mean(avpitch) - 2)) then begin ;0871013
     baselinePitchI[i]=1
   endif
-endfor
-
-for i=0, aSpan do begin
   if (betaB[i] lt -.014 and betaB[i] gt -.026) then begin
-    baselineBetaI[i]=1
+    BetaI[i]=1
   endif
-endfor
-
-for i=0, aSpan do begin
   if (abs(avyawr[i]) lt .003) then begin
     baselineYawI[i]=1
   endif
-endfor
-
-
-for i=0, aSpan do begin
   if (baselineI[i] eq 1) and (baselineRollI[i] eq 1) and (baselinePitchI[i] eq 1) and (baselineYawI[i]=1) then begin
     baselineIB[i]=1
   endif
@@ -385,8 +428,10 @@ endfor
 
 
 
+
 clearAir=where(baselineI eq 1)
 levelClearAir=where(baselineIB eq 1)
+signal=where(baselineI eq 0)
 
 
 
@@ -423,19 +468,34 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 
+for i=0, aSpan do begin
+  if (abs(lwc[i]) gt .005 and baselineI[i] eq 1) then begin
+    baselinedriftI[i]=1
+  endif
+endfor
 
-
+baselinedrift=where(baselinedriftI eq 1)
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
-  clearAir:clearAir, levelClearAir:levelClearAir,$
-  flightString:flightString, kLiq:kLiq, $
-  aiasMs:aiasMs, tas:tas, $
+  clearAir:clearAir, levelClearAir:levelClearAir,timeFlight:timeFlight,$
+  flightString:flightString, kLiq:kLiq, baselinedrift:baselinedrift,$
+  aiasMs:aiasMs, tas:tas, signal:signal,vlwcref:vlwcref, ilwcref:ilwcref,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
-  lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, $
+  lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor}
 
 
 return,g
+
+end
+
+
+
+
+function convertTime,hh,mm,ss
+common t,t
+timeindex=where(t.hour eq hh and t.min eq mm and t.sec eq ss)
+return,timeindex
 
 end
