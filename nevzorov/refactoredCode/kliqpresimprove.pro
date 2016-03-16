@@ -3,6 +3,8 @@
 pro kliqpresimprove
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+flight='0725'
+
   ;flight=['0710','0725','0727','0728','0729']
   kLevel=['400']
   ktype=['indicated']
@@ -30,6 +32,7 @@ pro kliqpresimprove
   avyawcon=[]
   betaBcon=[]
   lwcnoPresCorcon=[]
+  sigcon=[]
   column=dindgen(10,n_elements(flight))
   
   if runcalc eq 1 then begin
@@ -61,7 +64,7 @@ pro kliqpresimprove
           ;common g, g
           clearAir=g.clearAir
           pmb=g.pmb
-          lwc=g.lwc[clearair]
+          lwc=g.lwc
           time=g.time
           timeForm=g.timeForm
           as=g.as
@@ -97,19 +100,99 @@ pro kliqpresimprove
           ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
           lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor]
-         print,max(lwc)
+         cgcleanup
+          sig=(g.vlwccol*g.ilwccol)-(g.vlwcref*g.ilwcref)
+          ;sig[0:100]=0
+          sig[n_elements(sig)-100:n_elements(sig)-1]=5
+          x=a_correlate(sig,dindgen(n_elements(sig),start=0,increment=-1))
+          sigcon=[sigcon,sig]
+          
+          smooth=ts_smooth(x,600)
+          thresh=smooth+.002                
+          
+          p5=plot(g.time,x, dimensions=[800,1000])
+          p6=plot(g.time,thresh,'r',/overplot)
+          
+          clearair2i=dindgen(n_elements(g.pmb),start=0,increment=0)
+          for e=0,n_elements(sig)-1 do begin
+            if x[e] lt thresh[i] then begin
+              clearair2i[e] = 1
+            endif
+          endfor
+          
+          clearair2=where(clearair2I eq 1)
+          stop
+          
+          
+         
          fraction=(double(n_elements(clearair))/double(n_elements(pmb)))*100.
          print,fraction
           
-          if j eq 0 then plot1=scatterplot(pmb,lwcNoPresCor, sym_size=.2,sym_color='black')
-          if j gt 0 then plot1=scatterplot(pmb,lwcNoPresCor,sym_color='black',/overplot, sym_size=.2)
-
+          ;if j eq 0 then plot1=scatterplot(pmb,sig, sym_size=.2,sym_color='black')
+          ;if j gt 0 then plot1=scatterplot(pmb,sig,sym_color='black',/overplot, sym_size=.2)
+          smooth=ts_smooth(sig,460)
           
+          thresh=(smooth+0.25)-(exp(smooth)*.03)
+          
+          
+          sigdiff=abs(ts_diff(sig,1))
+          
+;          svlwccol=sort(sigdiff)
+;          vlwccolsorted=sigdiff[svlwccol]
+;          h=.017
+;          
+;
+;          clearair2i=dindgen(n_elements(g.pmb),start=0,increment=0)
+;          signal2i=dindgen(n_elements(g.pmb),start=0,increment=0)
+;          
+;          for e=0,n_elements(g.pmb)-2 do begin
+;            if sig[e] lt thresh[e] and sigdiff[e] lt h and sigdiff[e+1] lt h then begin
+;              clearair2i[e] = 1
+;            endif
+;            if sig[e] gt thresh[e] then begin
+;              signal2i[e] = 1
+;            endif
+;          endfor
+          
+         
+          
+          clearair2=where(clearair2I eq 1)
+          signal2=where(signal2i eq 1)
+          
+     
+          
+          p1=plot(g.time,sig, dimensions=[800,1000])
+          p3=plot(time,smooth,'g',/overplot)
+          
+          p2=plot(time,thresh,'r',/overplot)
+          
+          p5=plot(g.time,sigdiff, dimensions=[800,1000])
+          p6=plot([min(time),max(time)],[h,h],'r',/overplot)
+          p12=scatterplot(g.time[clearair2],sigdiff[clearair2],sym_color='green',symbol='.',/overplot)
+          p12=scatterplot(g.time[where(g.lwc[clearair2] gt .0499999)],sigdiff[where(g.lwc[clearair2] gt .0499999)],sym_color='pink',symbol='+',sym_size=4,/overplot)
+          p12.xrange=[1.9573d7,1.9575d7]
+          ;p6=plot([min(time),max(time)],[0.06,0.06],'r',/overplot)
+          p6.yrange=[-.02,.1]
+          
+          
+          p9=plot(g.time[clearair2],g.lwc[clearair2], dimensions=[800,1000])
+          p10=plot(g.time[clearair2],g.lwc[clearair2],'b', dimensions=[800,1000])
+          p10.yrange=[-.5,.5]
+          print,double(n_elements(clearair2))/double(n_elements(g.pmb))*100.
+          print,n_elements(where(g.lwc[clearair2] gt .05))
+          ;p2=plot([min(g.time),max(g.time)],[0.7518,0.7518],'r',/overplot)          stop
+      
+                      
+         
           
           ;if mean(lwcnev10) gt 0 then plot1=scatterplot(hivs[lwcnev10],lwc[lwcnev10],sym_color='red',/overplot, sym_size=.2)
         endfor
         ;save,pmbcon,lwccon,ascon,cdpdbar_NRBcon,cdpconc_NRBcon,trfcon,lwc100con,lwcnev1con,clearaircon,avrollcon,avpitchcon,avyawcon,lwcnoPresCorcon,filename='cons.sav'
         h=histogram(lwccon,binsize=.02)
+        lwcconsort=sort(lwcCon)
+        lwcConsorted=lwcCon[lwcconsort]
+        sigconsorted=sigcon[lwcconsort]
+        
         stop
         var=pmbcon
         xleft=min(var)-min(var)*.1
