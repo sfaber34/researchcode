@@ -32,6 +32,7 @@ endif else begin
   if flightDay eq '0803' then nclPath='../data/080313/20130803.c1.nc'
   if flightDay eq '0304' then nclPath='../data/030416/20160304.c1.nc'
   if flightDay eq '0307' then nclPath='../data/030716/20160307.c1.nc'
+  if flightDay eq '1217' then nclPath='../data/121715/20151217.c1.nc'
 endelse
 
 if strmatch(nclpath,'*2013*') eq 1 then cope=1
@@ -119,6 +120,14 @@ avroll=loadvar('avroll', filename=nclPath)
 if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
 if cope ne 1 then hivs=0
 
+;liquid water content from Nevzorov probe [g/m^3]
+if cope eq 1 then lwcNev1=loadvar('nevlwc1', filename=nclPath)
+if cope ne 1 then lwcNev1=0
+
+;liquid water content from Nevzorov probe [g/m^3]
+if cope eq 1 then lwcNev2=loadvar('nevlwc2', filename=nclPath)
+if cope ne 1 then lwcNev1=0
+
 ;Sideslip Angle [deg]
 betaB=loadvar('beta', filename=nclPath)
 
@@ -165,19 +174,9 @@ secstspb=strtrim(secstspb,1)
 
 timePretty=hourstspb+':'+minstspb+':'+secstspb
 
-lwcnev1 = 0
-lwcnev2 = 0
-if cope eq 1 then begin
-
-  ;liquid water content from Nevzorov probe [g/m^3]
-  lwcNev1=loadvar('nevlwc1', filename=nclPath)
-
-  ;liquid water content from Nevzorov probe [g/m^3]
-  lwcNev2=loadvar('nevlwc2', filename=nclPath)
-
-endif
-
 t={hour:hour,min:min,sec:sec,timeForm:timeForm}
+
+
 
 
 
@@ -254,6 +253,11 @@ if flightDay eq '0307' then begin
   aEnd=convertTime(00,04,00)
 endif
 
+if flightDay eq '1217' then begin
+  flightString='12-17-15'
+  aStart=convertTime(22,11,00)
+  aEnd=convertTime(00,04,00)
+endif
 
 
 
@@ -295,24 +299,6 @@ if cope eq 1 then begin
   hivs=hivs[aStart:aEnd]
 endif
 
-
-
-
-
-;-----------------------------------------CONSTANTS-------------------------------------------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-;surface area liquid sensor [m^2]
-aLiq=3.17d-5
-
-;surface area total sensor [m^2]
-aTot=5.02d-5
-
-;liquid collection efficiency
-colELiq=1.
-
-;total collection efficiency
-colETot=1.
 
 
 
@@ -367,12 +353,12 @@ endif
 
 
 ;------------------------------------------FILTER CLEAR AIR---------------------------------------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 correction=dindgen(n_elements(pmb),increment=0)
 smoothSignal=dindgen(n_elements(pmb),increment=0)
 cleari=dindgen(n_elements(pmb),increment=0)
-clearairitest=dindgen(n_elements(pmb),increment=0)
+clearairprei=dindgen(n_elements(pmb),increment=0)
 selectedsignali=dindgen(n_elements(pmb),increment=0)
 
 ;----------SIGNAL RATIO----------
@@ -380,8 +366,9 @@ selectedsignali=dindgen(n_elements(pmb),increment=0)
 
 rawSignal=((vlwccol*ilwccol)/(vlwcref*ilwcref))
 signalrange=(mean(rawSignal))-abs(min(rawSignal))
-;factor=((1/alog(mean(rawSignal))-1.))/mean(rawSignal)
 rawSignal=rawSignal^((1./(signalRange/2.)))
+
+
 ;----------BASELINE DETECTION STEP----------
 int=30
 
@@ -404,15 +391,13 @@ sd=stddev(smoothsignal)
 
 
 for n=0,n_elements(pmb)-1 do begin
-  if smoothsignal[n] lt sd*.7 then begin
-     clearairitest[n]=1
-  endif   
+  if smoothsignal[n] lt sd*.7 then clearairprei[n]=1
 endfor
 
 
 
 
-clearairb=where(clearairitest eq 1)
+clearairb=where(clearairprei eq 1)
 
 selectedsignal=smoothsignal[clearairb]
 selectedsignalsort=sort(selectedsignal)
@@ -427,9 +412,18 @@ endfor
 
 clearairb=where(selectedsignali eq 1)
 
+
+;-----REMOVE FIRST/LAST 50 POINTS-----
 clearairc=clearairb[50:n_elements(clearairb)-50]
 
 clearair=clearairc
+
+
+
+
+
+;------------------------------------------FILTER MISC.---------------------------------------------------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -472,8 +466,28 @@ levelClearAir=where(baselineIB eq 1)
 
 
 
+
+
+;-----------------------------------------CONSTANTS-------------------------------------------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+;surface area liquid sensor [m^2]
+aLiq=3.17d-5
+
+;surface area total sensor [m^2]
+aTot=5.02d-5
+
+;liquid collection efficiency
+colELiq=1.
+
+;total collection efficiency
+colETot=1.
+
 ;EXPENDED HEAT FOR LIQUID
 lLiqStar=2589.
+
+
+
 
 
 
@@ -483,6 +497,8 @@ pLiqNoPresCor=pLiq
 
 
 lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
+
+
 
 ;-----------------------------------------PRESSURE CORRECTION---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -496,6 +512,7 @@ pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
 
 
 
+
 ;-----------------------------------------CALCULATIONS---------------------------------------------------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -504,18 +521,16 @@ pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
 lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
-for i=0, aSpan do begin
-  if (abs(lwc[i]) gt .005 and baselineI[i] eq 1) then begin
-    baselinedriftI[i]=1
-  endif
-endfor
 
-baselinedrift=where(baselinedriftI eq 1)
+
+
+
+
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
   clearAir:clearAir, levelClearAir:levelClearAir,timeFlight:timeFlight,$
-  flightString:flightString, kLiq:kLiq, baselinedrift:baselinedrift,$
+  flightString:flightString, kLiq:kLiq,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
@@ -531,8 +546,26 @@ end
 
 
 function convertTime,hh,mm,ss
-common t,t
-timeindex=where(t.hour eq hh and t.min eq mm and t.sec eq ss)
-return,timeindex
-
+  common t,t
+  timeindex=where(t.hour eq hh and t.min eq mm and t.sec eq ss)
+  return,timeindex
 end
+
+
+
+pro info
+print,''
+print,''
+print,'-------------COPE-----------------'
+print,'LEVELS COPE = 400, 600, 900'
+print,'DAYS COPE = 0710, 0725, 0727, 0728, 0729, 0803, 0807, 0814, 0815, ||0709||'
+print,''
+print,''
+print,'-----------LARAMIE----------------'
+print,'LEVELS LARAMIE = 400, 500, 600, 700'
+print,'DAYS LARAMIE = 0307, ||0304||'
+print,''
+print,''
+print,''
+end
+

@@ -5,10 +5,11 @@ cgcleanup
 count=0
 total=0
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-flight='0307'
+  ;flight='1217'
+  kLevel=['400','500','600','700']
   kLevel=['400']
   ktype=['indicated']
-  colors=['red','blue','black']
+  colors=['red','blue','black','purple']
   yrange=[.05,-.05]
   xrange=[60,150]
   runcalc=1
@@ -32,7 +33,7 @@ flight='0307'
   avyawcon=[]
   betaBcon=[]  
   sigcon=[]
-  p2=plot([1,2],[1,2],/nodata)
+  p2=plot([1,2],[1,2],/nodata,dimensions=[1400,1000])
   column=dindgen(10,n_elements(flight))
   ;cgcleanup
   if runcalc eq 1 then begin
@@ -55,58 +56,32 @@ flight='0307'
         lwcnoPresCorcon=[]
         smoothsignalcon=[]
         for j=0,n_elements(flight)-1 do begin
-       g= nevBase(flight[j],ktype[k],kLevel[i])
+       g = nevBase(flight[j],ktype[k],kLevel[i])
+       
+       
+       
 
-       p2=scatterplot(g.timeForm[g.clearair],g.lwc[g.clearair],/overplot,dimensions=[1400,1000])
+       p2=scatterplot(g.pmb[g.clearair],g.lwcnoprescor[g.clearair],sym_color=colors[i],/overplot,dimensions=[1400,1000])
        ;p3=scatterplot(g.smoothsignal,g.lwc,dimensions=[1400,1000])
 
-
-
-  
-          ;common g, g
-          clearAir=g.clearAir
-          pmb=g.pmb
-          lwc=g.lwc
-          time=g.time
-          timeForm=g.timeForm
-          as=g.as
-          aiasMs=g.aiasMs
-          tas=g.tas
-          levelClearAir=g.levelClearAir
-          avroll=g.avroll
-          avpitch=g.avpitch
-          pLiq=g.pLiq
-          lwcnev1=g.lwcnev1[g.clearair]
-          lwcnoPresCor=g.lwcnoPresCor
-          flightString=g.flightString
-          kLiq=g.kLiq
-          cdpdbar_NRB=g.cdpdbar_NRB
-          cdpconc_NRB=g.cdpconc_NRB
-          trf=g.trf
-          lwc100=g.lwc100
-          avyaw=g.avyaw
+      
           
           
-          
-          
-          
-          
-          
-          pmbcon=[pmbcon,pmb]
-          lwccon=[lwccon,lwc]
-          ascon=[ascon,as]
-          cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
-          cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
-          trfcon=[trfcon,trf]
-          lwc100con=[lwc100con,lwc100]
-          lwcnev1con=[lwcnev1con,lwcnev1]
-          clearaircon=[clearaircon,clearair]
-          avpitchcon=[avpitchcon,avpitch]
-          avrollcon=[avrollcon,avroll]
-          ;betabcon=[betabcon,betab]
-          avyawcon=[avyawcon,avyaw]
-          lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor[g.clearair]]
-         smoothsignalcon=[smoothsignalcon,g.smoothsignal]
+          pmbcon=[pmbcon,g.pmb]
+          lwccon=[lwccon,g.lwc]
+          ascon=[ascon,g.as]
+          cdpdbar_NRBcon=[cdpdbar_NRBcon,g.cdpdbar_NRB]
+          cdpconc_NRBcon=[cdpconc_NRBcon,g.cdpconc_NRB]
+          trfcon=[trfcon,g.trf]
+          lwc100con=[lwc100con,g.lwc100]
+          lwcnev1con=[lwcnev1con,g.lwcnev1[g.clearair]]
+          clearaircon=[clearaircon,g.clearair]
+          avpitchcon=[avpitchcon,g.avpitch]
+          avrollcon=[avrollcon,g.avroll]
+          ;betabcon=[betabcon,g.betab]
+          avyawcon=[avyawcon,g.avyaw]
+          lwcnoPresCorcon=[lwcnoPresCorcon,g.lwcnoPresCor[g.clearair]]
+          smoothsignalcon=[smoothsignalcon,g.smoothsignal]
           print,' '
           print,' '
           print,'-------------------------------------------'
@@ -127,8 +102,8 @@ flight='0307'
 
 
         
-        lwcmean=mean(abs(lwc))
-        dev=stddev(lwc)
+        lwcmean=mean(abs(g.lwc))
+        dev=stddev(g.lwc)
         
         
           ave=(double(n_elements(clear))/double(n_elements(g.lwc)))*100.
@@ -136,7 +111,7 @@ flight='0307'
           print,'stddev=',dev
         
         ;p1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
-        p1=plot(g.timeFlight,g.rawsignal)
+        ;p1=plot(g.timeFlight,g.rawsignal)
         if ktype[k] eq 'indicated' and kLevel[i] eq '400' then begin
           lwcmean400ind=lwcmean
           lwcdev400ind=dev
