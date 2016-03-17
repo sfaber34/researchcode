@@ -372,12 +372,14 @@ endif
 correction=dindgen(n_elements(pmb),increment=0)
 smoothSignal=dindgen(n_elements(pmb),increment=0)
 cleari=dindgen(n_elements(pmb),increment=0)
+clearairitest=dindgen(n_elements(pmb),increment=0)
+selectedsignali=dindgen(n_elements(pmb),increment=0)
 
 ;----------SIGNAL RATIO----------
 rawSignal=(vlwccol*ilwccol)/(vlwcref*ilwcref)
 
 ;----------BASELINE DETECTION STEP----------
-int=230
+int=30
 
 for i=0,n_elements(pmb)-(int+1) do begin
   correction[i:i+int]=min(rawSignal[i:i+int])
@@ -391,45 +393,41 @@ for i=0,n_elements(pmb)-(int+1) do begin
 endfor
 
 
-;----------CREATE RUNNING AVERAGE----------
-smoothSignal=smooth(smoothSignal,20)
-smoothSignal2=smooth(smoothSignal,250)
+smoothsignal=smooth(smoothsignal,3)
 
 
-;----------FIND POWER RATIO THRESHOLD----------
-smoothpeakssort=sort(smoothSignal2)
-smoothpeakssorted=smoothSignal2[smoothpeakssort]
-
-;THRESHHOLD
-topmean=Mean(smoothpeakssorted[0:n_elements(smoothpeakssorted)*.92])
+sd=stddev(smoothsignal)
 
 
-;----------FILTER FOR POINTS LESS THAN THRESHOLD----------
-for i=0,n_elements(pmb)-1 do begin
-  if smoothSignal[i] lt topmean then begin
-    cleari[i]=1
+for n=0,n_elements(pmb)-1 do begin
+  if smoothsignal[n] lt sd*.7 then begin
+     clearairitest[n]=1
+  endif   
+endfor
+
+
+
+
+clearairb=where(clearairitest eq 1)
+
+selectedsignal=smoothsignal[clearairb]
+selectedsignalsort=sort(selectedsignal)
+selectedsignalsorted=selectedsignal[selectedsignalsort]
+thresholdout=selectedsignalsorted[n_elements(selectedsignalsort)*.6]
+
+for n=0,n_elements(pmb)-1 do begin
+  if smoothsignal[n] lt thresholdout  then begin
+    selectedsignali[n]=1
   endif
 endfor
 
+clearairb=where(selectedsignali eq 1)
 
-;----------REMOVE POWER RATIO OUTLIERS----------
-clearairb=where(cleari eq 1)
+clearairc=clearairb[50:n_elements(clearairb)-50]
 
-x=rawsignal[clearairb]
-xsort=sort(x)
-xsorted=x[xsort]
-cutoff=xsorted[n_elements(xsorted)*.92]
-
-for n=0,n_elements(clearairb)-1 do begin
-  if rawsignal[clearairb[n]] gt cutoff then clearairb[n]=0
-endfor
+clearair=clearairc
 
 
-;----------SET INDEXES OF CLEARAIR----------
-clearair=[]
-for n=0,n_elements(clearairb)-1 do begin
-  if clearairb[n] gt 0 then clearair=[clearair,clearairb[n]]
-endfor
 
 
 aSpan = n_elements(pmb) - 1
@@ -517,21 +515,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
-  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor}
-
-
-;REMOVE THIS
-  ;p1=plot(timeFlight,smoothSignal,/device,margin=[100,100,40,40],dimensions=[1000,800])
-  ;p2=scatterplot(timeFlight[clearair],rawsignal[clearair],/overplot,symbol='.',sym_color='red','')
-  
-  
-  
-;  p1.xtitle='Flight Time (sec)'
-;  p1.ytitle='Liquid Power Ratio'
-;  p1.font_size=18
-;  p1.xrange=[660,7900]
-  ;p1.yrange=[0,1]
-;REMOVE THIS
+  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
+  rawSignal:rawSignal, smoothSignal:smoothSignal}
 
   
 return,g

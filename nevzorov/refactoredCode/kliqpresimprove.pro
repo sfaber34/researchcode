@@ -5,7 +5,7 @@ pro kliqpresimprove
 count=0
 total=0
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
- ;flight='0727'
+;flight='0307'
   kLevel=['400']
   ktype=['indicated']
   colors=['red','blue','black']
@@ -32,6 +32,7 @@ total=0
   avyawcon=[]
   betaBcon=[]  
   sigcon=[]
+  p2=plot([1,2],[1,2],/nodata)
   column=dindgen(10,n_elements(flight))
   ;cgcleanup
   if runcalc eq 1 then begin
@@ -52,11 +53,15 @@ total=0
         hivscon=[]
         asdelcon=[]
         lwcnoPresCorcon=[]
+        smoothsignalcon=[]
         for j=0,n_elements(flight)-1 do begin
        g= nevBase(flight[j],ktype[k],kLevel[i])
-       p1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair],/overplot,dimensions=[1400,1000])
-  
-       
+
+       p2=scatterplot(g.timeForm[g.clearair],g.lwc[g.clearair],/overplot,dimensions=[1400,1000])
+       ;p3=scatterplot(g.smoothsignal,g.lwc,dimensions=[1400,1000])
+
+
+
   
           ;common g, g
           clearAir=g.clearAir
@@ -101,7 +106,7 @@ total=0
           ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
           lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor[g.clearair]]
-
+         smoothsignalcon=[smoothsignalcon,g.smoothsignal]
           print,' '
           print,' '
           print,'-------------------------------------------'
@@ -114,7 +119,7 @@ total=0
           print,count
           total=total+n_elements(g.pmb)
           print,total
-
+          print, 'FRACTION=',double(n_elements(where( g.lwc[g.clearair] gt .02)))/double(n_elements(g.clearair))
         endfor
         
       
@@ -122,8 +127,8 @@ total=0
 
 
         
-        lwcmean=mean(abs(lwcnoPresCorcon))
-        dev=stddev(lwcnoPresCorcon)
+        lwcmean=mean(abs(lwc))
+        dev=stddev(lwc)
         
         
           ave=(double(n_elements(clear))/double(n_elements(g.lwc)))*100.
