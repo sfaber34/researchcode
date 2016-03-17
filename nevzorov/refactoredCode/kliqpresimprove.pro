@@ -1,12 +1,11 @@
 ;CALCS AND PLOTS MEAN ERROR/STDEV FOR EACH K LIQ CALC
 
 pro kliqpresimprove
-
+;cgcleanup
+count=0
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight='0304'
-
-  ;flight=['0710','0725','0727','0728','0729']
-  kLevel=['400','600','500','400']
+;flight='0727'
+  kLevel=['400']
   ktype=['indicated']
   colors=['red','blue','black']
   yrange=[.05,-.05]
@@ -30,8 +29,7 @@ pro kliqpresimprove
   avrollcon=[]
   betabcon=[]
   avyawcon=[]
-  betaBcon=[]
-  lwcnoPresCorcon=[]
+  betaBcon=[]  
   sigcon=[]
   column=dindgen(10,n_elements(flight))
   ;cgcleanup
@@ -52,15 +50,12 @@ pro kliqpresimprove
         clearaircon=[]
         hivscon=[]
         asdelcon=[]
-        
+        lwcnoPresCorcon=[]
         for j=0,n_elements(flight)-1 do begin
        g= nevBase(flight[j],ktype[k],kLevel[i])
-       p3=plot(g.time,g.vlwccol)
-       stop   
-          print,''
-          print,'-------------------------------------------'
-          print, flight[j]
-          print, kLevel[i]
+       p1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair],/overplot,dimensions=[1400,1000])
+  
+       
   
           ;common g, g
           clearAir=g.clearAir
@@ -75,7 +70,7 @@ pro kliqpresimprove
           avroll=g.avroll
           avpitch=g.avpitch
           pLiq=g.pLiq
-          lwcnev1=g.lwcnev1
+          lwcnev1=g.lwcnev1[g.clearair]
           lwcnoPresCor=g.lwcnoPresCor
           flightString=g.flightString
           kLiq=g.kLiq
@@ -84,6 +79,10 @@ pro kliqpresimprove
           trf=g.trf
           lwc100=g.lwc100
           avyaw=g.avyaw
+          
+          
+          
+          
           
           
           
@@ -100,128 +99,35 @@ pro kliqpresimprove
           avrollcon=[avrollcon,avroll]
           ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
-          lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor]
+          lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor[g.clearair]]
 
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
-        print,'-------------------------------------------'
+          print,' '
+          print,' '
+          print,'-------------------------------------------'
+          print,''
+          print, flight[j]
+          print, kLevel[i]
           
           
-        endfor
-       
-        ;save,pmbcon,lwccon,ascon,cdpdbar_NRBcon,cdpconc_NRBcon,trfcon,lwc100con,lwcnev1con,clearaircon,avrollcon,avpitchcon,avyawcon,lwcnoPresCorcon,filename='cons.sav'
-        s=(g.vlwccol*g.ilwccol)/(g.vlwcref*g.ilwcref)
-        
-        h=histogram(lwccon,binsize=.02)
-        lwcconsort=sort(s)
-        lwcConsorted=s[lwcconsort]
-        
-        ;x=[2,5,10,20,25,30,40,80,100]
-        x=[80,90]
-        ;x=[100,140,180,220,350,400,600]
+          count=count+n_elements(g.clearair)
+          print,count
 
+        endfor
+        
+      
         
 
-        for m=0,n_elements(x)-1 do begin
-
-          for n=0,n_elements(x)-1 do begin
-        k=s
-        ;p2=plot(g.time,k)
-        
-        f=dindgen(n_elements(g.time),increment=0)
-        c=dindgen(n_elements(g.time),increment=0)
-        cleari=dindgen(n_elements(g.time),increment=0)
-        int=230
-        
-        for i=0,n_elements(g.time)-(int+1) do begin
-          f[i:i+int]=min(s[i:i+int])
-          i=i+int
-        endfor
-        
-        
-        for i=0,n_elements(g.time)-(int+1) do begin
-          c[i:i+int]=s[i:i+int]-f[i:i+int]
-          i=i+int
-        endfor
-        c=smooth(c,20)
-        
-        csort=sort(c)
-        csorted=c[csort]
-        csorted2=csorted[n_elements(csorted)*.52]
-        
-        for i=0,n_elements(g.time)-1 do begin
-          if c[i] lt csorted2 then cleari[i]=1
-         
-        
-        endfor
-        
-        cleari[0:200]=0
-        cleari[n_elements(cleari)-200:n_elements(cleari)-1]=0
-        
-        clear=where(cleari eq 1)
-        
-        
-;        p4=plot(g.time,f,'r',/overplot)        
-;        p4.yrange=[1.5,2.5]
-;        
-;        p5=plot(g.time,c,'r')
-;        p9=plot(g.time[clear],g.lwc[clear])
-        
-        ave=(double(n_elements(clear))/double(n_elements(g.lwc)))*100.
-        print,' '
-        print,' '
-        print,'-------------------------------------------'
-        print,'m=',m
-        print,'n=',n
-        print,'number=',ave
-        print,'max=',max(g.lwc[clear])
-        
-        p1=plot(g.time[clear],g.lwc[clear],dimensions=[1400,1000])
-        ;p2=plot(g.time,c,dimensions=[1400,1000],'r')
-        
-        stop
-        endfor
-        endfor
-        stop
-        var=pmbcon
-        xleft=min(var)-min(var)*.1
-        xright=max(var)+max(var)*.1
-        ytop=max(var)+max(var)*.1
-        ybottom=min(var)-min(var)*.1
-        
-        ;fit=linfit(var,lwcNoPresCorcon)
 
         
-        ;if j eq 0 then plot1=scatterplot(ascon,lwcNoPresCorcon, sym_size=.2)
-   
-;        plot1=scatterplot(lwc100con,lwcNoPresCorcon, sym_size=.2,dimensions=[1200,1200])
-;        plot2=scatterplot(lwc100con,lwcnev1con, sym_size=.2,sym_color='red',/overplot)
-;        plot2.xrange=[0,4]
-;        plot2.yrange=[0,4]
-;        plot3=plot([0,4],[0,4],'g',/overplot)
+        lwcmean=mean(abs(lwcnoPresCorcon))
+        dev=stddev(lwcnoPresCorcon)
         
-        lwcmean=mean(abs(lwc[clearair]))
-        dev=stddev(lwc[clearair])
         
-        print,lwcmean
-        print,dev
-        x=double(n_elements(clearair))/double(n_elements(pmb))*100.
-        print,x
+          ave=(double(n_elements(clear))/double(n_elements(g.lwc)))*100.
+          print,'mean=',lwcmean
+          print,'stddev=',dev
         
-        ;p1=scatterplot(g.time[g.clearair],g.lwc[g.clearair])
-        p1=scatterplot(g.pmb,g.lwc)
+        ;p1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
         
         if ktype[k] eq 'indicated' and kLevel[i] eq '400' then begin
           lwcmean400ind=lwcmean
@@ -255,11 +161,11 @@ pro kliqpresimprove
   
     endfor
     
-    endfor
-    
+  endfor
+    stop
     endif
     
-   ;if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansBB'
+   if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansBB'
    if runcalc eq 1 then stop
    
     
@@ -288,16 +194,100 @@ pro kliqpresimprove
    plot2.xrange=[-1,6]
    plot2.xminor=0
 
-   ;plot2.Save,'meanerrosB.ps'
+   stop
+   return
+
+ end
 
 
 
-;  presHeadersa=['Flight Day','900 mb','','','600 mb','','','400mb','','']
-;  presHeadersb=['Slope','Intercept','Abs Mean Error','Slope','Intercept','Abs Mean Error','Slope','Intercept','Abs Mean Error']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;for m=0,n_elements(x)-1 do begin
 ;
-;  write_csv,'kAsIndComp.csv',column,header=presHeadersa
-;  errorComp, column
-stop
-  return
+;  for n=0,n_elements(x)-1 do begin
+;    k=s
+;    ;p2=plot(g.time,k)
+;
+;    f=dindgen(n_elements(g.time),increment=0)
+;    c=dindgen(n_elements(g.time),increment=0)
+;    cleari=dindgen(n_elements(g.time),increment=0)
+;    int=230
+;
+;    for i=0,n_elements(g.time)-(int+1) do begin
+;      f[i:i+int]=min(s[i:i+int])
+;      i=i+int
+;    endfor
+;
+;
+;    for i=0,n_elements(g.time)-(int+1) do begin
+;      c[i:i+int]=s[i:i+int]-f[i:i+int]
+;      i=i+int
+;    endfor
+;    c=smooth(c,20)
+;
+;    csort=sort(c)
+;    csorted=c[csort]
+;    csorted2=csorted[n_elements(csorted)*.52]
+;
+;    for i=0,n_elements(g.time)-1 do begin
+;      if c[i] lt csorted2 then cleari[i]=1
+;
+;
+;    endfor
+;
+;    cleari[0:200]=0
+;    cleari[n_elements(cleari)-200:n_elements(cleari)-1]=0
+;
+;    clear=where(cleari eq 1)
 
-end
+
+    ;        p4=plot(g.time,f,'r',/overplot)
+    ;        p4.yrange=[1.5,2.5]
+    ;
+    ;        p5=plot(g.time,c,'r')
+    ;        p9=plot(g.time[clear],g.lwc[clear])
+    
+    ;plot2.Save,'meanerrosB.ps'
+
+
+
+    ;  presHeadersa=['Flight Day','900 mb','','','600 mb','','','400mb','','']
+    ;  presHeadersb=['Slope','Intercept','Abs Mean Error','Slope','Intercept','Abs Mean Error','Slope','Intercept','Abs Mean Error']
+    ;
+    ;  write_csv,'kAsIndComp.csv',column,header=presHeadersa
+    ;  errorComp, column
+    ;save,pmbcon,lwccon,ascon,cdpdbar_NRBcon,cdpconc_NRBcon,trfcon,lwc100con,lwcnev1con,clearaircon,avrollcon,avpitchcon,avyawcon,lwcnoPresCorcon,filename='cons.sav'
+    ;s=(g.vlwccol*g.ilwccol)/(g.vlwcref*g.ilwcref)
+    ;
+    ;h=histogram(lwccon,binsize=.02)
+    ;lwcconsort=sort(s)
+    ;lwcConsorted=s[lwcconsort]
+    ;
+    ;;x=[2,5,10,20,25,30,40,80,100]
+    ;x=[80,90]
+    ;;x=[100,140,180,220,350,400,600]

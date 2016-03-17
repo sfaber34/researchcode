@@ -1,6 +1,6 @@
 function nevbase, flightDay, airspeedType, level
 
-RESOLVE_ROUTINE, 'convertTime',/is_function,/no_recompile
+RESOLVE_ROUTINE, 'convertTime',/is_function
 RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
 
 
@@ -185,11 +185,6 @@ t={hour:hour,min:min,sec:sec,timeForm:timeForm}
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-vtwcrefmean=mean(vtwcref)
-
-
-
-
 if flightDay eq '0807' then begin
   flightString='08-07-13'
   aStart=convertTime(12,41,00)
@@ -349,9 +344,9 @@ endif
 ;K LIQUID
 
 if cope eq 1 then begin
-  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*tas^(-0.273777)+(0.399143) ;900 indicated
-  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*tas^(-0.0628865)+(-1.67763) ;600 indicated
-  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(36.0089)*tas^(-1.26173)+(1.03362) ;400 indicated
+  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasms^(-0.273777)+(0.399143) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*aiasms^(-0.0628865)+(-1.67763) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(36.0089)*aiasms^(-1.26173)+(1.03362) ;400 indicated
   
   if (airspeedType eq 'true') and (level eq '900') then kLiq=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
   if (airspeedType eq 'true') and (level eq '600') then kLiq=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
@@ -371,16 +366,17 @@ endif
 
 
 
-;------------------------------------------FILTERS---------------------------------------------------------------------------------------------------------------------------
+;------------------------------------------FILTER CLEAR AIR---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-rawSignal=(vlwccol*ilwccol)/(vlwcref*ilwcref)
-
-
 
 correction=dindgen(n_elements(pmb),increment=0)
 smoothSignal=dindgen(n_elements(pmb),increment=0)
 cleari=dindgen(n_elements(pmb),increment=0)
+
+;----------SIGNAL RATIO----------
+rawSignal=(vlwccol*ilwccol)/(vlwcref*ilwcref)
+
+;----------BASELINE DETECTION STEP----------
 int=230
 
 for i=0,n_elements(pmb)-(int+1) do begin
@@ -393,20 +389,47 @@ for i=0,n_elements(pmb)-(int+1) do begin
   smoothSignal[i:i+int]=rawSignal[i:i+int]-correction[i:i+int]
   i=i+int
 endfor
+
+
+;----------CREATE RUNNING AVERAGE----------
 smoothSignal=smooth(smoothSignal,20)
+smoothSignal2=smooth(smoothSignal,250)
 
-smoothSignalsort=sort(smoothSignal)
-smoothSignalsorted=smoothSignal[smoothSignalsort]
-smoothSignalsorted2=smoothSignalsorted[n_elements(smoothSignalsorted)*.54]
 
+;----------FIND POWER RATIO THRESHOLD----------
+smoothpeakssort=sort(smoothSignal2)
+smoothpeakssorted=smoothSignal2[smoothpeakssort]
+
+;THRESHHOLD
+topmean=Mean(smoothpeakssorted[0:n_elements(smoothpeakssorted)*.92])
+
+
+;----------FILTER FOR POINTS LESS THAN THRESHOLD----------
 for i=0,n_elements(pmb)-1 do begin
-  if smoothSignal[i] lt smoothSignalsorted2 then cleari[i]=1
+  if smoothSignal[i] lt topmean then begin
+    cleari[i]=1
+  endif
 endfor
 
-cleari[0:200]=0
-cleari[n_elements(cleari)-200:n_elements(cleari)-1]=0
 
-clearair=where(cleari eq 1)
+;----------REMOVE POWER RATIO OUTLIERS----------
+clearairb=where(cleari eq 1)
+
+x=rawsignal[clearairb]
+xsort=sort(x)
+xsorted=x[xsort]
+cutoff=xsorted[n_elements(xsorted)*.92]
+
+for n=0,n_elements(clearairb)-1 do begin
+  if rawsignal[clearairb[n]] gt cutoff then clearairb[n]=0
+endfor
+
+
+;----------SET INDEXES OF CLEARAIR----------
+clearair=[]
+for n=0,n_elements(clearairb)-1 do begin
+  if clearairb[n] gt 0 then clearair=[clearair,clearairb[n]]
+endfor
 
 
 
@@ -444,11 +467,8 @@ endfor
 
 
 
-
-
-;clearAir=where(baselineI eq 1)
 levelClearAir=where(baselineIB eq 1)
-signal=where(baselineI eq 0)
+
 
 
 
@@ -496,7 +516,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
   clearAir:clearAir, levelClearAir:levelClearAir,timeFlight:timeFlight,$
   flightString:flightString, kLiq:kLiq, baselinedrift:baselinedrift,$
-  aiasMs:aiasMs, tas:tas, signal:signal,vlwcref:vlwcref, ilwcref:ilwcref,$
+  aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor}
