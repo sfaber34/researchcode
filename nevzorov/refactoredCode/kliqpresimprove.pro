@@ -1,11 +1,11 @@
 ;CALCS AND PLOTS MEAN ERROR/STDEV FOR EACH K LIQ CALC
 
 pro kliqpresimprove
-;cgcleanup
+cgcleanup
 count=0
 total=0
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-;flight='0307'
+flight='0307'
   kLevel=['400']
   ktype=['indicated']
   colors=['red','blue','black']
@@ -136,7 +136,7 @@ total=0
           print,'stddev=',dev
         
         ;p1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
-        
+        p1=plot(g.timeFlight,g.rawsignal)
         if ktype[k] eq 'indicated' and kLevel[i] eq '400' then begin
           lwcmean400ind=lwcmean
           lwcdev400ind=dev

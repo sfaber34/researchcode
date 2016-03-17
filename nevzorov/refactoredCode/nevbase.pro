@@ -376,8 +376,12 @@ clearairitest=dindgen(n_elements(pmb),increment=0)
 selectedsignali=dindgen(n_elements(pmb),increment=0)
 
 ;----------SIGNAL RATIO----------
-rawSignal=(vlwccol*ilwccol)/(vlwcref*ilwcref)
 
+
+rawSignal=((vlwccol*ilwccol)/(vlwcref*ilwcref))
+signalrange=(mean(rawSignal))-abs(min(rawSignal))
+;factor=((1/alog(mean(rawSignal))-1.))/mean(rawSignal)
+rawSignal=rawSignal^((1./(signalRange/2.)))
 ;----------BASELINE DETECTION STEP----------
 int=30
 
