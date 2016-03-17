@@ -3,8 +3,9 @@
 pro kliqpresimprove
 ;cgcleanup
 count=0
+total=0
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-;flight='0727'
+ ;flight='0727'
   kLevel=['400']
   ktype=['indicated']
   colors=['red','blue','black']
@@ -111,6 +112,8 @@ count=0
           
           count=count+n_elements(g.clearair)
           print,count
+          total=total+n_elements(g.pmb)
+          print,total
 
         endfor
         

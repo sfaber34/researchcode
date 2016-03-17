@@ -54,7 +54,7 @@ pro histogram2
         lwcnoPresCorcon=[]
         for j=0,n_elements(flight)-1 do begin
           g= nevBase(flight[j],ktype[k],kLevel[i])
-          p1=scatterplot(g.pmb[g.clearair],g.lwcNoPresCor[g.clearair],/overplot,dimensions=[1400,1000])
+          ;p1=scatterplot(g.pmb[g.clearair],g.lwcNoPresCor[g.clearair],/overplot,dimensions=[1400,1000])
 
 
 
@@ -140,18 +140,21 @@ pro histogram2
 
 
   if runcalc eq 2 then begin
+    
+    cgcleanup
     restore, 'hist.sav'
    
    
-    inc=.005
+    inc=.01
     h=histogram(lwcnev1con,binsize=inc)
-    ticks=['.02','.04',' ',' ']
+    ticks=['.01','.02','.03','.04','.05','.06',' ',' ']
 
-
-    plot1=barplot(dindgen(n_elements(h)),h,histogram=1)
+stop
+    plot1=barplot(dindgen(n_elements(h)),h,histogram=1,dimensions=[1000,700])
     plot1.ylog=1
     plot1.xtickname=ticks
     plot1.xtext_orientation=270
+    plot1.YRANGE=[0,100000]
     
   endif
 

@@ -432,8 +432,6 @@ for n=0,n_elements(clearairb)-1 do begin
 endfor
 
 
-
-
 aSpan = n_elements(pmb) - 1
 
 BetaI=dindgen(n_elements(pmb),start=0,increment=0)
@@ -522,6 +520,20 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor}
 
 
+;REMOVE THIS
+  ;p1=plot(timeFlight,smoothSignal,/device,margin=[100,100,40,40],dimensions=[1000,800])
+  ;p2=scatterplot(timeFlight[clearair],rawsignal[clearair],/overplot,symbol='.',sym_color='red','')
+  
+  
+  
+;  p1.xtitle='Flight Time (sec)'
+;  p1.ytitle='Liquid Power Ratio'
+;  p1.font_size=18
+;  p1.xrange=[660,7900]
+  ;p1.yrange=[0,1]
+;REMOVE THIS
+
+  
 return,g
 
 end
