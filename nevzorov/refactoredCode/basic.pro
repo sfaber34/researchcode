@@ -1,13 +1,11 @@
 pro basic
 
-g=nevBase('0807','indicated','400')
-stop
-stuff=8
+stuff=10
 
 flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-flight='0307'
-kLevel=['400','500','600','700']
-ktype=['indicated']
+;flight='0307'
+kLevel=['400','600','900']
+ktype=['true']
 colors=['black','red','green','blue','magenta','yellow','purple','orange','grey']
 
 mean400=[]
@@ -39,6 +37,74 @@ clearaircon=[]
 hivscon=[]
 asdelcon=[]
 errorcon=[]
+presdevcon=[]
+
+
+if stuff eq 10 then begin
+  for j=0,n_elements(klevel)-1 do begin
+    lwccon=[]
+    pmbcon=[]
+    levelerrorcon=[]
+    for i=0,n_elements(flight)-1 do begin
+    g= nevBase(flight[i],ktype[0],kLevel[j])
+    lwccon=[lwccon,abs(g.lwcnoprescor[g.clearair])]
+    pmbcon=[pmbcon,g.pmb[g.clearair]]
+    print,flight[i],' ',kLevel[j]
+    
+    
+  endfor
+  
+  pmbconsort=sort(pmbcon)
+  pmbconsorted=pmbcon[pmbconsort]
+  lwcconsorted=lwccon[pmbconsort]
+
+  pmbsmooth=smooth(pmbconsorted,50)
+  lwcsmooth=smooth(lwcconsorted,50)
+  
+  if kLevel[j] eq '400' then begin
+    pmbsmooth400=pmbsmooth
+    lwcsmooth400=lwcsmooth
+  endif
+  if kLevel[j] eq '600' then begin
+    pmbsmooth600=pmbsmooth
+    lwcsmooth600=lwcsmooth
+  endif
+  if kLevel[j] eq '900' then begin
+    pmbsmooth900=pmbsmooth
+    lwcsmooth900=lwcsmooth
+  endif
+  ;plot1=plot(pmbsmooth,lwcsmooth,dimensions=[1400,1000])
+endfor
+  plot2=plot(pmbsmooth400,lwcsmooth400,'r',dimensions=[1400,1000])
+  plot3=plot(pmbsmooth600,lwcsmooth600,'blue',/overplot)
+  plot3=plot(pmbsmooth900,lwcsmooth900,/overplot)
+  plot2.xrange=[1000,400]
+  
+  stop
+endif
+
+
+
+
+
+
+if stuff eq 9 then begin
+  for i=0,n_elements(flight)-1 do begin
+    g= nevBase(flight[i],ktype[0],kLevel[0])
+      lwccon=[lwccon,abs(g.lwcnoprescor[g.clearair])]
+      pmbcon=[pmbcon,abs(600-g.pmb[g.clearair])]
+      print,flight[i]
+  endfor
+  
+  
+  plot1=scatterplot(pmbcon,lwccon,dimensions=[1400,1000])
+  stop
+endif
+
+
+
+
+
 
 if stuff eq 8 then begin
   

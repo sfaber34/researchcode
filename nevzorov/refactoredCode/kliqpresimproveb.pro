@@ -3,8 +3,8 @@
 pro kliqpresimproveB
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  kLevel=['400']
-  ktype=['indicated']
+  kLevel=['400','600','900']
+  ktype=['indicated','true']
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
@@ -60,26 +60,26 @@ pro kliqpresimproveB
 
           ;common g, g
           clearAir=g.clearAir
-          pmb=g.pmb
-          lwc=g.lwc
-          time=g.time
-          timeForm=g.timeForm
-          as=g.as
-          aiasMs=g.aiasMs
-          tas=g.tas
-          levelClearAir=g.levelClearAir
-          avroll=g.avroll
-          avpitch=g.avpitch
-          pLiq=g.pLiq
-          lwcnev1=g.lwcnev1
-          flightString=g.flightString
-          kLiq=g.kLiq
-          cdpdbar_NRB=g.cdpdbar_NRB
-          cdpconc_NRB=g.cdpconc_NRB
-          trf=g.trf
-          lwc100=g.lwc100
-          avyaw=g.avyaw
-          lwcNoPresCor=g.lwcNoPresCor
+          pmb=g.pmb[clearair]
+          lwc=g.lwc[clearair]
+          time=g.time[clearair]
+          timeForm=g.timeForm[clearair]
+          as=g.as[clearair]
+          aiasMs=g.aiasMs[clearair]
+          tas=g.tas[clearair]
+          levelClearAir=g.levelClearAir[clearair]
+          avroll=g.avroll[clearair]
+          avpitch=g.avpitch[clearair]
+          pLiq=g.pLiq[clearair]
+          lwcnev1=g.lwcnev1[clearair]
+          flightString=g.flightString[clearair]
+          kLiq=g.kLiq[clearair]
+          cdpdbar_NRB=g.cdpdbar_NRB[clearair]
+          cdpconc_NRB=g.cdpconc_NRB[clearair]
+          trf=g.trf[clearair]
+          lwc100=g.lwc100[clearair]
+          avyaw=g.avyaw[clearair]
+          lwcNoPresCor=g.lwcNoPresCor[clearair]
 
 
           pmbcon=[pmbcon,pmb]
@@ -96,7 +96,7 @@ pro kliqpresimproveB
           avyawcon=[avyawcon,avyaw]
           lwcNoPresCorcon=[lwcNoPresCorcon,lwcNoPresCor]
           
-          error=lwcnev1-lwc
+          error=lwc
 
           if j eq 0 then plot1=scatterplot(pmb,error, sym_size=.2,sym_color='black')
           if j gt 0 then plot1=scatterplot(pmb,error,sym_color='black',/overplot, sym_size=.2)
@@ -235,7 +235,7 @@ pro kliqpresimproveB
   plot1.title='All Flights Clear Air LWC Mean Error - No Pressure Correction'
   plot1.ytitle='Absolute Mean LWC Error g m!U-3!N'
   plot1.xtitle='Flight Day'
-  plot1.yrange=[-0.005,0.015]
+  ;plot1.yrange=[-0.005,0.015]
 
   ;leg1=legend(target=[plot1,plot2],shadow=0)
 
@@ -265,7 +265,7 @@ pro kliqpresimproveB
   plot2.title='All Flights Clear Air LWC Mean Error - With Pressure Correction'
   plot2.ytitle='Absolute Mean LWC Error g m!U-3!N'
   plot2.xtitle='Flight Day'
-  plot2.yrange=[-0.005,0.015]
+  ;plot2.yrange=[-0.005,0.015]
 
   ;leg1=legend(target=[plot1,plot2],shadow=0)
 
@@ -274,7 +274,7 @@ pro kliqpresimproveB
   plot3.xTICKVALUES=[0,1,2,3,4,5,6,7,8,9]
   plot3.xrange=[-1,9]
   plot3.xminor=0
-
+stop
   plot3.Save,'meanpreserrosC.ps'
 
 

@@ -1,7 +1,7 @@
 ;CALCS AND PLOTS MEAN ERROR/STDEV FOR EACH K LIQ CALC
 
 pro histogram2
-  ;cgcleanup
+  cgcleanup
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   
   ;flight=['0710','0725','0727','0728','0729']
@@ -143,7 +143,7 @@ pro histogram2
     
     cgcleanup
     restore, 'hist.sav'
-   
+   stop
    
     inc=.005
     h=histogram(lwcnev1con,binsize=inc)
@@ -160,6 +160,14 @@ pro histogram2
     plot1.xminor=0
     plot1.yticklen=1
     plot1.ysubticklen=.08
+    
+    
+    plot1.xtickinterval=.005
+    plot1.xrange=[ticks2[0],ticks2[10]]
+    plot1.xtitle='LWC g m!u-3!n'
+    plot1.ytitle='Frequency'
+    plot1.font_size=20
+    
   endif
 
 stop

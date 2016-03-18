@@ -6,13 +6,12 @@ count=0
 total=0
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   ;flight='1217'
-  kLevel=['400','500','600','700']
-  kLevel=['400']
-  ktype=['indicated']
+  kLevel=['400','600','900']
+  ktype=['indicated','true']
   colors=['red','blue','black','purple']
   yrange=[.05,-.05]
   xrange=[60,150]
-  runcalc=1
+  runcalc=0
 
   mean400=[]
   stdev400=[]
@@ -61,7 +60,7 @@ total=0
        
        
 
-       p2=scatterplot(g.pmb[g.clearair],g.lwcnoprescor[g.clearair],sym_color=colors[i],/overplot,dimensions=[1400,1000])
+       p2=scatterplot(g.as[g.clearair],g.lwc[g.clearair],sym_color=colors[i],/overplot,dimensions=[1400,1000])
        ;p3=scatterplot(g.smoothsignal,g.lwc,dimensions=[1400,1000])
 
       
@@ -87,14 +86,14 @@ total=0
           print,'-------------------------------------------'
           print,''
           print, flight[j]
-          print, kLevel[i]
+          print, ktype[k],kLevel[i]
           
           
           count=count+n_elements(g.clearair)
           print,count
           total=total+n_elements(g.pmb)
           print,total
-          print, 'FRACTION=',double(n_elements(where( g.lwc[g.clearair] gt .02)))/double(n_elements(g.clearair))
+          print, 'FRACTION=',double(n_elements(g.clearair))/double(n_elements(g.lwc))
         endfor
         
       
@@ -102,8 +101,8 @@ total=0
 
 
         
-        lwcmean=mean(abs(g.lwc))
-        dev=stddev(g.lwc)
+        lwcmean=mean(abs(g.lwc[g.clearair]))
+        dev=stddev(g.lwc[g.clearair])
         
         
           ave=(double(n_elements(clear))/double(n_elements(g.lwc)))*100.
@@ -145,7 +144,7 @@ total=0
     endfor
     
   endfor
-    stop
+
     endif
     
    if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='kAsLwcMeansBB'
@@ -176,8 +175,11 @@ total=0
    plot2.xTICKVALUES=[0,1,2,3,4,5,6]
    plot2.xrange=[-1,6]
    plot2.xminor=0
-
+   plot1.yrange=[-.005,.055]
    stop
+   
+   plot1.save,'kperformancewithprescorecomp.ps'
+   
    return
 
  end

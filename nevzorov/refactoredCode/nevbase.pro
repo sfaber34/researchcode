@@ -1,7 +1,18 @@
 function nevbase, flightDay, airspeedType, level
 
-RESOLVE_ROUTINE, 'convertTime',/is_function
-RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
+cd,current=h
+h=STRMATCH(h, '*/nevzorov/*')
+
+if !version.OS_FAMILY eq 'unix' then begin
+  if h ne 1 then cd,'/Volumes/sfaber1/research/nevzorov/refactoredCode'
+endif else begin
+  if h ne 1 then cd,'Z:\research\nevzorov/refactoredCode'
+endelse
+
+
+
+;RESOLVE_ROUTINE, 'convertTime',/is_function
+;RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
 
 
 common t,t
@@ -565,7 +576,7 @@ print,'-----------LARAMIE----------------'
 print,'LEVELS LARAMIE = 400, 500, 600, 700'
 print,'DAYS LARAMIE = 0307, ||0304||'
 print,''
-print,''
-print,''
+print,'-------------COMMANDS-----------------'
+print,'SUPERSCRIPT = !U *** !N'
 end
 

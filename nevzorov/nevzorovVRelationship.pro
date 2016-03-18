@@ -4,7 +4,7 @@ pro nevzorovVRelationship
 airspeedType='indicated'
 
 ;select flight level (900,600,400)
-flightLevel='900'
+flightLevel='600'
 
 ;select plots
 genplots='airspeedCon'
