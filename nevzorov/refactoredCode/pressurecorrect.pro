@@ -19,27 +19,24 @@ avpitch=g.avpitch
 pLiq=g.pLiq
 lwc=g.lwc
 lwcnev1=g.lwcnev1
-lwcAsCorrDiff=g.lwcAsCorrDiff
-lwcPresCorDiff=g.lwcPresCorDiff
-lwcPresCor=g.lwcPresCor
-linPresCor=g.linPresCor
+;lwcAsCorrDiff=g.lwcAsCorrDiff
+;lwcPresCorDiff=g.lwcPresCorDiff
+;lwcPresCor=g.lwcPresCor
+;linPresCor=g.linPresCor
 flightString=g.flightString
 kLiq=g.kLiq
-clearAirLargeErr=g.clearAirLargeErr
-clearAirLargeErrex=g.clearAirLargeErrex
-levelClearAirLargeErrex=g.levelClearAirLargeErrex
-linPresCorSteepClimb=g.linPresCorSteepClimb
-baselineClimbTimesNon=g.baselineClimbTimesNon
-baselineClimbTimesNonLevel=g.baselineClimbTimesNonLevel
+;clearAirLargeErr=g.clearAirLargeErr
+;clearAirLargeErrex=g.clearAirLargeErrex
+;levelClearAirLargeErrex=g.levelClearAirLargeErrex
+;linPresCorSteepClimb=g.linPresCorSteepClimb
+;baselineClimbTimesNon=g.baselineClimbTimesNon
+;baselineClimbTimesNonLevel=g.baselineClimbTimesNonLevel
 ;pmbdifftime=g.pmbdifftime
 ;pmbdiffTimeNon=g.pmbdiffTimeNon
 ;pmbdiff=g.pmbdiff
 ;pmbdiffTimeNonlevel=g.pmbdiffTimeNonlevel
 ;pmbdifflevel=g.pmbdifflevel
-hivs=g.hivs
-lowhivs=g.lowhivs
-highhivs=g.highhivs
-lowhivslevel=g.lowhivslevel
+
 lwc100=g.lwc100
 cdpdbar_NRB=g.cdpdbar_NRB
 cdpconc_NRB=g.cdpconc_NRB
@@ -52,7 +49,7 @@ lwc640660ex=where(((timeform lt 142000) or (timeform gt 152400)) and lwc lt .05)
 lwc640660non=where(((timeform lt 142000) or (timeform gt 152400)) and lwc lt .05 and (abs(avRoll) lt 5) and (avpitch lt (mean(avpitch) + 2) and avpitch gt (mean(avpitch) - 2)))
 
 plot1=scatterplot(pmb[clearair],lwc[clearair],symbol='+',sym_size=.45,dimensions=[1200,900],name='Clear Air Points')
-plot2=scatterplot(pmb[lowhivslevel],lwc[lowhivslevel],symbol='+',sym_size=.45,sym_color='red',/overplot, name='Level Clear Air Points')
+
 
 lin1Left=300
 lin1Right=1000

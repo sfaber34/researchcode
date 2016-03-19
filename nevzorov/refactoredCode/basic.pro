@@ -1,11 +1,11 @@
 pro basic
 
-stuff=10
+stuff=13
 
-flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 ;flight='0307'
-kLevel=['400','600','900']
-ktype=['true']
+kLevel=['400','500','600','700']
+ktype=['indicated']
 colors=['black','red','green','blue','magenta','yellow','purple','orange','grey']
 
 mean400=[]
@@ -38,6 +38,144 @@ hivscon=[]
 asdelcon=[]
 errorcon=[]
 presdevcon=[]
+
+
+if stuff eq 13 then begin
+  level=['400','700']
+  flightb=['0304','0307']
+colors=['red','green','blue','black']
+cgcleanup
+for i=0,n_elements(flightb)-1 do begin
+  
+  yr=[-.3,.3]
+  ;xr=[]
+  ;yd=[-.4,.4]
+  ;xd=[]
+  
+  
+  
+  g= nevBase(flightb[i],'indicated','400')
+  
+  p2=plot(g.timeFlight,g.lwc,dimensions=[1400,1000],title=flightb[i])
+  p1=scatterplot(g.timeFlight[g.clearair],g.lwc[g.clearair],sym_color='red',/overplot)
+  
+  endfor
+ ; thresh2=.005
+  
+  ;raw=((g.vlwccol)-(g.vlwcref))
+  
+;  u=sort(raw)
+;  u=reverse(u)
+;  u1=u[0]
+;  u2=u[50]
+;  
+;  x1=min([u1,u2])
+;  x2=max([u1,u2])
+;  thresh2=.0045*mean(raw[x1:x2])
+;  
+;  
+;  
+;  
+;  print,thresh2/mean(raw[x1:x2])
+;
+;
+;  int=10
+;correction=dindgen(n_elements(g.pmb),increment=0)
+;smooth=dindgen(n_elements(g.pmb),increment=0)
+;
+; for a=0,n_elements(g.pmb)-(int+1) do begin
+;  correction[a:a+int]=min(raw[a:a+int])
+;  a=a+int
+;endfor
+;
+;
+;for b=0,n_elements(g.pmb)-(int+1) do begin
+;  smooth[b:b+int]=raw[b:b+int]-correction[b:b+int]
+;  b=b+int
+;endfor
+;
+;  diff=ts_diff(smooth,1)
+;    
+;    
+; clear=where(abs(diff) le thresh2 and shift(abs(diff),1) le thresh2 and shift(abs(diff),-1) le thresh2)
+;    
+;
+;
+;p2=plot(g.timeFlight,g.lwc,dimensions=[1400,1000],title=flightb[i])
+;p1=scatterplot(g.timeFlight[clear],g.lwc[clear],sym_color='red',/overplot)
+;  p1.yrange=[-.06,.06]
+;  print, double(n_elements(clear))/double(n_elements(g.lwc))
+;
+;  endfor
+
+
+    
+;    h=histogram((abs(g.lwc-g.lwc100)/abs(g.lwc100)),binsize=2,max=100)
+;    p1=barplot((dindgen(n_elements(h))),h,ylog=1)
+;    stop
+;    x=smooth(g.timeFlight,.1*n_elements(g.timeFlight))
+;    y=smooth(abs(g.lwc-g.lwc100)/abs(g.lwc100),.1*n_elements(g.timeFlight))
+;    p1=plot(x,y,dimensions=[1400,1000],'black',/overplot)
+    ;p2=plot(g.timeFLight,g.lwc100,dimensions=[1400,1000],'red',/overplot)
+
+
+
+
+endif
+
+
+
+if stuff eq 20 then begin
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  for flight=0, n_elements(flight)-1 do begin
+  g= nevBase(flight[i],'indicated','400')
+  print, max(g.rawsignal)
+  
+  endfor
+
+  stop
+endif
+
+
+
+
+
+
+
+if stuff eq 12 then begin
+  g= nevBase('0307','indicated','400')
+
+  diff=g.lwc-g.lwc100
+
+  p1=plot(g.timeFlight,diff,dimensions=[1400,1000])
+  p1=plot(g.timeFlight,g.lwc100,/overplot,'r')
+  p1.xtitle="Alexei's LWC g m!U-3!N"
+  p1.ytitle="LWC Difference (Alexei's - Mine) g m!U-3!N"
+  p1.FONT_SIZE=20
+  p1.xrange=[-.02,2]
+  p1.yrange=[-.2,.05]
+
+  stop
+endif
+
+
+
+if stuff eq 11 then begin
+  g= nevBase('0815','indicated','400')
+  
+  diff=g.lwcnev1-g.lwc
+  
+  p1=scatterplot(g.lwcnev1,diff,dimensions=[1400,1000])
+  p1.xtitle="Alexei's LWC g m!U-3!N"
+  p1.ytitle="LWC Difference (Alexei's - Mine) g m!U-3!N"
+  p1.FONT_SIZE=20
+  p1.xrange=[-.02,2]
+  p1.yrange=[-.2,.05]
+  
+  stop
+endif
+
+
 
 
 if stuff eq 10 then begin

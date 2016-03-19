@@ -30,6 +30,8 @@ if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '0814' then nclPath='Z:\research\nevzorov\data\081413\20130814.c1.nc'
   if flightDay eq '0815' then nclPath='Z:\research\nevzorov\data\081513\20130815.c1.nc'
   if flightDay eq '0803' then nclPath='Z:\research\nevzorov\data\080313\20130803.c1.nc'
+  if flightDay eq '0307' then nclPath='Z:\research\nevzorov\data\030716\20160307.c1.nc'
+  if flightDay eq '0304' then nclPath='Z:\research\nevzorov\data\030416\20160304.c1.nc'
 endif else begin
   if flightDay eq '0709' then nclPath='../data/070913/20130709.c1.nc'
   if flightDay eq '0710' then nclPath='../data/20130710.c1.nc'
@@ -137,7 +139,7 @@ if cope ne 1 then lwcNev1=0
 
 ;liquid water content from Nevzorov probe [g/m^3]
 if cope eq 1 then lwcNev2=loadvar('nevlwc2', filename=nclPath)
-if cope ne 1 then lwcNev1=0
+if cope ne 1 then lwcNev2=0
 
 ;Sideslip Angle [deg]
 betaB=loadvar('beta', filename=nclPath)
@@ -375,13 +377,20 @@ selectedsignali=dindgen(n_elements(pmb),increment=0)
 ;----------SIGNAL RATIO----------
 
 
-rawSignal=((vlwccol*ilwccol)/(vlwcref*ilwcref))
-signalrange=(mean(rawSignal))-abs(min(rawSignal))
-rawSignal=rawSignal^((1./(signalRange/2.)))
+rawSignal=((vlwccol)-(vlwcref))
+
+u=sort(rawSignal)
+u=reverse(u)
+u1=u[0]
+u2=u[50]
+
+x1=min([u1,u2])
+x2=max([u1,u2])
+thresh2=.0045*mean(rawSignal[x1:x2])
 
 
 ;----------BASELINE DETECTION STEP----------
-int=30
+int=10
 
 for i=0,n_elements(pmb)-(int+1) do begin
   correction[i:i+int]=min(rawSignal[i:i+int])
@@ -395,39 +404,13 @@ for i=0,n_elements(pmb)-(int+1) do begin
 endfor
 
 
-smoothsignal=smooth(smoothsignal,3)
+diff=ts_diff(smoothSignal,1)
+    
+    
+ clearair=where(abs(diff) le thresh2 and shift(abs(diff),1) le thresh2 and shift(abs(diff),-1) le thresh2)
 
 
-sd=stddev(smoothsignal)
-
-
-for n=0,n_elements(pmb)-1 do begin
-  if smoothsignal[n] lt sd*.7 then clearairprei[n]=1
-endfor
-
-
-
-
-clearairb=where(clearairprei eq 1)
-
-selectedsignal=smoothsignal[clearairb]
-selectedsignalsort=sort(selectedsignal)
-selectedsignalsorted=selectedsignal[selectedsignalsort]
-thresholdout=selectedsignalsorted[n_elements(selectedsignalsort)*.6]
-
-for n=0,n_elements(pmb)-1 do begin
-  if smoothsignal[n] lt thresholdout  then begin
-    selectedsignali[n]=1
-  endif
-endfor
-
-clearairb=where(selectedsignali eq 1)
-
-
-;-----REMOVE FIRST/LAST 50 POINTS-----
-clearairc=clearairb[50:n_elements(clearairb)-50]
-
-clearair=clearairc
+;clearair=smoothsort
 
 
 
@@ -545,8 +528,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
-  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc_NRB:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
-  rawSignal:rawSignal, smoothSignal:smoothSignal}
+  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
+  rawSignal:rawSignal, smoothSignal:smoothSignal, cdpacc:cdpacc}
 
   
 return,g
