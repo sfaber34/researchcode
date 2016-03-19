@@ -1,7 +1,13 @@
 ;CALCS AND PLOTS MEAN ERROR/STDEV FOR EACH K LIQ CALC
 
 pro histogram2
-  cgcleanup
+
+
+
+
+
+
+  ;cgcleanup
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   
   ;flight=['0710','0725','0727','0728','0729']
@@ -10,7 +16,8 @@ pro histogram2
   colors=['red','blue','black']
   yrange=[.05,-.05]
   xrange=[60,150]
-  runcalc=2
+
+  runcalc=4
 
   mean400=[]
   stdev400=[]
@@ -60,8 +67,8 @@ pro histogram2
 
           ;common g, g
           clearAir=g.clearAir
-          pmb=g.pmb
-          lwc=g.lwc
+          pmb=g.pmb[g.clearair]
+          lwc=g.lwc[g.clearair]
           time=g.time
           timeForm=g.timeForm
           as=g.as
@@ -72,11 +79,11 @@ pro histogram2
           avpitch=g.avpitch
           pLiq=g.pLiq
           lwcnev1=g.lwcnev1[g.clearair]
-          lwcnoPresCor=g.lwcnoPresCor
+          lwcnoPresCor=g.lwcnoPresCor[g.clearair]
           flightString=g.flightString
           kLiq=g.kLiq
-          cdpdbar_NRB=g.cdpdbar_NRB
-          cdpconc_NRB=g.cdpconc_NRB
+          cdpdbar_NRB=g.cdpdbar
+          cdpconc_NRB=g.cdpconc
           trf=g.trf
           lwc100=g.lwc100
           avyaw=g.avyaw
@@ -88,7 +95,7 @@ pro histogram2
 
 
           pmbcon=[pmbcon,pmb]
-          lwccon=[lwccon,lwc[g.clearair]]
+          lwccon=[lwccon,lwc]
           ascon=[ascon,as]
           cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
           cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
@@ -100,7 +107,7 @@ pro histogram2
           avrollcon=[avrollcon,avroll]
           ;betabcon=[betabcon,betab]
           avyawcon=[avyawcon,avyaw]
-          lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor[g.clearair]]
+          lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor]
 
           print,' '
           print,' '
@@ -109,7 +116,12 @@ pro histogram2
           print, flight[j]
           print, kLevel[i]
 
-
+          
+          
+          
+          
+          
+          
         endfor
 
 
@@ -130,12 +142,85 @@ pro histogram2
       endfor
 
     endfor
-
+    lwcnev1=lwcnev1con
+    lwc=lwccon
+    lwcnoPresCor=lwcnoPresCorcon
+    pmb=pmbcon
   endif
+  
+  
+  
 
   ;if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='hist.sav'
-  if runcalc eq 1 then save, lwcnev1con, lwccon,filename='hist.sav'
+  if runcalc eq 1 then save, lwcnev1, lwc, lwcnoPresCor, pmb, filename='hist.sav'
   if runcalc eq 1 then stop
+
+
+
+  if runcalc eq 4 then begin
+    restore, 'hist.sav'
+    print, mean(abs(lwc))
+    print, stddev(lwc)
+    stop
+    plot1=scatterplot(pmb,lwcnoprescor,dimensions=[1200,800])
+    
+    plot1.xrange=[1000,350]
+    plot1.yrange=[-.1,.1]
+    plot1.xtitle='Flight Level Pressure'
+    plot1.ytitle='Clear Air LWC Error (g m!u-3!n)'
+    plot1.font_size=24
+    
+    l=linfit(pmb,lwcnoprescor)
+    plot2=plot([1000,350],[l[1]*1000+l[0],l[1]*350+l[0]],'r',/overplot)
+    plot1.save,'presdepnocorb.png'
+    stop
+  endif  
+
+
+  if runcalc eq 3 then begin
+
+    ;cgcleanup
+    restore, 'hist.sav'
+
+
+    inc=50.
+    
+    errorcon=[]
+
+    
+    
+     for t=299.,1000. do begin
+      x=mean(abs(lwcnoprescor[where(pmb gt t and pmb lt t+50.)]))
+      errorcon=[errorcon,x]
+      t=t+50.
+     endfor
+    
+
+    
+    
+    ;h=histogram(pmb,binsize=inc)
+    ;ticks=['.005','.010','.015','.020','.025',' ',' ']
+    ticks2=dindgen(n_elements(errorcon),start=300,increment=50)
+
+
+    plot1=barplot(ticks2,errorcon,histogram=1,dimensions=[1200,800])
+    ;plot1.ylog=1
+    
+    ;plot1.xtickname=ticks
+    plot1.xtext_orientation=270
+    ;plot1.YRANGE=[0,100000]
+    plot1.xminor=0
+    plot1.yticklen=1
+    plot1.ysubticklen=.08
+    plot1.xtickinterval=50
+
+   
+
+    plot1.xtitle='Flight Level Pressure (mb)'
+    plot1.ytitle='Mean Clear Air LWC Error (g m!U-3!N)'
+    plot1.font_size=24
+    plot1.save, 'ktrueperformanc.png'
+  endif
 
 
 
@@ -143,34 +228,35 @@ pro histogram2
     
     cgcleanup
     restore, 'hist.sav'
-   stop
+
    
     inc=.005
-    h=histogram(lwcnev1con,binsize=inc)
+    h=histogram(lwcnev1,binsize=inc)
     ticks=['.005','.010','.015','.020','.025',' ',' ']
     ticks2=dindgen(n_elements(h),start=inc,increment=inc)
 
 
-    plot1=barplot(ticks2,h,histogram=1,dimensions=[1000,700])
+    plot1=barplot(ticks2,h,histogram=1,dimensions=[1000,800])
     plot1.ylog=1
-    plot1.xrange=[ticks2[0],ticks2[n_elements(ticks2)-1]]
+    
     ;plot1.xtickname=ticks
     plot1.xtext_orientation=270
     plot1.YRANGE=[0,100000]
     plot1.xminor=0
     plot1.yticklen=1
     plot1.ysubticklen=.08
-    
+ 
     
     plot1.xtickinterval=.005
-    plot1.xrange=[ticks2[0],ticks2[10]]
+    plot1.xrange=[950,300]
     plot1.xtitle='LWC g m!u-3!n'
     plot1.ytitle='Frequency'
-    plot1.font_size=20
+    plot1.font_size=24
     
+    stop
+    plot1.save, 'clearairhist.ps'
   endif
 
-stop
 
 
 
@@ -179,32 +265,33 @@ stop
 
 
 
-  if runcalc eq 0 then restore, 'hist.sav'
 
-  callevel=['400 mb Ind','600 mb Ind','900 mb Ind','400 mb True','600 mb True','900 mb True']
-  holder=dindgen(n_elements(callevel),start=0,increment=1)
-  kmeans=[lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true]
-  devs=[lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true]
+;  if runcalc eq 0 then restore, 'hist.sav'
+;
+;  callevel=['400 mb Ind','600 mb Ind','900 mb Ind','400 mb True','600 mb True','900 mb True']
+;  holder=dindgen(n_elements(callevel),start=0,increment=1)
+;  kmeans=[lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true]
+;  devs=[lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true]
+;
+;  plot1=scatterplot(holder,kmeans,dimensions=[1200,900], name='% Slope Correction')
+;  ;plot1.xrange=[0,10]
+;  ;plot1.yrange=[40,150]
+;  plot1.xtickname=callevel
+;  plot1.sym_filled=1
+;  plot1.font_size=16
+;  plot1.title='All Flights Clear Air LWC Mean Error'
+;  plot1.ytitle='Absolute Mean Error g m!U-3!N'
+;  plot1.xtitle='k Regression Flight Level and Airspeed Type'
+;
+;  ;leg1=legend(target=[plot1,plot2],shadow=0)
+;
+;  plot2=errorplot(holder,kmeans, devs,/overplot,linestyle=6,errorbar_thick=2)
+;
+;  plot2.xTICKVALUES=[0,1,2,3,4,5,6]
+;  plot2.xrange=[-1,6]
+;  plot2.xminor=0
 
-  plot1=scatterplot(holder,kmeans,dimensions=[1200,900], name='% Slope Correction')
-  ;plot1.xrange=[0,10]
-  ;plot1.yrange=[40,150]
-  plot1.xtickname=callevel
-  plot1.sym_filled=1
-  plot1.font_size=16
-  plot1.title='All Flights Clear Air LWC Mean Error'
-  plot1.ytitle='Absolute Mean Error g m!U-3!N'
-  plot1.xtitle='k Regression Flight Level and Airspeed Type'
-
-  ;leg1=legend(target=[plot1,plot2],shadow=0)
-
-  plot2=errorplot(holder,kmeans, devs,/overplot,linestyle=6,errorbar_thick=2)
-
-  plot2.xTICKVALUES=[0,1,2,3,4,5,6]
-  plot2.xrange=[-1,6]
-  plot2.xminor=0
-
-  stop
+  
   return
 
 end

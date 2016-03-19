@@ -1,5 +1,11 @@
 pro basic
 
+print,'1'
+
+g= nevBase('0727','indicated','400')
+
+prnt,'2'
+stop
 stuff=13
 
 ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
@@ -42,22 +48,37 @@ presdevcon=[]
 
 if stuff eq 13 then begin
   level=['400','700']
-  flightb=['0304','0307']
+  flightb=['0727','0307']
+  level=['400']
+  flightb=['0727']
 colors=['red','green','blue','black']
 cgcleanup
 for i=0,n_elements(flightb)-1 do begin
-  
-  yr=[-.3,.3]
-  ;xr=[]
-  ;yd=[-.4,.4]
-  ;xd=[]
-  
-  
-  
   g= nevBase(flightb[i],'indicated','400')
+  p1=plot(g.timeFlight,g.rawsignal,dimensions=[1400,1000])
+  p2=plot(g.timeFlight,g.smoothsignal,dimensions=[1400,1000])
+  p3=plot([min(g.timeFlight),max(g.timeFlight)],[g.thresh,g.thresh],'r',/overplot,name='Threshold',thick=3)
+  ;p1=plot(g.timeFlight,g.lwc100,/overplot,'r')
+  p1.ytitle="Liquid Power Difference (Volt)"
+  p1.xtitle="Flight Time (sec)"
+  p1.FONT_SIZE=24
+  p1.yrange=[0,2]
+  p1.xrange=[min(g.timeFlight),max(g.timeFlight)]
+  p1.save,'rawsignal.ps'
   
-  p2=plot(g.timeFlight,g.lwc,dimensions=[1400,1000],title=flightb[i])
-  p1=scatterplot(g.timeFlight[g.clearair],g.lwc[g.clearair],sym_color='red',/overplot)
+  p2.ytitle="Liquid Power Difference (Volt)"
+  p2.xtitle="Flight Time (sec)"
+  p2.FONT_SIZE=24
+  p2.yrange=[-.02,.3]
+  p2.xrange=[min(g.timeFlight),max(g.timeFlight)]
+  l1=legend(position=[400,100],target=[p3],/device,shadow=0)
+  stop
+  p2.save,'smoothsignal.ps'
+  
+  
+  
+;  p2=plot(g.timeFlight,g.lwc,dimensions=[1400,1000],title=flightb[i])
+;  p1=scatterplot(g.timeFlight[g.clearair],g.lwc[g.clearair],sym_color='red',/overplot)
   
   endfor
  ; thresh2=.005

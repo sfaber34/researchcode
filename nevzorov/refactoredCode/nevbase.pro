@@ -386,8 +386,8 @@ u2=u[50]
 
 x1=min([u1,u2])
 x2=max([u1,u2])
-thresh2=.0045*mean(rawSignal[x1:x2])
-
+if cope eq 0 or cope eq 2 then thresh=.003*mean(rawSignal[x1:x2])
+if cope eq 1 then thresh=.0045*mean(rawSignal[x1:x2])
 
 ;----------BASELINE DETECTION STEP----------
 int=10
@@ -407,13 +407,7 @@ endfor
 diff=ts_diff(smoothSignal,1)
     
     
- clearair=where(abs(diff) le thresh2 and shift(abs(diff),1) le thresh2 and shift(abs(diff),-1) le thresh2)
-
-
-;clearair=smoothsort
-
-
-
+ clearair=where(abs(diff) le thresh and shift(abs(diff),1) le thresh and shift(abs(diff),-1) le thresh)
 
 
 ;------------------------------------------FILTER MISC.---------------------------------------------------------------------------------------------------------------------------
@@ -524,10 +518,10 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
   clearAir:clearAir, levelClearAir:levelClearAir,timeFlight:timeFlight,$
-  flightString:flightString, kLiq:kLiq,$
+  flightString:flightString, kLiq:kLiq,thresh:thresh,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
-  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc_NRB:cdpconc_NRB, trf:trf, $
-  lwc100:lwc100, cdpdbar_NRB:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
+  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, $
+  lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
   rawSignal:rawSignal, smoothSignal:smoothSignal, cdpacc:cdpacc}
 
