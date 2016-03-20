@@ -1,4 +1,4 @@
-function nevbase, flightDay, airspeedType, level
+function nevbaseTotal, flightDay, airspeedType, level
 
 cd,current=h
 h=STRMATCH(h, '*/nevzorov/*')
@@ -377,7 +377,7 @@ selectedsignali=dindgen(n_elements(pmb),increment=0)
 ;----------SIGNAL RATIO----------
 
 
-rawSignal=((vlwccol)-(vlwcref))
+rawSignal=((vtwccol)-(vtwcref))
 
 u=sort(rawSignal)
 u=reverse(u)
@@ -459,9 +459,6 @@ levelClearAir=where(baselineIB eq 1)
 ;-----------------------------------------CONSTANTS-------------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-;surface area liquid sensor [m^2]
-aLiq=3.17d-5
-
 ;surface area total sensor [m^2]
 aTot=5.02d-5
 
@@ -480,11 +477,11 @@ lLiqStar=2589.
 
 
 ;HEAT LOSS LIQUID
-pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
-pLiqNoPresCor=pLiq
+pTot=vtwccol*itwccol-kLiq*vtwcref*itwcref
+pTotNoPresCor=pTot
 
 
-lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
+twcNoPresCor=pTot/(colELiq*tas*aLiq*lLiqStar)
 
 
 
@@ -492,10 +489,10 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-linPresCor=linfit(pmb[clearair],pLiq[clearair])
+linPresCor=linfit(pmb[clearair],pTot[clearair])
 
-poly=poly_fit(pmb[clearair],pLiq[clearair],2)
-pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
+poly=poly_fit(pmb[clearair],pTot[clearair],2)
+pTot=pTotNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
 
 
 
@@ -506,7 +503,7 @@ pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
 
 
 ;WATER CONTENT LIQUID
-lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
+lwc=pTot/(colELiq*tas*aLiq*lLiqStar)
 
 
 
@@ -516,13 +513,13 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
-  pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
+  pTot:pTot, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
   clearAir:clearAir, levelClearAir:levelClearAir,timeFlight:timeFlight,$
   flightString:flightString, kLiq:kLiq,thresh:thresh,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
-  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
+  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pTotNoPresCor:pTotNoPresCor,$
   rawSignal:rawSignal, smoothSignal:smoothSignal, cdpacc:cdpacc}
 
   
@@ -556,3 +553,4 @@ print,''
 print,'-------------COMMANDS-----------------'
 print,'SUPERSCRIPT = !U *** !N'
 end
+

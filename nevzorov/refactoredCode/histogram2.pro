@@ -91,11 +91,11 @@ pro histogram2
            
 
           x=where(abs(g.cdplwc) gt 0.001 and abs(g.lwcnev1) gt 0.001)
-          perdiff=abs(( g.cdplwc[x]-g.lwcnev1[x]) / ((g.cdplwc[x]+g.lwcnev1[x])/2.))*100.
+          perdiff=( g.cdplwc[x]-g.lwcnev1[x]) / abs((g.cdplwc[x]+g.lwcnev1[x])/2.)
           s=stddev(perdiff)
           m=mean(perdiff)
           
-          p1= scatterplot(g.timeFlight[x],perdiff[x])
+          p1= scatterplot(g.timeFlight,perdiff)
           stop
           
           print,'-----------------------'
