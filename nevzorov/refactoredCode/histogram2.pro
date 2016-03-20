@@ -17,7 +17,7 @@ pro histogram2
   yrange=[.05,-.05]
   xrange=[60,150]
 
-  runcalc=4
+  runcalc=1
 
   mean400=[]
   stdev400=[]
@@ -39,6 +39,7 @@ pro histogram2
   betaBcon=[]
   sigcon=[]
   lwccon=[]
+  cdplwccon=[]
   column=dindgen(10,n_elements(flight))
   
   if runcalc eq 1 then begin
@@ -63,12 +64,12 @@ pro histogram2
           g= nevBase(flight[j],ktype[k],kLevel[i])
           ;p1=scatterplot(g.pmb[g.clearair],g.lwcNoPresCor[g.clearair],/overplot,dimensions=[1400,1000])
 
-
+        
 
           ;common g, g
           clearAir=g.clearAir
-          pmb=g.pmb[g.clearair]
-          lwc=g.lwc[g.clearair]
+          pmb=g.pmb
+          lwc=g.lwc
           time=g.time
           timeForm=g.timeForm
           as=g.as
@@ -78,8 +79,8 @@ pro histogram2
           avroll=g.avroll
           avpitch=g.avpitch
           pLiq=g.pLiq
-          lwcnev1=g.lwcnev1[g.clearair]
-          lwcnoPresCor=g.lwcnoPresCor[g.clearair]
+          lwcnev1=g.lwcnev1
+          lwcnoPresCor=g.lwcnoPresCor
           flightString=g.flightString
           kLiq=g.kLiq
           cdpdbar_NRB=g.cdpdbar
@@ -87,18 +88,32 @@ pro histogram2
           trf=g.trf
           lwc100=g.lwc100
           avyaw=g.avyaw
+           
 
+          x=where(abs(g.cdplwc) gt 0.001 and abs(g.lwcnev1) gt 0.001)
+          perdiff=abs(( g.cdplwc[x]-g.lwcnev1[x]) / ((g.cdplwc[x]+g.lwcnev1[x])/2.))*100.
+          s=stddev(perdiff)
+          m=mean(perdiff)
+          
+          p1= scatterplot(g.timeFlight[x],perdiff[x])
+          stop
+          
+          print,'-----------------------'
+          print,'-----------------------'
+          print,'-----------------------'
+          print, flight[j]
+          print, kLevel[i]
+          print,flight[j]
 
-
-
-
+          print,s
+          print,m
 
 
           pmbcon=[pmbcon,pmb]
           lwccon=[lwccon,lwc]
           ascon=[ascon,as]
           cdpdbar_NRBcon=[cdpdbar_NRBcon,cdpdbar_NRB]
-          cdpconc_NRBcon=[cdpconc_NRBcon,cdpconc_NRB]
+          cdplwccon=[cdplwccon,g.cdplwc]
           trfcon=[trfcon,trf]
           lwc100con=[lwc100con,lwc100]
           lwcnev1con=[lwcnev1con,lwcnev1]
@@ -109,12 +124,7 @@ pro histogram2
           avyawcon=[avyawcon,avyaw]
           lwcnoPresCorcon=[lwcnoPresCorcon,lwcnoPresCor]
 
-          print,' '
-          print,' '
-          print,'-------------------------------------------'
-          print,''
-          print, flight[j]
-          print, kLevel[i]
+          
 
           
           
@@ -134,8 +144,8 @@ pro histogram2
 
 
         ave=(double(n_elements(clear))/double(n_elements(g.lwc)))*100.
-        print,'mean=',lwcmean
-        print,'stddev=',dev
+;        print,'mean=',lwcmean
+;        print,'stddev=',dev
 
 
 
@@ -146,22 +156,43 @@ pro histogram2
     lwc=lwccon
     lwcnoPresCor=lwcnoPresCorcon
     pmb=pmbcon
+    cdplwc=cdplwccon
   endif
   
   
   
 
   ;if runcalc eq 1 then save,lwcmean400ind,lwcmean600ind,lwcmean900ind,lwcmean400true,lwcmean600true,lwcmean900true,lwcdev400ind,lwcdev600ind,lwcdev900ind,lwcdev400true,lwcdev600true,lwcdev900true ,filename='hist.sav'
-  if runcalc eq 1 then save, lwcnev1, lwc, lwcnoPresCor, pmb, filename='hist.sav'
+  if runcalc eq 1 then save, lwcnev1, lwc, lwcnoPresCor, pmb, cdplwc, filename='hist.sav'
   if runcalc eq 1 then stop
 
 
 
   if runcalc eq 4 then begin
     restore, 'hist.sav'
-    print, mean(abs(lwc))
-    print, stddev(lwc)
+    diff=cdplwc-lwc
+    diff2=cdplwc-lwcnev1
+    sig=where(lwcnev1 eq 0)
+    
+    
+    p1=scatterplot(cdplwc,diff,dimensions=[1200,800],sym_size='.4')
+    p1.xtitle="Korolev's LWC g m!U-3!N"
+    p1.ytitle="LWC Difference (Korolev's LWC - Calculated LWC) g m!U-3!N"
+    p1.font_size=22
+    ;p1.yrange=[-.025,.025]
+    ;p1.xrange=[-.1,2.6]
+    
+    p2=scatterplot(cdplwc,diff2,dimensions=[1200,800],sym_size='.4',sym_color='grey',/overplot)
+    
+    print, mean(abs(diff))
+    print, stddev(diff)
+    print,'-------------------------------'
+    print, mean(abs(diff[sig]))
+    print, stddev(diff[sig])
+    ;p1.save,'lwcdirectcomp.png'
     stop
+    
+  
     plot1=scatterplot(pmb,lwcnoprescor,dimensions=[1200,800])
     
     plot1.xrange=[1000,350]
@@ -179,7 +210,7 @@ pro histogram2
 
   if runcalc eq 3 then begin
 
-    ;cgcleanup
+    cgcleanup
     restore, 'hist.sav'
 
 
@@ -232,7 +263,7 @@ pro histogram2
    
     inc=.005
     h=histogram(lwcnev1,binsize=inc)
-    ticks=['.005','.010','.015','.020','.025',' ',' ']
+    ;ticks=['.005','.010','.015','.020','.025',' ',' ']
     ticks2=dindgen(n_elements(h),start=inc,increment=inc)
 
 
