@@ -141,6 +141,10 @@ if cope ne 1 then lwcNev1=0
 if cope eq 1 then lwcNev2=loadvar('nevlwc2', filename=nclPath)
 if cope ne 1 then lwcNev2=0
 
+;Total water content from Nevzorov probe [g/m^3]
+if cope eq 1 then twcNev=loadvar('nevtwc', filename=nclPath)
+if cope ne 1 then twcNev=0
+
 ;Sideslip Angle [deg]
 betaB=loadvar('beta', filename=nclPath)
 
@@ -309,6 +313,7 @@ timeFlight=timeFlight[aStart:aEnd]
 if cope eq 1 then begin
   lwcNev1=lwcNev1[aStart:aEnd]
   lwcNev2=lwcNev2[aStart:aEnd]
+  twcNev=twcNev[aStart:aEnd]
   hivs=hivs[aStart:aEnd]
 endif
 
@@ -386,7 +391,7 @@ if cope eq 2 then begin
   if (airspeedType eq 'indicated') and (level eq '700') then kLiq=(-0.0126704)*tas^(0.698457)+(2.01460)
   if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(-0.00956550)*tas^(0.753178)+(2.00092)
   if (airspeedType eq 'indicated') and (level eq '500') then kLiq=(-0.135222)*tas^(0.375551)+(2.43805)
-  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(-0.0810470)*tas^(0.436789)+(2.28769)
+  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(3260.89)*aiasms^(-2.61716)+(0.683100) ;400 indicated
 endif
 
 
@@ -399,42 +404,90 @@ endif
 correctionLiq=dindgen(n_elements(pmb),increment=0)
 smoothSignalLiq=dindgen(n_elements(pmb),increment=0)
 
+correctionTot=dindgen(n_elements(pmb),increment=0)
+smoothSignalTot=dindgen(n_elements(pmb),increment=0)
+
 
 ;----------SIGNAL RATIO----------
 
+;-----LIQUID-----
+rawSignalLiq=((vlwccol))
 
-rawSignalLiq=((vlwccol)-(vlwcref))
 
-u=sort(rawSignalLiq)
-u=reverse(u)
-u1=u[0]
-u2=u[50]
 
-x1=min([u1,u2])
-x2=max([u1,u2])
-if cope eq 0 or cope eq 2 then thresh=.003*mean(rawSignalLiq[x1:x2])
-if cope eq 1 then thresh=.0045*mean(rawSignalLiq[x1:x2])
+
+
+
+;-----TOTAL-----
+rawSignalTot=((vtwccol))
+
+
 
 ;----------BASELINE DETECTION STEP----------
 int=10
 
 for i=0,n_elements(pmb)-(int+1) do begin
   correctionLiq[i:i+int]=min(rawSignalLiq[i:i+int])
+  correctionTot[i:i+int]=min(rawSignalTot[i:i+int])
   i=i+int
 endfor
 
 
 for i=0,n_elements(pmb)-(int+1) do begin
   smoothSignalLiq[i:i+int]=rawSignalLiq[i:i+int]-correctionLiq[i:i+int]
+  smoothSignalTot[i:i+int]=rawSignalTot[i:i+int]-correctionTot[i:i+int]
   i=i+int
 endfor
 
+diffLiq=smoothSignalLiq
 
-diffLiq=ts_diff(smoothSignalLiq,1)
-   p1=plot(timeFlight,diffLiq) 
+
+uLiq2=sort(rawSignalLiq)
+uLiq3=reverse(uLiq2)
+uLiq=diffLiq[uLiq3]
+u1Liq=uLiq[0]
+u2Liq=uLiq[50]
+
+x1Liq=min([u1Liq,u2Liq])
+x2Liq=max([u1Liq,u2Liq])
+if cope eq 0 or cope eq 2 then threshLiq=.007*mean(rawSignalLiq[x1Liq:x2Liq])
+if cope eq 1 then threshLiq=.007*mean(rawSignalLiq[x1Liq:x2Liq])
+
+
+
+
+
+
+
+diffTot=smoothSignalTot
+
+
+uTot2=sort(diffTot)
+uTot3=reverse(uTot2)
+uTot=diffTot[uTot3]
+u1Tot=uTot[0]
+u2Tot=uTot[50]
+
+
+x1Tot=min([u1Tot,u2Tot])
+x2Tot=max([u1Tot,u2Tot])
+if cope eq 0 or cope eq 2 then threshTot=.0025*mean(uTot[0:50])
+if cope eq 1 then threshTot=0.0025*mean(uTot[x1Tot:x2Tot])
+
+
+
+
+;p1=plot(timeFlight,diffTot) 
     
-clearair=where(abs(diffLiq) le thresh and shift(abs(diffLiq),1) le thresh and shift(abs(diffLiq),-1) le thresh)
+clearairLiq=where(abs(diffLiq) le threshLiq and shift(abs(diffLiq),1) le threshLiq and shift(abs(diffLiq),-1) le threshLiq and shift(abs(diffLiq),2) le threshLiq and shift(abs(diffLiq),-2) le threshLiq)
+clearairTot=where(abs(diffTot) le threshTot and shift(abs(diffTot),1) le threshTot and shift(abs(diffTot),-1) le threshTot and shift(abs(diffTot),2) le threshTot and shift(abs(diffTot),-2) le threshTot)
 
+clearairLiq=clearairLiq[50:n_elements(clearairLiq)-50]
+
+
+;p1=plot(timeFlight, twcnev)
+;p1=plot([0,1.5d4], [threshLiq,threshLiq],/overplot,'r',yrange=[-.05,.15])
+;p1=scatterplot(timeFlight,rawSignalLiq,/overplot,sym_color='red',symbol='.')
 
 ;------------------------------------------FILTER MISC.---------------------------------------------------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -473,7 +526,7 @@ endfor
 
 
 
-levelClearAir=where(baselineIB eq 1)
+levelclearairLiq=where(baselineIB eq 1)
 
 
 
@@ -495,6 +548,10 @@ colELiq=1.
 
 ;EXPENDED HEAT FOR LIQUID
 lLiqStar=2589.
+
+
+;LIQUID SENSOR ICE COLLECTION EFFICIENCY
+betaLiq=0.11
 
 
 
@@ -520,16 +577,33 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 
+
+;-----HEAT LOSS TOTAL------
+pTot=vlwccol*itwccol-kTot*vtwcref*itwcref
+pTotNoPresCor=pTot
+
+
+twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
+
+
+
 ;-----------------------------------------PRESSURE correctionLiq---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-linPresCorLiq=linfit(pmb[clearair],pLiq[clearair])
+linPresCorLiq=linfit(pmb[clearairLiq],pLiq[clearairLiq])
 
-poly=poly_fit(pmb[clearair],pLiq[clearair],2)
+poly=poly_fit(pmb[clearairLiq],pLiq[clearairLiq],2)
 pLiq=pLiqNoPresCor - ( linPresCorLiq[1]*pmb + linPresCorLiq[0] )
 
 
+
+
+
+linPresCorTot=linfit(pmb[clearairTot],pTot[clearairTot])
+
+;poly=poly_fit(pmb[clearairTot],pTot[clearairTot],2)
+pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 
 
@@ -544,14 +618,21 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 
+;WATER CONTENT TOTAL
+twc=pTot/(colETot*tas*aTot*lIceStar)
 
 
+
+
+lwc2=lwc + 1.13*twc
+
+twc2=lwc + twc
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
-  pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, lwcNoPresCor:lwcNoPresCor, $
-  clearAir:clearAir, levelClearAir:levelClearAir,timeFlight:timeFlight,$
-  flightString:flightString, kLiq:kLiq,thresh:thresh,$
-  aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref,$
+  pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, twcNev:twcNev, lwcNoPresCor:lwcNoPresCor, twc:twc,lwc2:lwc2,twc2:twc2,$
+  clearairLiq:clearairLiq, levelclearairLiq:levelclearairLiq,timeFlight:timeFlight,$
+  flightString:flightString, kLiq:kLiq,threshLiq:threshLiq, clearairTot:clearairTot,$
+  aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref, twcNoPresCor:twcNoPresCor,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$

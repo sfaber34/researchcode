@@ -1,7 +1,7 @@
 pro basic
 
 
-stuff=20
+stuff=21
 
 ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 ;flight='0307'
@@ -138,6 +138,56 @@ for i=0,n_elements(flightb)-1 do begin
 
 
 endif
+
+
+
+
+
+
+if stuff eq 21 then begin
+   cgcleanup
+  lwccon=[]
+  lwc2con=[]
+  lwcnev1con=[]
+  
+  var1con=[]
+  var2con=[]
+  
+  low=250.
+  high=1000.
+  
+  
+
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight=['0307']
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','400')
+    
+    var1=g.pmb[g.clearairLiq]
+    var2=g.lwc[g.clearairLiq]
+
+    ;p1=scatterplot(g.lwcnev1,g.twcnev,dimensions=[1000,1000]) ;xrange=[low,high],yrange=[low,high]
+    p2=scatterplot(var1,var2,dimensions=[1000,1000],sym_color='black',/overplot,yrange=[-.1,.1])
+    lwccon=[lwccon,g.lwc]
+    lwc2con=[lwc2con,g.lwc2]
+    lwcnev1con=[lwcnev1con,g.lwcnev1]
+    var1con=[var1con,var1]
+    var2con=[var2con,var2]
+  endfor
+stop
+  lin=linfit(var1con,var2con)
+  ;p2=plot([low,high],[low,high],thick=2,'red',/overplot)
+  p2=plot([low,high],[low*lin[1]+lin[0],high*lin[1]+lin[0]],thick=2,'blue',linestyle=2,/overplot)
+  p2.xtitle="CDP LWC (g m!U-3!N)"
+  p2.ytitle="Calculated LWC (g m!U-3!N)"
+  p2.font_size=24
+  p2.title=string((1.-lin[1])*100.)
+  stop
+endif
+
+
+
+
 
 
 
