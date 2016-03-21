@@ -4,7 +4,7 @@ pro nevzorovVRelationship
 airspeedType='indicated'
 
 ;select flight level (900,600,400)
-flightLevel='600'
+flightLevel='400'
 
 ;select plots
 genplots='airspeedCon'
@@ -228,7 +228,12 @@ if flightLevel eq '400' then begin
 endif
   
 
+;redefine variables for twc
 
+vlwccol=vtwccol
+ilwccol=itwccol
+vlwcref=vtwcref
+vlwcref=vtwcref
 
 ;power calculations
 liqColPower=vlwccol*ilwccol
@@ -425,6 +430,7 @@ if genplots eq 'airspeedCon' then begin
 ;        yFitErrorMean=mean(abs(liqKCon-yFit))
 ;        text2=string('Mean Y Fit Error=',yFitErrorMean)
 ;        text2a=text(250,10,text2,/device)
+        print,geoFit
       endif
       
       plot1.xrange=[xLeft,xRight]
@@ -444,67 +450,67 @@ endif
 
 
 
-if genplots eq 'airspeedCon' then begin
+;if genplots eq 'airspeedCon' then begin
+;
+;
+;
+;  if sensor eq 'liquid' then begin
+;
+;    plot1=scatterplot(asA,liqKA,symbol='o',sym_size='.6',name=string(asAMean),sym_fill_color='black',dimensions=[1200,900])
+;    plot2=scatterplot(asB,liqKB,symbol='o',sym_size='.6',name=string(asBMean),sym_color='blue',sym_fill_color='blue',/overplot)
+;    plot3=scatterplot(asC,liqKC,symbol='o',sym_size='.6',name=string(asCMean),sym_color='dark slate grey',sym_fill_color='dark slate grey',/overplot)
+;    plot4=scatterplot(asD,liqKD,symbol='o',sym_size='.6',name=string(asDMean),sym_color='green',sym_fill_color='green',/overplot)
+;    plot5=scatterplot(asE,liqKE,symbol='o',sym_size='.6',name=string(asEMean),sym_color='light sea green',sym_fill_color='light sea green',/overplot)
+;    legend1=legend(target=[plot1,plot2,plot3,plot4,plot5],shadow=0)
+;
+;    atitle=string('Liquid K vs ',airspeedType,' Airspeed -',pConMeanAll)
+;    xtitle=string(airspeedType+' Airspeed [m/s]')
+;    plot1.title=atitle
+;    plot1.xtitle=xtitle
+;
+;    if regression eq 'linear' then begin
+;      plot1Linfit=linfit(asCon,liqKCon,yfit=yfit)
+;      regLine=(plot1linfit[1])*unitVector+plot1LinFit[0]
+;      plot1b=plot(unitVector,regLine,'r',/overplot)
+;
+;      text1=string(plot1Linfit)
+;      text1A=text(50,10,text1,/device)
+;
+;      yFitErrorMean=mean(abs(liqKCon-yFit))
+;      text2=string('Mean Y Fit Error=',yFitErrorMean)
+;      text2a=text(250,10,text2,/device)
+;    endif
+;
+;
+;    if regression eq 'geometric' then begin
+;      ;geoFit=comfit(asCon,liqKCon,[1,-.00289,1.4095],yfit=yfit,/geometric)
+;      ;geoFit=comfit(asCon,liqKCon,[511.5,-1.29,1.48],yfit=yfit,/geometric) ;400 indicated
+;      geoFit=comfit(asCon,liqKCon,[150.5,-1.89,2.48],yfit=yfit,/geometric) ;400 true
+;      ;geoFit=comfit(asCon,liqKCon,[2.5,-.19,-2.48],yfit=yfit,/geometric) ;600 indicated
+;      ;geoFit=comfit(asCon,liqKCon,[2.5,-.19,-2.48],yfit=yfit,/geometric) ;600 true
+;      ;geoFit=comfit(asCon,liqKCon,[1.5,-.99,-1.48],yfit=yfit,/geometric) ;900 indicated
+;      ;geoFit=comfit(asCon,liqKCon,[1.5,-.59,-8.48],yfit=yfit,/geometric) ;900 true
+;      regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
+;      plot1b=plot(unitVector,regLine,'r',/overplot)
+;
+;      text1=string(geoFit)
+;      text1A=text(50,10,text1,/device)
+;
+;      yFitErrorMean=mean(abs(liqKCon-yFit))
+;      text2=string('Mean Y Fit Error=',yFitErrorMean)
+;      text2a=text(250,10,text2,/device)
+;    endif
+;
+;    plot1.xrange=[xLeft,xRight]
+;    plot1.yrange=[yLow,yHigh]
+;
+;
+;    plot1.ytitle='Liquid K'
+;
+;  endif
 
 
-
-  if sensor eq 'liquid' then begin
-
-    plot1=scatterplot(asA,liqKA,symbol='o',sym_size='.6',name=string(asAMean),sym_fill_color='black',dimensions=[1200,900])
-    plot2=scatterplot(asB,liqKB,symbol='o',sym_size='.6',name=string(asBMean),sym_color='blue',sym_fill_color='blue',/overplot)
-    plot3=scatterplot(asC,liqKC,symbol='o',sym_size='.6',name=string(asCMean),sym_color='dark slate grey',sym_fill_color='dark slate grey',/overplot)
-    plot4=scatterplot(asD,liqKD,symbol='o',sym_size='.6',name=string(asDMean),sym_color='green',sym_fill_color='green',/overplot)
-    plot5=scatterplot(asE,liqKE,symbol='o',sym_size='.6',name=string(asEMean),sym_color='light sea green',sym_fill_color='light sea green',/overplot)
-    legend1=legend(target=[plot1,plot2,plot3,plot4,plot5],shadow=0)
-
-    atitle=string('Liquid K vs ',airspeedType,' Airspeed -',pConMeanAll)
-    xtitle=string(airspeedType+' Airspeed [m/s]')
-    plot1.title=atitle
-    plot1.xtitle=xtitle
-
-    if regression eq 'linear' then begin
-      plot1Linfit=linfit(asCon,liqKCon,yfit=yfit)
-      regLine=(plot1linfit[1])*unitVector+plot1LinFit[0]
-      plot1b=plot(unitVector,regLine,'r',/overplot)
-
-      text1=string(plot1Linfit)
-      text1A=text(50,10,text1,/device)
-
-      yFitErrorMean=mean(abs(liqKCon-yFit))
-      text2=string('Mean Y Fit Error=',yFitErrorMean)
-      text2a=text(250,10,text2,/device)
-    endif
-
-
-    if regression eq 'geometric' then begin
-      ;geoFit=comfit(asCon,liqKCon,[1,-.00289,1.4095],yfit=yfit,/geometric)
-      ;geoFit=comfit(asCon,liqKCon,[511.5,-1.29,1.48],yfit=yfit,/geometric) ;400 indicated
-      geoFit=comfit(asCon,liqKCon,[150.5,-1.89,2.48],yfit=yfit,/geometric) ;400 true
-      ;geoFit=comfit(asCon,liqKCon,[2.5,-.19,-2.48],yfit=yfit,/geometric) ;600 indicated
-      ;geoFit=comfit(asCon,liqKCon,[2.5,-.19,-2.48],yfit=yfit,/geometric) ;600 true
-      ;geoFit=comfit(asCon,liqKCon,[1.5,-.99,-1.48],yfit=yfit,/geometric) ;900 indicated
-      ;geoFit=comfit(asCon,liqKCon,[1.5,-.59,-8.48],yfit=yfit,/geometric) ;900 true
-      regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
-      plot1b=plot(unitVector,regLine,'r',/overplot)
-
-      text1=string(geoFit)
-      text1A=text(50,10,text1,/device)
-
-      yFitErrorMean=mean(abs(liqKCon-yFit))
-      text2=string('Mean Y Fit Error=',yFitErrorMean)
-      text2a=text(250,10,text2,/device)
-    endif
-
-    plot1.xrange=[xLeft,xRight]
-    plot1.yrange=[yLow,yHigh]
-
-
-    plot1.ytitle='Liquid K'
-
-  endif
-
-
-endif
+;endif
 
 
 

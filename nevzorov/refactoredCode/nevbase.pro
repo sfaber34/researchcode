@@ -11,8 +11,8 @@ endelse
 
 
 
-;RESOLVE_ROUTINE, 'convertTime',/is_function
-;RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
+RESOLVE_ROUTINE, 'convertTime',/is_function
+RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
 
 
 common t,t
@@ -340,7 +340,7 @@ endif
 
 
 
-;K LIQUID
+;-----K LIQUID------
 
 if cope eq 1 then begin
   if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasms^(-0.273777)+(0.399143) ;900 indicated
@@ -365,49 +365,75 @@ endif
 
 
 
+
+
+
+;-----K TOTAL------
+
+if cope eq 1 then begin
+  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasms^(-0.273777)+(0.399143) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*aiasms^(-0.0628865)+(-1.67763) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(3260.89)*aiasms^(-2.61716)+(0.683100) ;400 indicated
+
+  if (airspeedType eq 'true') and (level eq '900') then kLiq=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
+  if (airspeedType eq 'true') and (level eq '600') then kLiq=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
+  if (airspeedType eq 'true') and (level eq '400') then kLiq=(1280.56)*tas^(-2.00624)+(1.08139) ;400 true
+endif
+
+
+
+if cope eq 2 then begin
+  if (airspeedType eq 'indicated') and (level eq '700') then kLiq=(-0.0126704)*tas^(0.698457)+(2.01460)
+  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(-0.00956550)*tas^(0.753178)+(2.00092)
+  if (airspeedType eq 'indicated') and (level eq '500') then kLiq=(-0.135222)*tas^(0.375551)+(2.43805)
+  if (airspeedType eq 'indicated') and (level eq '400') then kLiq=(-0.0810470)*tas^(0.436789)+(2.28769)
+endif
+
+
+
+
+
 ;------------------------------------------FILTER CLEAR AIR---------------------------------------------------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-correction=dindgen(n_elements(pmb),increment=0)
-smoothSignal=dindgen(n_elements(pmb),increment=0)
-cleari=dindgen(n_elements(pmb),increment=0)
-clearairprei=dindgen(n_elements(pmb),increment=0)
-selectedsignali=dindgen(n_elements(pmb),increment=0)
+correctionLiq=dindgen(n_elements(pmb),increment=0)
+smoothSignalLiq=dindgen(n_elements(pmb),increment=0)
+
 
 ;----------SIGNAL RATIO----------
 
 
-rawSignal=((vlwccol)-(vlwcref))
+rawSignalLiq=((vlwccol)-(vlwcref))
 
-u=sort(rawSignal)
+u=sort(rawSignalLiq)
 u=reverse(u)
 u1=u[0]
 u2=u[50]
 
 x1=min([u1,u2])
 x2=max([u1,u2])
-if cope eq 0 or cope eq 2 then thresh=.003*mean(rawSignal[x1:x2])
-if cope eq 1 then thresh=.0045*mean(rawSignal[x1:x2])
+if cope eq 0 or cope eq 2 then thresh=.003*mean(rawSignalLiq[x1:x2])
+if cope eq 1 then thresh=.0045*mean(rawSignalLiq[x1:x2])
 
 ;----------BASELINE DETECTION STEP----------
 int=10
 
 for i=0,n_elements(pmb)-(int+1) do begin
-  correction[i:i+int]=min(rawSignal[i:i+int])
+  correctionLiq[i:i+int]=min(rawSignalLiq[i:i+int])
   i=i+int
 endfor
 
 
 for i=0,n_elements(pmb)-(int+1) do begin
-  smoothSignal[i:i+int]=rawSignal[i:i+int]-correction[i:i+int]
+  smoothSignalLiq[i:i+int]=rawSignalLiq[i:i+int]-correctionLiq[i:i+int]
   i=i+int
 endfor
 
 
-diff=ts_diff(smoothSignal,1)
+diffLiq=ts_diff(smoothSignalLiq,1)
+   p1=plot(timeFlight,diffLiq) 
     
-    
-clearair=where(abs(diff) le thresh and shift(abs(diff),1) le thresh and shift(abs(diff),-1) le thresh)
+clearair=where(abs(diffLiq) le thresh and shift(abs(diffLiq),1) le thresh and shift(abs(diffLiq),-1) le thresh)
 
 
 ;------------------------------------------FILTER MISC.---------------------------------------------------------------------------------------------------------------------------
@@ -424,8 +450,6 @@ baselineRollI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineYawI=dindgen(n_elements(pmb),start=0,increment=0)
 baselinePitchI=dindgen(n_elements(pmb),start=0,increment=0)
 baselineI=dindgen(n_elements(pmb),start=0,increment=0)
-signalI=dindgen(n_elements(pmb),start=0,increment=0)
-baselinedriftI=dindgen(n_elements(pmb),start=0,increment=0)
 
 
 
@@ -459,27 +483,35 @@ levelClearAir=where(baselineIB eq 1)
 ;-----------------------------------------CONSTANTS-------------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+;-----LIQUID-----
+
 ;surface area liquid sensor [m^2]
 aLiq=3.17d-5
 
-;surface area total sensor [m^2]
-aTot=5.02d-5
 
 ;liquid collection efficiency
 colELiq=1.
 
-;total collection efficiency
-colETot=1.
 
 ;EXPENDED HEAT FOR LIQUID
 lLiqStar=2589.
 
 
 
+;-----TOTAL-----
+
+;surface area total sensor [m^2]
+aTot=5.02d-5
+
+;total collection efficiency
+colETot=1.
+
+;EXPENDED HEAT FOR LIQUID
+lIceStar=1.13*lLiqStar
 
 
 
-;HEAT LOSS LIQUID
+;-----HEAT LOSS LIQUID------
 pLiq=vlwccol*ilwccol-kLiq*vlwcref*ilwcref
 pLiqNoPresCor=pLiq
 
@@ -488,14 +520,14 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 
-;-----------------------------------------PRESSURE CORRECTION---------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------PRESSURE correctionLiq---------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-linPresCor=linfit(pmb[clearair],pLiq[clearair])
+linPresCorLiq=linfit(pmb[clearair],pLiq[clearair])
 
 poly=poly_fit(pmb[clearair],pLiq[clearair],2)
-pLiq=pLiqNoPresCor - ( linPresCor[1]*pmb + linPresCor[0] )
+pLiq=pLiqNoPresCor - ( linPresCorLiq[1]*pmb + linPresCorLiq[0] )
 
 
 
@@ -523,7 +555,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, $
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
-  rawSignal:rawSignal, smoothSignal:smoothSignal, cdpacc:cdpacc}
+  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc}
 
   
 return,g

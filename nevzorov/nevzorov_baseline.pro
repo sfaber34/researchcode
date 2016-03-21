@@ -43,7 +43,12 @@ PRO Nevzorov_baseline
   vlwcref = LOADVAR('vlwcref', file=inf)
   ilwccol = LOADVAR('ilwccol', file=inf)
   ilwcref = LOADVAR('ilwcref', file=inf)
-    k_fact = (vlwccol * ilwccol)/(vlwcref*ilwcref)
+  vtwccol = LOADVAR('vtwccol', file=inf)
+  vtwcref = LOADVAR('vtwcref', file=inf)
+  itwccol = LOADVAR('itwccol', file=inf)
+  itwcref = LOADVAR('itwcref', file=inf)
+    ;k_fact = (vlwccol * ilwccol)/(vlwcref*ilwcref)
+    k_fact = (vtwccol * itwccol)/(vtwcref*itwcref)
   aias = LOADVAR('aias', file=inf)
   ps = LOADVAR('ps_hads_a', file=inf)
   trf = LOADVAR('trf', file=inf)
@@ -76,10 +81,11 @@ PRO Nevzorov_baseline
 
     p1 = PLOT(aias[inds], k_fact[inds], 'o', /CURRENT, OVERPLOT=1)
     ;p2 = PLOT([0,200],[fit[0],200*fit[1]+fit[0]], /CURRENT, OVERPLOT=1)
-    p2 = PLOT(unitv,line, /CURRENT, OVERPLOT=1)
+    p2 = PLOT(unitv,line, /CURRENT, OVERPLOT=1,dimensions=[1200,1000])
     print, fitb[0], fitb[1], fitb[2]
     p2.xrange=[60,104]
-    p2.yrange=[1.6,1.8]
+    ;p2.yrange=[1.6,1.8]
+    p1.yrange=[0,.6]
     
     CASE i of 
        0 : BEGIN

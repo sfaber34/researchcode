@@ -142,7 +142,7 @@ endif
 
 
 if stuff eq 20 then begin
-  cgcleanup
+;  cgcleanup
   lwccon=[]
   lwcnev1con=[]
   low=0.
