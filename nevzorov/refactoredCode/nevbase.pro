@@ -407,7 +407,7 @@ endfor
 diff=ts_diff(smoothSignal,1)
     
     
- clearair=where(abs(diff) le thresh and shift(abs(diff),1) le thresh and shift(abs(diff),-1) le thresh)
+clearair=where(abs(diff) le thresh and shift(abs(diff),1) le thresh and shift(abs(diff),-1) le thresh)
 
 
 ;------------------------------------------FILTER MISC.---------------------------------------------------------------------------------------------------------------------------

@@ -1,12 +1,7 @@
 pro basic
 
-print,'1'
 
-g= nevBase('0727','indicated','400')
-
-prnt,'2'
-stop
-stuff=13
+stuff=20
 
 ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 ;flight='0307'
@@ -147,12 +142,27 @@ endif
 
 
 if stuff eq 20 then begin
-  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  for flight=0, n_elements(flight)-1 do begin
-  g= nevBase(flight[i],'indicated','400')
-  print, max(g.rawsignal)
+  cgcleanup
+  lwccon=[]
+  lwcnev1con=[]
+  low=0.
+  high=3.
   
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  for i=0, n_elements(flight)-1 do begin
+  g= nevBase(flight[i],'indicated','400')
+  
+  p1=scatterplot(g.lwcnev1,g.lwc,dimensions=[1000,1000],/overplot,xrange=[low,high],yrange=[low,high])
+  lwccon=[lwccon,g.lwc]
+  lwcnev1con=[lwcnev1con,g.lwcnev1]
   endfor
+  
+  lin=linfit(lwcnev1con,lwccon)
+  p2=plot([low,high],[low,high],thick=2,'red',/overplot)
+  p2=plot([low,high],[low*lin[1]+lin[0],high*lin[1]+lin[0]],thick=2,'blue',linestyle=2,/overplot)
+  p2.xtitle="CDP LWC (g m!U-3!N)"
+  p2.ytitle="Calculated LWC (g m!U-3!N)"
+  p2.font_size=24
 
   stop
 endif
