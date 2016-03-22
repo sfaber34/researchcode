@@ -411,7 +411,7 @@ smoothSignalTot=dindgen(n_elements(pmb),increment=0)
 ;----------SIGNAL RATIO----------
 
 ;-----LIQUID-----
-rawSignalLiq=((vlwccol))
+rawSignalLiq=(vlwccol)
 
 
 
@@ -419,7 +419,7 @@ rawSignalLiq=((vlwccol))
 
 
 ;-----TOTAL-----
-rawSignalTot=((vtwccol))
+rawSignalTot=(vtwccol)
 
 
 
@@ -450,8 +450,8 @@ u2Liq=uLiq[50]
 
 x1Liq=min([u1Liq,u2Liq])
 x2Liq=max([u1Liq,u2Liq])
-if cope eq 0 or cope eq 2 then threshLiq=.007*mean(rawSignalLiq[x1Liq:x2Liq])
-if cope eq 1 then threshLiq=.007*mean(rawSignalLiq[x1Liq:x2Liq])
+if cope eq 0 or cope eq 2 then threshLiq=.007*mean(rawSignalLiq[0:50])
+if cope eq 1 then threshLiq=.007*mean(rawSignalLiq[0:50])
 
 
 
@@ -471,8 +471,8 @@ u2Tot=uTot[50]
 
 x1Tot=min([u1Tot,u2Tot])
 x2Tot=max([u1Tot,u2Tot])
-if cope eq 0 or cope eq 2 then threshTot=.0025*mean(uTot[0:50])
-if cope eq 1 then threshTot=0.0025*mean(uTot[x1Tot:x2Tot])
+if cope eq 0 or cope eq 2 then threshTot=.055*mean(uTot[0:50])
+if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
 
 
 
@@ -482,7 +482,17 @@ if cope eq 1 then threshTot=0.0025*mean(uTot[x1Tot:x2Tot])
 clearairLiq=where(abs(diffLiq) le threshLiq and shift(abs(diffLiq),1) le threshLiq and shift(abs(diffLiq),-1) le threshLiq and shift(abs(diffLiq),2) le threshLiq and shift(abs(diffLiq),-2) le threshLiq)
 clearairTot=where(abs(diffTot) le threshTot and shift(abs(diffTot),1) le threshTot and shift(abs(diffTot),-1) le threshTot and shift(abs(diffTot),2) le threshTot and shift(abs(diffTot),-2) le threshTot)
 
-clearairLiq=clearairLiq[50:n_elements(clearairLiq)-50]
+
+clearairLiq=clearairLiq[30:n_elements(clearairLiq)-30]
+clearairTot=clearairTot[30:n_elements(clearairTot)-30]
+
+
+
+clearairTotsort=sort(vtwccol[clearairTot])
+clearairTotsortsorted=clearairTot[clearairTotsort]
+clearairTotsortsorted=clearairTotsortsorted[n_elements(clearairTotsortsorted)*.01:n_elements(clearairTotsortsorted)*.99]
+
+
 
 
 ;p1=plot(timeFlight, twcnev)

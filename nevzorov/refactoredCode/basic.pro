@@ -159,15 +159,17 @@ if stuff eq 21 then begin
   
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight=['0307']
+  ;flight=['0307']
   for i=0, n_elements(flight)-1 do begin
     g= nevBase(flight[i],'indicated','400')
     
-    var1=g.pmb[g.clearairLiq]
-    var2=g.lwc[g.clearairLiq]
+    var1=g.pmb[g.clearairTot]
+    var2=g.twc[g.clearairTot]
 
     ;p1=scatterplot(g.lwcnev1,g.twcnev,dimensions=[1000,1000]) ;xrange=[low,high],yrange=[low,high]
-    p2=scatterplot(var1,var2,dimensions=[1000,1000],sym_color='black',/overplot,yrange=[-.1,.1])
+    p2=scatterplot(var1,var2,dimensions=[1000,1000],sym_color='black',/overplot)
+    ;p3=scatterplot(var1,g.lwcnev1[g.clearairTot],dimensions=[1000,1000],sym_color='red',/overplot)
+    p3=scatterplot(var1,g.lwcnoprescor[g.clearairTot],dimensions=[1000,1000],sym_color='green',/overplot)
     lwccon=[lwccon,g.lwc]
     lwc2con=[lwc2con,g.lwc2]
     lwcnev1con=[lwcnev1con,g.lwcnev1]
