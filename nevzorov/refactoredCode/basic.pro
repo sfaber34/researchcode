@@ -47,7 +47,7 @@ if stuff eq 13 then begin
   level=['400']
   flightb=['0727']
 colors=['red','green','blue','black']
-cgcleanup
+;cgcleanup
 for i=0,n_elements(flightb)-1 do begin
   g= nevBase(flightb[i],'indicated','400')
   p1=plot(g.timeFlight,g.rawsignal,dimensions=[1400,1000])
@@ -145,7 +145,7 @@ endif
 
 
 if stuff eq 21 then begin
-   cgcleanup
+   ;cgcleanup
   lwccon=[]
   lwc2con=[]
   lwcnev1con=[]
@@ -157,9 +157,83 @@ if stuff eq 21 then begin
   high=1000.
   
   
+  
+  
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;flight=['0710','0729','0729']
+  level=['400']
+  color=['black','blue','red']
+  ;cgcleanup
+
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','400')
+
+;    p4=plot(g.timeFlight,g.smoothsignaltot,dimensions=[1000,1000],color=color[0],title=flight[i])
+;    p5=scatterplot(g.timeFlight[g.clearairtot],g.smoothsignaltot[g.clearairtot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+;    p6=plot([min(g.timeFlight),max(g.timeFlight)],[g.threshtot,g.threshtot],'g',thick=2,/overplot)
+    
+    
+;    p4=plot(g.timeFlight,g.twcnoprescor,dimensions=[1800,1000],color=color[0],title=flight[i])
+;    p5=plot(g.timeFlight,g.lwcnoprescor,dimensions=[1800,1000],color='green',title='No pres cor',/overplot)
+    
+    ;x=where(g.twcnoprescor[g.clearairtot] gt .25)
+    
+    ;p4=plot(g.timeFlight,(g.twcnev-g.twc),dimensions=[1800,1000],title=flight[i])
+    ;p4=plot(g.timeFlight,(g.vtwcref*g.itwcref),dimensions=[1800,1000],color=color[1],title=flight[i],/overplot)
+    p4=scatterplot(g.twcnev,g.twc,dimensions=[1200,1200],title=flight[i],/overplot,sym_color='green')
+    p5=plot([0,2],[0,2],color='red',thick=2,/overplot)
+    p4.yrange=[0,2]
+    p4.xrange=[0,2]
+    ;p4=plot(g.timeFlight,g.twcnev-g.twc,dimensions=[1800,1000],color='red',title=flight[i],/overplot)
+    ;p5=plot(g.timeFlight,g.twcnev,dimensions=[1800,1000],color='green',title='No pres cor',/overplot)
+    
+    ;p4.yrange=[-.1,.1]
+    ;p4.xrange=[5d3,8.5d3]
+    ;p5=scatterplot(g.timeFlight[g.clearairtot],g.twcnoprescor[g.clearairtot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+
+
+
+    x=where(g.twcnev eq 0)
+
+    print,'n=',n_elements(g.clearairTot),'/',n_elements(g.pmb)
+
+    lwccon=[lwccon,g.lwc]
+    lwc2con=[lwc2con,g.lwc2]
+    lwcnev1con=[lwcnev1con,g.lwcnev1]
+
+  endfor
+  stop
+  
+  
+  
+  
+  ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight=['0304']
+  color=['black','blue']
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','400')
+
+    p4=plot(g.timeFlight,g.rawsignaltot,dimensions=[1000,1000],color=color[0],title=flight[i])
+    p5=scatterplot(g.timeFlight[g.clearairliq],g.rawsignaltot[g.clearairliq],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+    p6=plot(g.timeFlight,g.rawsignaltot2,dimensions=[1000,1000],color=color[1],title=flight[i],/overplot)
+    p7=scatterplot(g.timeFlight[g.clearairliq],g.rawsignaltot2[g.clearairliq],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+    
+    x=where(g.twcnev eq 0)
+
+    print,'n=',n_elements(g.clearairTot),'/',n_elements(g.pmb)
+
+    lwccon=[lwccon,g.lwc]
+    lwc2con=[lwc2con,g.lwc2]
+    lwcnev1con=[lwcnev1con,g.lwcnev1]
+
+  endfor
+  stop
+  
+  
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  ;flight=['0727']
+  flight=['0304']
+  color=['black','blue']
   for i=0, n_elements(flight)-1 do begin
     g= nevBase(flight[i],'indicated','400')
     
@@ -170,7 +244,7 @@ if stuff eq 21 then begin
     ;p4=scatterplot(g.timeFlight[g.clearairTot],g.smoothsignaltot[g.clearairTot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
     ;p2=plot(g.timeFlight,g.vtwccol,dimensions=[1000,1000],title=flight[i])
     ;p3=scatterplot(g.timeFlight[g.clearairTot],g.vtwccol[g.clearairTot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
-    p5=scatterplot(g.twcnev,g.twc,dimensions=[1000,1000],sym_color='green',symbol='+',title=flight[i],/overplot)
+    p5=scatterplot(g.as[g.clearairliq],g.lwc[g.clearairliq],dimensions=[1000,1000],sym_color=color[i],symbol='+',title=flight[i],/overplot)
     x=where(g.twcnev eq 0)
     ;p6=scatterplot(g.twcnev,g.twcnev-g.twc[x],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)  
     print,'n=',n_elements(g.clearairTot),'/',n_elements(g.pmb)
@@ -518,7 +592,7 @@ for i=0,n_elements(levels)-1 do begin
   plot1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
   print, mean(abs(g.lwc))
 endfor
-cgcleanup
+;cgcleanup
 endif  
 flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815','0307']
 

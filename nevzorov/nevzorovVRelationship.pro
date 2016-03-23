@@ -4,7 +4,7 @@ pro nevzorovVRelationship
 airspeedType='indicated'
 
 ;select flight level (900,600,400)
-flightLevel='400'
+flightLevel='900'
 
 ;select plots
 genplots='airspeedCon'
@@ -49,6 +49,28 @@ nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
   
   ;total collector current [A]
   itwccol=loadvar('itwccol', filename=nclPath)
+  
+  
+  
+  
+  ;-------------------FOR TOTK----------------------
+  ;liquid reference voltage [V]
+  vlwcref=loadvar('vtwcref', filename=nclPath)
+
+  ;liquid collector voltage [V]
+  vlwccol=loadvar('vtwccol', filename=nclPath)
+
+  ;liquid reference current [A]
+  ilwcref=loadvar('itwcref', filename=nclPath)
+
+  ;liquid collector current [A]
+  ilwccol=loadvar('itwccol', filename=nclPath)
+  ;-------------------FOR TOTK----------------------
+  
+  
+  
+  
+  
   
   ;reverse flow static temperature [C]
   trf=loadvar('trf', filename=nclPath)

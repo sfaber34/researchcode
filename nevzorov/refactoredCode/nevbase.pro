@@ -261,8 +261,8 @@ endif
 
 if flightDay eq '0304' then begin
   flightString='03-04-16'
-  aStart=convertTime(17,05,00)
-  aEnd=convertTime(19,16,00)
+  aStart=convertTime(17,25,00)
+  aEnd=convertTime(18,46,00)
 endif
 
 if flightDay eq '0307' then begin
@@ -290,6 +290,7 @@ vtwcref=vtwcref[aStart:aEnd]
 vtwccol=vtwccol[aStart:aEnd]
 ilwcref=ilwcref[aStart:aEnd]
 itwccol=itwccol[aStart:aEnd]
+itwcref=itwcref[aStart:aEnd]
 ilwccol=ilwccol[aStart:aEnd]
 trf=trf[aStart:aEnd]
 tas=tas[aStart:aEnd]
@@ -377,21 +378,21 @@ endif
 ;-----K TOTAL------
 
 if cope eq 1 then begin
-  if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasms^(-0.273777)+(0.399143) ;900 indicated
-  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(3.73599)*aiasms^(-0.0628865)+(-1.67763) ;600 indicated
-  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(3260.89)*aiasms^(-2.61716)+(0.683100) ;400 indicated
+  if (airspeedType eq 'indicated') and (level eq '900') then kTot=(2.36402)*aiasms^(-0.500554)+(0.233744) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kTot=(1.12249)*aiasms^(-0.238178)+(0.140327) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(0.583912)*aiasms^(-0.0731364)+(0.135938) ;400 indicated
 
-  if (airspeedType eq 'true') and (level eq '900') then kLiq=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
-  if (airspeedType eq 'true') and (level eq '600') then kLiq=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
-  if (airspeedType eq 'true') and (level eq '400') then kLiq=(1280.56)*tas^(-2.00624)+(1.08139) ;400 true
+  if (airspeedType eq 'true') and (level eq '900') then kTot=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
+  if (airspeedType eq 'true') and (level eq '600') then kTot=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
+  if (airspeedType eq 'true') and (level eq '400') then kTot=(1280.56)*tas^(-2.00624)+(1.08139) ;400 true
 endif
 
 
 
 if cope eq 2 then begin
-  if (airspeedType eq 'indicated') and (level eq '700') then kLiq=(-0.0126704)*tas^(0.698457)+(2.01460)
-  if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(-0.00956550)*tas^(0.753178)+(2.00092)
-  if (airspeedType eq 'indicated') and (level eq '500') then kLiq=(-0.135222)*tas^(0.375551)+(2.43805)
+  if (airspeedType eq 'indicated') and (level eq '700') then kTot=(-0.0126704)*tas^(0.698457)+(2.01460)
+  if (airspeedType eq 'indicated') and (level eq '600') then kTot=(-0.00956550)*tas^(0.753178)+(2.00092)
+  if (airspeedType eq 'indicated') and (level eq '500') then kTot=(-0.135222)*tas^(0.375551)+(2.43805)
   if (airspeedType eq 'indicated') and (level eq '400') then kTot=(3260.89)*aiasms^(-2.61716)+(0.683100) ;400 indicated
 endif
 
@@ -409,6 +410,7 @@ correctionTot=dindgen(n_elements(pmb),increment=0)
 smoothSignalTot=dindgen(n_elements(pmb),increment=0)
 
 
+
 ;----------SIGNAL RATIO----------
 
 ;-----LIQUID-----
@@ -421,7 +423,6 @@ rawSignalLiq=(vlwccol)
 
 ;-----TOTAL-----
 rawSignalTot=(vtwccol)
-rawSignalTot2=(vtwccol - vtwcref)
 
 
 
@@ -439,18 +440,20 @@ for i=0,n_elements(pmb)-(int+1) do begin
   i=i+int
 endfor
 
-intb=10
+intb=20
 
 for i=0,n_elements(pmb)-(intb+1) do begin
-  correctionTot[i:i+int]=min(rawSignalTot[i:i+int])
+  correctionTot[i:i+intb]=min(rawSignalTot[i:i+intb])
   i=i+int
 endfor
 
 
 for i=0,n_elements(pmb)-(intb+1) do begin
-  smoothSignalTot[i:i+int]=rawSignalTot[i:i+int]-correctionTot[i:i+int]
+  smoothSignalTot[i:i+intb]=rawSignalTot[i:i+intb]-correctionTot[i:i+intb]
   i=i+int
 endfor
+
+
 
 
 diffLiq=smoothSignalLiq
@@ -485,17 +488,15 @@ u2Tot=uTot[50]
 
 x1Tot=min([u1Tot,u2Tot])
 x2Tot=max([u1Tot,u2Tot])
-if cope eq 0 or cope eq 2 then threshTot=.055*mean(uTot[0:50])
+if cope eq 0 or cope eq 2 then threshTot=.085*mean(uTot[0:50])
 if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
-threshTot=0.016
+;threshTot=0.016
 
 
 ;p1=plot(timeFlight,diffTot) 
     
 clearairLiq=where(abs(diffLiq) le threshLiq and shift(abs(diffLiq),1) le threshLiq and shift(abs(diffLiq),-1) le threshLiq and shift(abs(diffLiq),2) le threshLiq and shift(abs(diffLiq),-2) le threshLiq)
-;clearairTot=where(diffTot le threshTot and shift(diffTot,1) le threshTot and shift(diffTot,-1) le threshTot and shift(diffTot,2) le threshTot and shift(diffTot,-2) le threshTot and $
-  ;rawsignalTot2 gt 0. and shift(rawsignalTot2,1) gt 0. and shift(rawsignalTot2,-1) gt 0. and shift(rawsignalTot2,2) gt 0. and shift(rawsignalTot2,-2) gt 0.)
-clearairTot=where(diffTot le threshTot and shift(diffTot,1) le threshTot and shift(diffTot,-1) le threshTot and shift(diffTot,2) le threshTot and shift(diffTot,-2) le threshTot)
+clearairTot=where(abs(diffTot) le threshTot and abs(shift(diffTot,1)) le threshTot and abs(shift(diffTot,-1)) le threshTot and abs(shift(diffTot,2)) le threshTot and abs(shift(diffTot,-2)) le threshTot)
 
 
 clearairLiq=clearairLiq[30:n_elements(clearairLiq)-30]
@@ -584,7 +585,7 @@ betaLiq=0.11
 
 ;surface area total sensor [m^2]
 aTot=5.02d-5
-;aTot=4.82d-5
+aTot=4.82d-5
 
 ;total collection efficiency
 colETot=1.
@@ -609,7 +610,7 @@ pTot=vlwccol*itwccol-kTot*vtwcref*itwcref
 pTotNoPresCor=pTot
 pTotKor=vlwccol*itwccol-(1.1 - tas*pmb*3.2954d-6+8.3207d-4)*vtwcref*itwcref
 
-twcNoPresCor=pTot/(colETot*tas*aTot*lLiqStar)
+twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
 
 
 
@@ -645,7 +646,7 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 ;WATER CONTENT TOTAL
-twc=pTot/(colETot*tas*aTot*lLiqStar)
+twc=pTot/(colETot*tas*aTot*lIceStar)
 ;twc=pTotKor/(colETot*tas*aTot*lLiqStar)
 
 
@@ -659,11 +660,11 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   clearairLiq:clearairLiq, levelclearairLiq:levelclearairLiq,timeFlight:timeFlight,$
   flightString:flightString, kLiq:kLiq,threshLiq:threshLiq, clearairTot:clearairTot,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref, twcNoPresCor:twcNoPresCor,$
-  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, rawSignalTot2:rawSignalTot2,$
+  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, threshTot:threshTot,$
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
-  rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot,pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
+  rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref}
 
   
