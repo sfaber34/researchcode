@@ -218,8 +218,9 @@ endif
 
 if flightDay eq '0710' then begin
   flightString='07-10-13'
-  aStart=convertTime(11,31,00)
-  aEnd=convertTime(14,11,00)
+  ;aStart=convertTime(11,31,00)
+  aStart=convertTime(11,50,00)
+  aEnd=convertTime(14,20,00)
 endif
 
 if flightDay eq '0725' then begin
@@ -420,6 +421,7 @@ rawSignalLiq=(vlwccol)
 
 ;-----TOTAL-----
 rawSignalTot=(vtwccol)
+rawSignalTot2=(vtwccol - vtwcref)
 
 
 
@@ -428,16 +430,28 @@ int=10
 
 for i=0,n_elements(pmb)-(int+1) do begin
   correctionLiq[i:i+int]=min(rawSignalLiq[i:i+int])
-  correctionTot[i:i+int]=min(rawSignalTot[i:i+int])
   i=i+int
 endfor
 
 
 for i=0,n_elements(pmb)-(int+1) do begin
   smoothSignalLiq[i:i+int]=rawSignalLiq[i:i+int]-correctionLiq[i:i+int]
+  i=i+int
+endfor
+
+intb=10
+
+for i=0,n_elements(pmb)-(intb+1) do begin
+  correctionTot[i:i+int]=min(rawSignalTot[i:i+int])
+  i=i+int
+endfor
+
+
+for i=0,n_elements(pmb)-(intb+1) do begin
   smoothSignalTot[i:i+int]=rawSignalTot[i:i+int]-correctionTot[i:i+int]
   i=i+int
 endfor
+
 
 diffLiq=smoothSignalLiq
 
@@ -473,14 +487,15 @@ x1Tot=min([u1Tot,u2Tot])
 x2Tot=max([u1Tot,u2Tot])
 if cope eq 0 or cope eq 2 then threshTot=.055*mean(uTot[0:50])
 if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
-
-
+threshTot=0.016
 
 
 ;p1=plot(timeFlight,diffTot) 
     
 clearairLiq=where(abs(diffLiq) le threshLiq and shift(abs(diffLiq),1) le threshLiq and shift(abs(diffLiq),-1) le threshLiq and shift(abs(diffLiq),2) le threshLiq and shift(abs(diffLiq),-2) le threshLiq)
-clearairTot=where(abs(diffTot) le threshTot and shift(abs(diffTot),1) le threshTot and shift(abs(diffTot),-1) le threshTot and shift(abs(diffTot),2) le threshTot and shift(abs(diffTot),-2) le threshTot)
+;clearairTot=where(diffTot le threshTot and shift(diffTot,1) le threshTot and shift(diffTot,-1) le threshTot and shift(diffTot,2) le threshTot and shift(diffTot,-2) le threshTot and $
+  ;rawsignalTot2 gt 0. and shift(rawsignalTot2,1) gt 0. and shift(rawsignalTot2,-1) gt 0. and shift(rawsignalTot2,2) gt 0. and shift(rawsignalTot2,-2) gt 0.)
+clearairTot=where(diffTot le threshTot and shift(diffTot,1) le threshTot and shift(diffTot,-1) le threshTot and shift(diffTot,2) le threshTot and shift(diffTot,-2) le threshTot)
 
 
 clearairLiq=clearairLiq[30:n_elements(clearairLiq)-30]
@@ -569,6 +584,7 @@ betaLiq=0.11
 
 ;surface area total sensor [m^2]
 aTot=5.02d-5
+;aTot=4.82d-5
 
 ;total collection efficiency
 colETot=1.
@@ -591,9 +607,9 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 ;-----HEAT LOSS TOTAL------
 pTot=vlwccol*itwccol-kTot*vtwcref*itwcref
 pTotNoPresCor=pTot
+pTotKor=vlwccol*itwccol-(1.1 - tas*pmb*3.2954d-6+8.3207d-4)*vtwcref*itwcref
 
-
-twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
+twcNoPresCor=pTot/(colETot*tas*aTot*lLiqStar)
 
 
 
@@ -629,8 +645,8 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 ;WATER CONTENT TOTAL
-twc=pTot/(colETot*tas*aTot*lIceStar)
-
+twc=pTot/(colETot*tas*aTot*lLiqStar)
+;twc=pTotKor/(colETot*tas*aTot*lLiqStar)
 
 
 
@@ -643,10 +659,12 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   clearairLiq:clearairLiq, levelclearairLiq:levelclearairLiq,timeFlight:timeFlight,$
   flightString:flightString, kLiq:kLiq,threshLiq:threshLiq, clearairTot:clearairTot,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref, twcNoPresCor:twcNoPresCor,$
-  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, $
+  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, rawSignalTot2:rawSignalTot2,$
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
-  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc}
+  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
+  rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot,pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
+  vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref}
 
   
 return,g

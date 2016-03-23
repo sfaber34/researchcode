@@ -159,22 +159,30 @@ if stuff eq 21 then begin
   
 
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  ;flight=['0307']
+  ;flight=['0727']
   for i=0, n_elements(flight)-1 do begin
     g= nevBase(flight[i],'indicated','400')
     
-    var1=g.pmb[g.clearairTot]
-    var2=g.twc[g.clearairTot]
+    var1=g.twcnev
+    var2=g.twcnev-g.twc
 
-    ;p1=scatterplot(g.lwcnev1,g.twcnev,dimensions=[1000,1000]) ;xrange=[low,high],yrange=[low,high]
-    p2=scatterplot(var1,var2,dimensions=[1000,1000],sym_color='black',/overplot)
+    ;p1=plot(g.timeFlight,g.smoothsignaltot,dimensions=[1000,1000]) ;xrange=[low,high],yrange=[low,high]
+    ;p4=scatterplot(g.timeFlight[g.clearairTot],g.smoothsignaltot[g.clearairTot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+    ;p2=plot(g.timeFlight,g.vtwccol,dimensions=[1000,1000],title=flight[i])
+    ;p3=scatterplot(g.timeFlight[g.clearairTot],g.vtwccol[g.clearairTot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+    p5=scatterplot(g.twcnev,g.twc,dimensions=[1000,1000],sym_color='green',symbol='+',title=flight[i],/overplot)
+    x=where(g.twcnev eq 0)
+    ;p6=scatterplot(g.twcnev,g.twcnev-g.twc[x],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)  
+    print,'n=',n_elements(g.clearairTot),'/',n_elements(g.pmb)
+    ;p2=scatterplot(var1,var2,dimensions=[1000,1000],sym_color='black',/overplot)
     ;p3=scatterplot(var1,g.lwcnev1[g.clearairTot],dimensions=[1000,1000],sym_color='red',/overplot)
-    p3=scatterplot(var1,g.lwcnoprescor[g.clearairTot],dimensions=[1000,1000],sym_color='green',/overplot)
+    ;p3=scatterplot(var1,g.lwcnoprescor[g.clearairTot],dimensions=[1000,1000],sym_color='green',/overplot)
     lwccon=[lwccon,g.lwc]
     lwc2con=[lwc2con,g.lwc2]
     lwcnev1con=[lwcnev1con,g.lwcnev1]
     var1con=[var1con,var1]
     var2con=[var2con,var2]
+
   endfor
 stop
   lin=linfit(var1con,var2con)
