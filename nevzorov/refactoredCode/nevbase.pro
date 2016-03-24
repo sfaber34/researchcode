@@ -609,9 +609,8 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 ;-----HEAT LOSS TOTAL------
-pTot=vtwccol*itwccol-kTot*vlwcref*ilwcref
+pTot=vtwccol*itwccol-kTot*vtwcref*itwcref
 pTotNoPresCor=pTot
-;pTotKor=vlwccol*itwccol-(1.1 - tas*pmb*3.2954d-6+8.3207d-4)*vtwcref*itwcref
 
 twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
 
