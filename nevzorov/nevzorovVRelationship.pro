@@ -55,21 +55,21 @@ nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
   
   ;-------------------FOR TOTK----------------------
   ;liquid reference voltage [V]
-  vlwcref=loadvar('vtwcref', filename=nclPath)
+  vlwcref=loadvar('vlwcref', filename=nclPath)
 
   ;liquid collector voltage [V]
-  vlwccol=loadvar('vtwccol', filename=nclPath)
+  vlwccol=loadvar('vlwccol', filename=nclPath)
 
   ;liquid reference current [A]
-  ilwcref=loadvar('itwcref', filename=nclPath)
+  ilwcref=loadvar('ilwcref', filename=nclPath)
 
   ;liquid collector current [A]
-  ilwccol=loadvar('itwccol', filename=nclPath)
+  ilwccol=loadvar('ilwccol', filename=nclPath)
   ;-------------------FOR TOTK----------------------
   
-  
-  
-  
+;  
+;  vtwcref=vlwcref
+;  itwcref=ilwcref
   
   
   ;reverse flow static temperature [C]
@@ -252,13 +252,13 @@ endif
 
 ;redefine variables for twc
 
-vlwccol=vtwccol
-ilwccol=itwccol
-vlwcref=vtwcref
-vlwcref=vtwcref
+;vlwccol=vtwccol
+;ilwccol=itwccol
+;vlwcref=vtwcref
+;vlwcref=vtwcref
 
 ;power calculations
-liqColPower=vlwccol*ilwccol
+liqColPower=vtwccol*itwccol
 liqRefPower=vlwcref*ilwcref
 liqK=liqColPower/liqRefPower
 

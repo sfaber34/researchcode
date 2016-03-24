@@ -187,7 +187,7 @@ if stuff eq 22 then begin
     e=g.pTot/(g.lwc*g.tas*g.aTot*g.lIceStar)
     econ=[econ,e[x]]
     p10=scatterplot(g.twcnev,g.twcnev-g.twc,dimensions=[1800,1400],sym_color='red',symbol='.',title=flight[i],/overplot)
-
+    ;p10.yrange=[-.005,.005]
   endfor
 stop
   p9=scatterplot(trfcon,econ,dimensions=[1400,1000])

@@ -317,6 +317,8 @@ if cope eq 1 then begin
   lwcNev2=lwcNev2[aStart:aEnd]
   twcNev=twcNev[aStart:aEnd]
   hivs=hivs[aStart:aEnd]
+  vtwcref=vlwcref
+  itwcref=ilwcref
 endif
 
 
@@ -585,18 +587,19 @@ betaLiq=0.11
 
 ;surface area total sensor [m^2]
 aTot=5.02d-5
-aTot=4.82d-5
+;aTot=4.82d-5
 
 ;total collection efficiency
-colETot=1.
+colETot=1
 
 ;-------PAR BY TRF---------
 ;-------SEE 3/23/16 IN LOG---------
-colETot=0.49964736687174566+trf*(-0.0030369760138078371)
+;colETot=0.49964736687174566+trf*(-0.0030369760138078371)
 
 
 ;EXPENDED HEAT FOR LIQUID
-lIceStar=1.13*lLiqStar
+;lIceStar=1.13*lLiqStar
+lIceStar=lLiqStar
 
 
 
@@ -611,9 +614,9 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 ;-----HEAT LOSS TOTAL------
-pTot=vlwccol*itwccol-kTot*vtwcref*itwcref
+pTot=vtwccol*itwccol-kTot*vtwcref*itwcref
 pTotNoPresCor=pTot
-pTotKor=vlwccol*itwccol-(1.1 - tas*pmb*3.2954d-6+8.3207d-4)*vtwcref*itwcref
+;pTotKor=vlwccol*itwccol-(1.1 - tas*pmb*3.2954d-6+8.3207d-4)*vtwcref*itwcref
 
 twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
 
@@ -635,7 +638,7 @@ pLiq=pLiqNoPresCor - ( linPresCorLiq[1]*pmb + linPresCorLiq[0] )
 linPresCorTot=linfit(pmb[clearairTot],pTot[clearairTot])
 
 ;poly=poly_fit(pmb[clearairTot],pTot[clearairTot],2)
-pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
+pTot=pTotNoPresCor; - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 
 
@@ -656,19 +659,16 @@ twc=pTot/(colETot*tas*aTot*lIceStar)
 
 
 
-lwc2=lwc + 1.13*twc
-
-twc2=lwc + twc
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
-  pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, twcNev:twcNev, lwcNoPresCor:lwcNoPresCor, twc:twc,lwc2:lwc2,twc2:twc2,$
+  pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, twcNev:twcNev, lwcNoPresCor:lwcNoPresCor, twc:twc,$
   clearairLiq:clearairLiq, levelclearairLiq:levelclearairLiq,timeFlight:timeFlight,$
   flightString:flightString, kLiq:kLiq,threshLiq:threshLiq, clearairTot:clearairTot,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref, twcNoPresCor:twcNoPresCor,$
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, threshTot:threshTot,$
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
-  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
+  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,colETot:colETot,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar}
 
@@ -703,3 +703,16 @@ print,''
 print,'-------------COMMANDS-----------------'
 print,'SUPERSCRIPT = !U *** !N'
 end
+
+pro setwd
+
+  cd,current=h
+  h=STRMATCH(h, '*/nevzorov/*')
+
+  if !version.OS_FAMILY eq 'unix' then begin
+    if h ne 1 then cd,'/Volumes/sfaber1/research/nevzorov/refactoredCode'
+  endif else begin
+    if h ne 1 then cd,'Z:\research\nevzorov/refactoredCode'
+  endelse
+end  
+  
