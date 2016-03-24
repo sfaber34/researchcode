@@ -391,10 +391,10 @@ endif
 
 
 if cope eq 2 then begin
-  if (airspeedType eq 'indicated') and (level eq '700') then kTot=(-0.0126704)*tas^(0.698457)+(2.01460)
-  if (airspeedType eq 'indicated') and (level eq '600') then kTot=(-0.00956550)*tas^(0.753178)+(2.00092)
-  if (airspeedType eq 'indicated') and (level eq '500') then kTot=(-0.135222)*tas^(0.375551)+(2.43805)
-  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(3260.89)*aiasms^(-2.61716)+(0.683100) ;400 indicated
+  if (airspeedType eq 'indicated') and (level eq '700') then kTot=(-0.0258749)*aiasms^(0.711242)+(1.37937)
+  if (airspeedType eq 'indicated') and (level eq '600') then kTot=(-0.104706)*aiasms^(0.468563)+(1.64276)
+  if (airspeedType eq 'indicated') and (level eq '500') then kTot=(-0.0249307)*aiasms^(0.698422)+(1.39464)
+  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(-0.0700741)*aiasms^(0.512351)+(1.56121) ;400 indicated
 endif
 
 

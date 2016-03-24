@@ -83,9 +83,11 @@ PRO Nevzorov_baseline
     ;p2 = PLOT([0,200],[fit[0],200*fit[1]+fit[0]], /CURRENT, OVERPLOT=1)
     p2 = PLOT(unitv,line, /CURRENT, OVERPLOT=1,dimensions=[1200,1000])
     print, fitb[0], fitb[1], fitb[2]
-    p2.xrange=[60,104]
+    ;p2.xrange=[60,104]
     ;p2.yrange=[1.6,1.8]
-    p1.yrange=[0,.6]
+    ;p1.yrange=[0,.6]
+    p2.yrange=[.6,1.2]
+    p2.xrange=[50,100]
     
     CASE i of 
        0 : BEGIN
@@ -108,7 +110,7 @@ PRO Nevzorov_baseline
 
 
   ENDFOR
-STOP
+
 
 ;  ;the following calculate the 'wet' power given fit parameters fit[0] and fit[1]
 ;  Pw = (vlwccol*ilwccol) - (aias*fit[1] + fit[0])*(vlwcref*ilwcref)

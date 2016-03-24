@@ -161,14 +161,15 @@ if stuff eq 22 then begin
   econ=[]
   xcon=[]
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  level=['600']
+  flight=['0307']
+  level=['400']
   color=['black','blue','red']
-  ;cgcleanup
+  cgcleanup
 
   for i=0, n_elements(flight)-1 do begin
     g= nevBase(flight[i],'indicated','400')
 
-    x=where(abs(g.twcnev-g.lwcnev1) lt 1000)
+    x=where(abs(g.twcnev-g.lwcnev1) lt .01 and g.lwc gt .04)
     print,'n=',n_elements(x),'/',n_elements(g.pmb)
 
     ;p5=scatterplot(g.lwc[x],g.twc[x],dimensions=[1400,1400],sym_color='blue',symbol='+',title=flight[i],/overplot)
@@ -185,10 +186,16 @@ if stuff eq 22 then begin
 
     e=g.pTot/(g.lwc*g.tas*g.aTot*g.lIceStar)
     econ=[econ,e[x]]
-    p10=scatterplot(g.twcnev,g.twc,dimensions=[1400,1400],sym_color='green',symbol='+',sym_size=.7,title=flight[i],/overplot)
+    
+    twcdiff=g.lwc-g.twc
+    
+    
+    p10=scatterplot(g.cdplwc,g.lwc,dimensions=[1200,1200],title=flight[i])
+    p11=scatterplot(g.cdplwc,g.twc,sym_color='red',dimensions=[1200,1200],title=flight[i],/overplot)
+    ;p11=scatterplot(g.timeFlight[x],twcdiff[x],dimensions=[1400,1400],sym_color='red',symbol='.',title=flight[i],/overplot)
     p11=plot([0,2],[0,2],/overplot,thick=2,'r')
-    p10.yrange=[0,2]
-    p10.xrange=[0,2]
+    p10.yrange=[0,.4]
+    p10.xrange=[0,.4]
   endfor
 stop
   p9=scatterplot(trfcon,econ,dimensions=[1400,1000])
