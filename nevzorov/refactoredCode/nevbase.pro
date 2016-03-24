@@ -1,13 +1,12 @@
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;CALCULATES NEVZOROV LIQUID WATER CONTENT, TOTAL WATER CONTENT
+;
+;NOTE - K (DRY AIR HEAT LOSS COEF) MUST BE MANUALLY ENTERED BEFORE CALC
+;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 function nevbase, flightDay, airspeedType, level
-
-cd,current=h
-h=STRMATCH(h, '*/nevzorov/*')
-
-if !version.OS_FAMILY eq 'unix' then begin
-  if h ne 1 then cd,'/Volumes/sfaber1/research/nevzorov/refactoredCode'
-endif else begin
-  if h ne 1 then cd,'Z:\research\nevzorov/refactoredCode'
-endelse
 
 
 
@@ -332,13 +331,6 @@ endif
 ;CONVERT INDICATED AIRSPEED TO M/S
 aiasMs=aias*.514444
 
-
-
-
-
-;-----------------------------------------Kliq---------------------------------------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 if airspeedType eq 'true' then begin
   as=tas
 endif
@@ -349,7 +341,14 @@ endif
 
 
 
-;-----K LIQUID------
+;-----------------------------------------Kliq---------------------------------------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+;----------------------------------------------------K LIQUID---------------------------------------------------------------
 
 if cope eq 1 then begin
   if (airspeedType eq 'indicated') and (level eq '900') then kLiq=(2.47292)*aiasms^(-0.273777)+(0.399143) ;900 indicated
@@ -377,16 +376,16 @@ endif
 
 
 
-;-----K TOTAL------
+;----------------------------------------------------K TOTAL----------------------------------------------------
 
 if cope eq 1 then begin
-  if (airspeedType eq 'indicated') and (level eq '900') then kTot=(2.36402)*aiasms^(-0.500554)+(0.233744) ;900 indicated
-  if (airspeedType eq 'indicated') and (level eq '600') then kTot=(1.12249)*aiasms^(-0.238178)+(0.140327) ;600 indicated
-  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(0.583912)*aiasms^(-0.0731364)+(0.135938) ;400 indicated
+  if (airspeedType eq 'indicated') and (level eq '900') then kTot=(10.8603)*aiasms^(-0.675924)+(0.167331) ;900 indicated
+  if (airspeedType eq 'indicated') and (level eq '600') then kTot=(3.39234)*aiasms^(-0.182697)+(-0.737908) ;600 indicated
+  if (airspeedType eq 'indicated') and (level eq '400') then kTot=(224.264)*aiasms^(-1.73025)+(0.725502) ;400 indicated
 
-  if (airspeedType eq 'true') and (level eq '900') then kTot=(8.56136)*tas^(-0.0292547)+(-6.37413) ;900 true
-  if (airspeedType eq 'true') and (level eq '600') then kTot=(3.91644)*tas^(-0.0685396)+(-1.70073) ;600 true
-  if (airspeedType eq 'true') and (level eq '400') then kTot=(1280.56)*tas^(-2.00624)+(1.08139) ;400 true
+  if (airspeedType eq 'true') and (level eq '900') then kTot=(35.0933)*tas^(-1.00354)+(0.318860) ;900 true
+  if (airspeedType eq 'true') and (level eq '600') then kTot=(3.83487)*tas^(-0.238794)+(-0.496087) ;600 true
+  if (airspeedType eq 'true') and (level eq '400') then kTot=(9874.83)*tas^(-2.45898)+(0.753854) ;400 true
 endif
 
 

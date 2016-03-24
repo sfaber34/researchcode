@@ -1,26 +1,26 @@
 pro nevzorovK
 
   ;airspeed type (true, indicated)
-  airspeedType='indicated'
+  airspeedType='true'
 
   ;select flight level (900,600,400)
-  flightLevel='900'
-
-  ;select sensor (liquid, total)
-  sensor='liquid'
+  flightLevel=400
 
   findRange='true'
 
   ;select regression (linear, geometric)
   regression='geometric'
   
+  ;select if cope mission (0,1)
+  cope=1
+  
   
   ;k for total (0,1)
-  total='1'
+  total=1
 
   ;path to ncl file
-  ;nclPath='/Volumes/sfaber1/research/nevzorov/121715/20151217.c1.nc'
-  nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
+  if cope eq 0 then nclPath='/Volumes/sfaber1/research/nevzorov/121715/20151217.c1.nc'
+  if cope eq 1 then nclPath='/Volumes/sfaber1/research/nevzorov/data/070913/20130709.c1.nc'
 
 
 
@@ -53,7 +53,7 @@ pro nevzorovK
 
 
   ;------------REDEFINE VARS FOR TOTAL-------------------
-  if total eq '1' then begin
+  if total eq 1 then begin
     vlwccol=vtwccol
     ilwccol=itwccol
   endif
@@ -200,7 +200,7 @@ pro nevzorovK
 
 
 
-  if flightLevel eq '900' then begin
+  if flightLevel eq 900 then begin
     aStart=aStartA
     aEnd=aEndA
     bStart=bStartA
@@ -213,7 +213,7 @@ pro nevzorovK
     eEnd=eEndA
   endif
 
-  if flightLevel eq '600' then begin
+  if flightLevel eq 600 then begin
     aStart=aStartB
     aEnd=aEndB
     bStart=bStartB
@@ -226,7 +226,7 @@ pro nevzorovK
     eEnd=eEndB
   endif
 
-  if flightLevel eq '400' then begin
+  if flightLevel eq 400 then begin
     aStart=aStartC
     aEnd=aEndC
     bStart=bStartC
@@ -382,9 +382,6 @@ pro nevzorovK
   ;-----------gen plots-----------
 
 
-
-    if sensor eq 'liquid' then begin
-
       plot1=scatterplot(asA,liqKA,symbol='o',sym_size='.6',name=string(asAMean),sym_fill_color='black',dimensions=[1200,900])
       plot2=scatterplot(asB,liqKB,symbol='o',sym_size='.6',name=string(asBMean),sym_color='blue',sym_fill_color='blue',/overplot)
       plot3=scatterplot(asC,liqKC,symbol='o',sym_size='.6',name=string(asCMean),sym_color='dark slate grey',sym_fill_color='dark slate grey',/overplot)
@@ -392,7 +389,8 @@ pro nevzorovK
       plot5=scatterplot(asE,liqKE,symbol='o',sym_size='.6',name=string(asEMean),sym_color='light sea green',sym_fill_color='light sea green',/overplot)
       legend1=legend(target=[plot1,plot2,plot3,plot4,plot5],shadow=0)
 
-      atitle=string('Liquid K vs ',airspeedType,' Airspeed -',pConMeanAll)
+      if total eq 0 then atitle=string('Liquid K vs ',airspeedType,' Airspeed -',pConMeanAll)
+      if total eq 1 then atitle=string('Total K vs ',airspeedType,' Airspeed -',pConMeanAll)
       xtitle=string(airspeedType+' Airspeed [m/s]')
       plot1.title=atitle
       plot1.xtitle=xtitle
@@ -433,6 +431,5 @@ pro nevzorovK
 
       plot1.ytitle='Liquid K'
 
-    endif
 
 end
