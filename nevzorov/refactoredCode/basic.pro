@@ -1,7 +1,7 @@
 pro basic
 
 
-stuff=21
+stuff=22
 
 ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 ;flight='0307'
@@ -144,6 +144,71 @@ endif
 
 
 
+
+if stuff eq 22 then begin
+  ;cgcleanup
+  lwccon=[]
+  lwc2con=[]
+  lwcnev1con=[]
+
+  var1con=[]
+  var2con=[]
+
+  low=250.
+  high=1000.
+
+  twccon=[]
+  econ=[]
+  xcon=[]
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;flight=['0710','0729','0729']
+  level=['400']
+  color=['black','blue','red']
+  cgcleanup
+
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','400')
+
+    x=where(abs(g.twcnev-g.lwcnev1) lt 1000)
+    print,'n=',n_elements(x),'/',n_elements(g.pmb)
+
+    ;p5=scatterplot(g.lwc[x],g.twc[x],dimensions=[1400,1400],sym_color='blue',symbol='+',title=flight[i],/overplot)
+    ;p5=scatterplot(g.twcnev[x],g.twc[x],dimensions=[1400,1400],sym_color='red',symbol='+',title=flight[i],/overplot)
+    ;p6=plot([0,1.5],[0,1.5],'g',thick=2,/overplot)
+;    p5.xrange=[0,1.5]
+;    p5.yrange=[0,1.5]
+    xcon=[xcon,x]
+    lwccon=[lwccon,g.lwc[x]]
+    twccon=[twccon,g.twc[x]]
+    pmbcon=[pmbcon,g.pmb[x]]
+    ascon=[ascon,g.as[x]]
+    trfcon=[trfcon,g.trf[x]]
+
+    e=g.pTot/(g.lwc*g.tas*g.aTot*g.lIceStar)
+    econ=[econ,e[x]]
+    p10=scatterplot(g.twcnev,g.twcnev-g.twc,dimensions=[1800,1400],sym_color='red',symbol='.',title=flight[i],/overplot)
+
+  endfor
+stop
+  p9=scatterplot(trfcon,econ,dimensions=[1400,1000])
+  p9.yrange=[0,1]
+
+  line=linfit(trfcon,econ)
+
+  p10=plot([-20,20],[line[0]+line[1]*(-20),line[0]+line[1]*20],thick=2,'r',/overplot)
+
+
+
+
+  stop
+
+
+
+endif
+
+
+
+
 if stuff eq 21 then begin
    ;cgcleanup
   lwccon=[]
@@ -156,52 +221,49 @@ if stuff eq 21 then begin
   low=250.
   high=1000.
   
-  
-  
-  
+  twccon=[]
+  econ=[]
+  xcon=[]
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   ;flight=['0710','0729','0729']
   level=['400']
   color=['black','blue','red']
-  ;cgcleanup
+  cgcleanup
 
   for i=0, n_elements(flight)-1 do begin
     g= nevBase(flight[i],'indicated','400')
-
-;    p4=plot(g.timeFlight,g.smoothsignaltot,dimensions=[1000,1000],color=color[0],title=flight[i])
-;    p5=scatterplot(g.timeFlight[g.clearairtot],g.smoothsignaltot[g.clearairtot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
-;    p6=plot([min(g.timeFlight),max(g.timeFlight)],[g.threshtot,g.threshtot],'g',thick=2,/overplot)
     
+    x=where(abs(g.twcnev-g.lwcnev1) lt .08 and g.lwc gt .2)
+    print,'n=',n_elements(x),'/',n_elements(g.pmb)
     
-;    p4=plot(g.timeFlight,g.twcnoprescor,dimensions=[1800,1000],color=color[0],title=flight[i])
-;    p5=plot(g.timeFlight,g.lwcnoprescor,dimensions=[1800,1000],color='green',title='No pres cor',/overplot)
+    p5=scatterplot(g.lwc[x],g.twc[x],dimensions=[1400,1400],sym_color='blue',symbol='+',title=flight[i],/overplot)
+    p6=plot([0,1.5],[0,1.5],'g',thick=2,/overplot)
+    p5.xrange=[0,1.5]
+    p5.yrange=[0,1.5]
+    xcon=[xcon,x]
+    lwccon=[lwccon,g.lwc[x]]
+    twccon=[twccon,g.twc[x]]
+    pmbcon=[pmbcon,g.pmb[x]]
+    ascon=[ascon,g.as[x]]
+    trfcon=[trfcon,g.trf[x]]
     
-    ;x=where(g.twcnoprescor[g.clearairtot] gt .25)
-    
-    ;p4=plot(g.timeFlight,(g.twcnev-g.twc),dimensions=[1800,1000],title=flight[i])
-    ;p4=plot(g.timeFlight,(g.vtwcref*g.itwcref),dimensions=[1800,1000],color=color[1],title=flight[i],/overplot)
-    p4=scatterplot(g.twcnev,g.twc,dimensions=[1200,1200],title=flight[i],/overplot,sym_color='green')
-    p5=plot([0,2],[0,2],color='red',thick=2,/overplot)
-    p4.yrange=[0,2]
-    p4.xrange=[0,2]
-    ;p4=plot(g.timeFlight,g.twcnev-g.twc,dimensions=[1800,1000],color='red',title=flight[i],/overplot)
-    ;p5=plot(g.timeFlight,g.twcnev,dimensions=[1800,1000],color='green',title='No pres cor',/overplot)
-    
-    ;p4.yrange=[-.1,.1]
-    ;p4.xrange=[5d3,8.5d3]
-    ;p5=scatterplot(g.timeFlight[g.clearairtot],g.twcnoprescor[g.clearairtot],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+    e=g.pTot/(g.lwc*g.tas*g.aTot*g.lIceStar)
+    econ=[econ,e[x]]
 
-
-
-    x=where(g.twcnev eq 0)
-
-    print,'n=',n_elements(g.clearairTot),'/',n_elements(g.pmb)
-
-    lwccon=[lwccon,g.lwc]
-    lwc2con=[lwc2con,g.lwc2]
-    lwcnev1con=[lwcnev1con,g.lwcnev1]
 
   endfor
+  
+  
+  p9=scatterplot(trfcon,econ,dimensions=[1400,1000])
+  p9.yrange=[0,1]
+  
+  line=linfit(trfcon,econ)
+  
+  p10=plot([-20,20],[line[0]+line[1]*(-20),line[0]+line[1]*20],thick=2,'r',/overplot)
+
+
+  print,line
+  
   stop
   
   

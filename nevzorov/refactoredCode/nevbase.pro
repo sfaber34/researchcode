@@ -490,7 +490,7 @@ x1Tot=min([u1Tot,u2Tot])
 x2Tot=max([u1Tot,u2Tot])
 if cope eq 0 or cope eq 2 then threshTot=.085*mean(uTot[0:50])
 if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
-;threshTot=0.016
+
 
 
 ;p1=plot(timeFlight,diffTot) 
@@ -590,6 +590,11 @@ aTot=4.82d-5
 ;total collection efficiency
 colETot=1.
 
+;-------PAR BY TRF---------
+;-------SEE 3/23/16 IN LOG---------
+colETot=0.49964736687174566+trf*(-0.0030369760138078371)
+
+
 ;EXPENDED HEAT FOR LIQUID
 lIceStar=1.13*lLiqStar
 
@@ -665,7 +670,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
-  vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref}
+  vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar}
 
   
 return,g
