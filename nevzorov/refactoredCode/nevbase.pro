@@ -492,9 +492,7 @@ x2Tot=max([u1Tot,u2Tot])
 if cope eq 0 or cope eq 2 then threshTot=.085*mean(uTot[0:50])
 if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
 
-
-
-;p1=plot(timeFlight,diffTot) 
+ 
     
 clearairLiq=where(abs(diffLiq) le threshLiq and shift(abs(diffLiq),1) le threshLiq and shift(abs(diffLiq),-1) le threshLiq and shift(abs(diffLiq),2) le threshLiq and shift(abs(diffLiq),-2) le threshLiq)
 clearairTot=where(abs(diffTot) le threshTot and abs(shift(diffTot,1)) le threshTot and abs(shift(diffTot,-1)) le threshTot and abs(shift(diffTot,2)) le threshTot and abs(shift(diffTot,-2)) le threshTot)
@@ -512,9 +510,8 @@ clearairTotsortsorted=clearairTotsortsorted[n_elements(clearairTotsortsorted)*.0
 
 
 
-;p1=plot(timeFlight, twcnev)
-;p1=plot([0,1.5d4], [threshLiq,threshLiq],/overplot,'r',yrange=[-.05,.15])
-;p1=scatterplot(timeFlight,rawSignalLiq,/overplot,sym_color='red',symbol='.')
+
+
 
 ;------------------------------------------FILTER MISC.---------------------------------------------------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -589,7 +586,7 @@ aTot=5.02d-5
 ;aTot=4.82d-5
 
 ;total collection efficiency
-colETot=1
+colETot=1.
 
 ;-------PAR BY TRF---------
 ;-------SEE 3/23/16 IN LOG---------
@@ -597,7 +594,6 @@ colETot=1
 
 
 ;EXPENDED HEAT FOR LIQUID
-;lIceStar=1.13*lLiqStar
 lIceStar=lLiqStar
 
 
@@ -613,7 +609,7 @@ lwcNoPresCor=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 ;-----HEAT LOSS TOTAL------
-pTot=vtwccol*itwccol-kTot*vtwcref*itwcref
+pTot=vtwccol*itwccol-kTot*vlwcref*ilwcref
 pTotNoPresCor=pTot
 ;pTotKor=vlwccol*itwccol-(1.1 - tas*pmb*3.2954d-6+8.3207d-4)*vtwcref*itwcref
 
@@ -625,19 +621,19 @@ twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-linPresCorLiq=linfit(pmb[clearairLiq],pLiq[clearairLiq])
+linPresCorLiq=linfit(pmb[clearairLiq],pLiqNoPresCor[clearairLiq])
 
-poly=poly_fit(pmb[clearairLiq],pLiq[clearairLiq],2)
+;poly=poly_fit(pmb[clearairLiq],pLiqNoPresCor[clearairLiq],2)
 pLiq=pLiqNoPresCor - ( linPresCorLiq[1]*pmb + linPresCorLiq[0] )
 
 
 
 
 
-linPresCorTot=linfit(pmb[clearairTot],pTot[clearairTot])
+linPresCorTot=linfit(pmb[clearairTot],pTotNoPresCor[clearairTot])
 
 ;poly=poly_fit(pmb[clearairTot],pTot[clearairTot],2)
-pTot=pTotNoPresCor; - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
+pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 
 
@@ -654,7 +650,7 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
-;twc=pTotKor/(colETot*tas*aTot*lLiqStar)
+
 
 
 

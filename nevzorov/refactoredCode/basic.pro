@@ -67,7 +67,7 @@ for i=0,n_elements(flightb)-1 do begin
   p2.yrange=[-.02,.3]
   p2.xrange=[min(g.timeFlight),max(g.timeFlight)]
   l1=legend(position=[400,100],target=[p3],/device,shadow=0)
-  stop
+
   p2.save,'smoothsignal.ps'
   
   
@@ -161,8 +161,7 @@ if stuff eq 22 then begin
   econ=[]
   xcon=[]
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  ;flight=['0710','0729','0729']
-  level=['400']
+  level=['600']
   color=['black','blue','red']
   cgcleanup
 
