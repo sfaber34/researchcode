@@ -1,7 +1,168 @@
 pro basic
 
+stuff=2
 
-stuff=22
+
+
+
+
+
+
+
+
+
+if stuff eq 2 then begin
+  cgcleanup
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;flight=['1124','1217','0304','0307']
+  flight='0815'
+
+  color=['black','blue','red','pink','green','purple']
+  type=['indicated']
+
+
+
+  lwccon=[]
+  cdplwccon=[]
+  diffcon=[]
+  twccon=[]
+  pmbcon=[]
+  econ=[]
+  xcon=[]
+  ascon=[]
+  twcnevcon=[]
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','600')
+    ;g.cdplwc=g.lwc100
+    x=where(g.cdplwc gt .02 and g.cdplwc lt 1.3)
+
+    cdplwccon=[cdplwccon,g.cdplwc[x]]
+    lwccon=[lwccon,g.lwcnev1[x]]
+    
+    p10=scatterplot(g.cdplwc,g.lwcnev1,dimensions=[1400,1400],sym_size=.8,symbol='.',sym_color=color[4],/overplot)
+    p10.xrange=[-.1,2.5]
+    p10.yrange=[-.1,2.5]
+    p10.xtitle='Flight Time sec'
+    p10.ytitle='Pressure mb'
+    ;p10=scatterplot(g.twcnev[x],g.twcnev[x]-g.twc[x],sym_size=.8,symbol='.',sym_color='red',/overplot)
+
+  endfor
+
+    x=where(finite(lwccon) eq 1)
+    lin=linfit(cdplwccon[x],lwccon[x])
+    p11=plot([0,2.5],[0,2.5],thick=2,'r',/overplot)
+    
+    p12=plot([0,2.5],[0,lin[1]*2.5],thick=2,'orange',linestyle=2,/overplot)
+    
+endif
+
+
+stop
+
+
+
+
+
+
+if stuff eq 1 then begin
+  cgcleanup
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight=['1124','1217','0304','0307']
+  color=['black','blue','red','pink','green','purple']
+  type=['indicated']
+
+
+
+
+
+  diffcon=[]
+  twccon=[]
+  pmbcon=[]
+  econ=[]
+  xcon=[]
+  ascon=[]
+  twcnevcon=[]
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','600')
+
+    x=where(g.twcnev-g.twc gt .0125)
+
+    
+    p10=plot(g.timeFlight,g.cdplwc-g.lwc,dimensions=[1400,1200],title=flight[i])
+    p10=scatterplot(g.timeFlight[g.clearairliq],g.cdplwc[g.clearairliq]-g.lwc[g.clearairliq],dimensions=[1400,1200],sym_size=.8,symbol='.',sym_color=color[1],/overplot)
+    p10.xtitle='Flight Time sec'
+    p10.ytitle='Pressure mb'
+    ;p10=scatterplot(g.twcnev[x],g.twcnev[x]-g.twc[x],sym_size=.8,symbol='.',sym_color='red',/overplot)
+
+  endfor
+
+
+
+
+;  p10.xtitle="Korolev's TWC g m!U-3!N"
+;  p10.ytitle="TWC Difference (Korolev - Calculated) g m!U-3!N"
+  p10.font_size=24
+  ;p10.xrange=[-.1,1.8]
+endif
+
+
+stop
+
+
+
+
+
+
+
+if stuff eq 1123 then begin
+  cgcleanup
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  color=['black','blue','red','pink','green','purple']
+  type=['indicated','true']
+
+
+
+
+    
+      diffcon=[]
+      twccon=[]
+      pmbcon=[]
+      econ=[]
+      xcon=[]
+      ascon=[]
+      twcnevcon=[]
+      for i=0, n_elements(flight)-1 do begin
+        g= nevBase(flight[i],'true','600')
+        
+        x=where(abs(g.twcnev) gt .000001)
+        
+        p10=scatterplot(g.twcnev[x],g.twcnev[x]-g.twc[x],dimensions=[1400,1200],sym_size=.8,symbol='.',sym_color=color[0],/overplot)
+        ;p10=scatterplot(g.twcnev[x],g.twcnev[x]-g.twc[x],sym_size=.8,symbol='.',sym_color='red',/overplot)
+        
+      endfor
+  
+  
+  
+
+  p10.xtitle="Korolev's TWC g m!U-3!N"
+  p10.ytitle="TWC Difference (Korolev - Calculated) g m!U-3!N"
+  p10.font_size=24
+  ;p10.xrange=[-.1,1.8]
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 ;flight='0307'
@@ -146,57 +307,112 @@ endif
 
 
 if stuff eq 22 then begin
+  meancon=[]
+  stddevcon=[]
+  r=0
   ;cgcleanup
   lwccon=[]
   lwc2con=[]
   lwcnev1con=[]
-
+  
   var1con=[]
   var2con=[]
-
-  low=250.
-  high=1000.
-
-  twccon=[]
-  econ=[]
-  xcon=[]
-  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  flight=['0307']
-  level=['400']
-  color=['black','blue','red']
-  cgcleanup
-
+lcon=[]
+  
+  
+  ;flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight=['1217','0307','1217','1124']
+  d=0
+  w=0
+  level=['400','600','900']
+  color=['black','blue','red','pink','green','purple']
+  type=['indicated','true']
+ 
+  
+  for n=0, n_elements(type)-1 do begin
+    d=d+1
+  for j=0, n_elements(level)-1 do begin
+    diffcon=[]
+    twccon=[]
+    pmbcon=[]
+    econ=[]
+    xcon=[]
+    ascon=[]
+    twcnevcon=[]
+    
   for i=0, n_elements(flight)-1 do begin
-    g= nevBase(flight[i],'indicated','400')
+    g= nevBase(flight[i],type[n],level[j])
 
-    x=where(abs(g.twcnev-g.lwcnev1) lt .01 and g.lwc gt .04)
-    print,'n=',n_elements(x),'/',n_elements(g.pmb)
+    ;y=where(g.twcnev gt .16 and abs(g.twcnev) ne 0.)
+    ;print,'n=',n_elements(x),'/',n_elements(g.pmb)
 
     ;p5=scatterplot(g.lwc[x],g.twc[x],dimensions=[1400,1400],sym_color='blue',symbol='+',title=flight[i],/overplot)
     ;p5=scatterplot(g.twcnev[x],g.twc[x],dimensions=[1400,1400],sym_color='red',symbol='+',title=flight[i],/overplot)
     ;p6=plot([0,1.5],[0,1.5],'g',thick=2,/overplot)
 ;    p5.xrange=[0,1.5]
 ;    p5.yrange=[0,1.5]
-    xcon=[xcon,x]
-    lwccon=[lwccon,g.lwc[x]]
-    twccon=[twccon,g.twc[x]]
-    pmbcon=[pmbcon,g.pmb[x]]
-    ascon=[ascon,g.as[x]]
-    trfcon=[trfcon,g.trf[x]]
 
-    e=g.pTot/(g.lwc*g.tas*g.aTot*g.lIceStar)
-    econ=[econ,e[x]]
+ print,i
+;    xcon=[xcon,0]
+;    lwccon=[lwccon,g.lwc[x]]
+    twccon=[twccon,g.twc[g.clearairtot]]
+    pmbcon=[pmbcon,g.pmb[g.clearairtot]]
+    ascon=[ascon,g.as[g.clearairtot]]
+;    trfcon=[trfcon,g.trf[x]]
+    diffcon=[diffcon,g.twc[g.clearairtot]]
+    twcnevcon=[twcnevcon,g.twc[g.clearairtot]]
+    ;e=g.pTot/(g.lwc*g.tas*g.aTot*g.lIceStar)
+    ;econ=[econ,e[x]]
+
     
-    twcdiff=g.lwc-g.twc
     
-    
-    p10=scatterplot(g.cdplwc,g.lwc,dimensions=[1200,1200],title=flight[i])
-    p11=scatterplot(g.cdplwc,g.twc,sym_color='red',dimensions=[1200,1200],title=flight[i],/overplot)
+    ;p10=scatterplot(g.pmb[g.clearairtot],g.twc[g.clearairtot],dimensions=[1400,1200],sym_size=1.5,symbol='.',sym_color=color[w],/overplot)
+    ;p11=scatterplot(g.cdplwc,g.twc,sym_color='red',dimensions=[1200,1200],title=flight[i],/overplot)
     ;p11=scatterplot(g.timeFlight[x],twcdiff[x],dimensions=[1400,1400],sym_color='red',symbol='.',title=flight[i],/overplot)
-    p11=plot([0,2],[0,2],/overplot,thick=2,'r')
-    p10.yrange=[0,.4]
-    p10.xrange=[0,.4]
+;    p11=plot([0,2],[0,2],/overplot,thick=2,'r')
+;    p10.yrange=[0,.4]
+;    p10.xrange=[0,.4]
+
+;    p10.xtitle="Korolev's TWC g m!U-3!N"
+;    p10.ytitle="TWC Difference (Korolev - Calculated) g m!U-3!N"
+;    p10.font_size=24
   endfor
+  stop
+  colorb=['black','blue','red','pink','green','purple']
+  
+  x=where(finite(twccon) eq 1)
+  twccon=twccon[x]
+  
+  ;y=where(twcnevcon gt .25)
+  
+  l=linfit(ascon[x],twccon[x])
+  lcon=[lcon,l]
+  plot11=plot([-.1,2],[l[0]+l[1]*(-.1),l[0]+l[1]*2],color=colorb[r], thick=2,/overplot)
+  ;plot11.xrange=[-.1,2]
+  w++
+  print,type[n]
+  print,level[j]
+  print,'--------------------------------------------------'
+  print,'Absolute Mean=',mean(abs(twccon))
+  print,'Standard Dev=',stddev(twccon)
+  print,'Slope=',l[1]
+  print,'--------------------------------------------------'
+  print,''
+  print,''
+  r++
+  meancon=[meancon,mean(abs(twccon))]
+  stddevcon=[stddevcon,stddev(twccon)]
+  endfor
+  endfor
+  
+  
+  ticks2=dindgen(n_elements(lcon),start=0,increment=1)
+
+
+  plot1=scatterplot(ticks2,lcon,dimensions=[1400,1000])
+  ;plot2=errorplot(ticks2,meancon,stddevcon,linestyle='none',/overplot)
+  plot1.xrange=[-1,6]
+  
 stop
   p9=scatterplot(trfcon,econ,dimensions=[1400,1000])
   p9.yrange=[0,1]

@@ -8,7 +8,8 @@
 
 function nevbase, flightDay, airspeedType, level
 
-
+;----------------OPTIONS------------------------
+autoSetT=1
 
 RESOLVE_ROUTINE, 'convertTime',/is_function
 RESOLVE_ROUTINE, 'loadvar',/is_function,/no_recompile
@@ -31,6 +32,8 @@ if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '0803' then nclPath='Z:\research\nevzorov\data\080313\20130803.c1.nc'
   if flightDay eq '0307' then nclPath='Z:\research\nevzorov\data\030716\20160307.c1.nc'
   if flightDay eq '0304' then nclPath='Z:\research\nevzorov\data\030416\20160304.c1.nc'
+  if flightDay eq '1217' then nclPath='Z:\research\nevzorov\data\121715\20151217.c1.nc'
+  if flightDay eq '1124' then nclPath='Z:\research\nevzorov\data\112415\20151124.c1.nc'
 endif else begin
   if flightDay eq '0709' then nclPath='../data/070913/20130709.c1.nc'
   if flightDay eq '0710' then nclPath='../data/20130710.c1.nc'
@@ -45,6 +48,7 @@ endif else begin
   if flightDay eq '0304' then nclPath='../data/030416/20160304.c1.nc'
   if flightDay eq '0307' then nclPath='../data/030716/20160307.c1.nc'
   if flightDay eq '1217' then nclPath='../data/121715/20151217.c1.nc'
+  if flightDay eq '1124' then nclPath='../data/112415/20151124.c1.nc'
 endelse
 
 if strmatch(nclpath,'*2013*') eq 1 then cope=1
@@ -199,83 +203,89 @@ t={hour:hour,min:min,sec:sec,timeForm:timeForm}
 ;-----------------------------------------SET START/STOP TIMES----------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+if autoSetT eq 1 then begin
+  vsig=where(vlwccol gt 4.)
+  vsig=vsig[30:n_elements(vsig)-1]
+  aStart=min(vsig)+40
+  aEnd=max(vsig)-40
+endif else begin
+  if flightDay eq '0807' then begin    
+    aStart=convertTime(12,41,00)
+    aEnd=convertTime(15,54,00)
+  endif
 
-if flightDay eq '0807' then begin
-  flightString='08-07-13'
-  aStart=convertTime(12,41,00)
-  aEnd=convertTime(15,54,00)
+  if flightDay eq '0814' then begin
+    aStart=convertTime(11,54,00)
+    aEnd=convertTime(15,02,00)
+  endif
   
-;  aStart=convertTime(13,25,58)
-;  aEnd=convertTime(14,01,40)
-endif
+  if flightDay eq '0710' then begin
+    ;aStart=convertTime(11,31,00)
+    aStart=convertTime(11,50,00)
+    aEnd=convertTime(14,20,00)
+  endif
+  
+  if flightDay eq '0725' then begin
+    aStart=convertTime(10,22,00)
+    aEnd=convertTime(13,48,00)
+  endif
+  
+  if flightDay eq '0727' then begin
+    aStart=convertTime(11,49,17)
+    aEnd=convertTime(13,50,00)
+  endif
+  
+  if flightDay eq '0728' then begin
+    aStart=convertTime(11,47,00)
+    aEnd=convertTime(15,05,00)
+  endif
+  
+  if flightDay eq '0729' then begin
+    aStart=convertTime(11,49,10)
+    aEnd=convertTime(14,57,00)
+  endif
+  
+  if flightDay eq '0815' then begin
+    aStart=convertTime(12,25,00)
+    aEnd=convertTime(14,57,00)
+  endif
+  
+  if flightDay eq '0803' then begin
 
-if flightDay eq '0814' then begin
-  flightString='08-14-13'
-  aStart=convertTime(11,54,00)
-  aEnd=convertTime(15,02,00)
-endif
+    aStart=convertTime(11,34,45)
+    aEnd=convertTime(15,07,00)
+  endif
+  
+  if flightDay eq '0304' then begin
+    aStart=convertTime(17,25,00)
+    aEnd=convertTime(18,46,00)
+  endif
+  
+  if flightDay eq '0307' then begin
+    aStart=convertTime(22,11,00)
+    aEnd=convertTime(00,04,00)
+  endif
+  
+  if flightDay eq '1217' then begin
+    aStart=convertTime(22,11,00)
+    aEnd=convertTime(00,04,00)
+  endif
+endelse
 
-if flightDay eq '0710' then begin
-  flightString='07-10-13'
-  ;aStart=convertTime(11,31,00)
-  aStart=convertTime(11,50,00)
-  aEnd=convertTime(14,20,00)
-endif
-
-if flightDay eq '0725' then begin
-  flightString='07-25-13'
-  aStart=convertTime(10,22,00)
-  aEnd=convertTime(13,48,00)
-endif
-
-if flightDay eq '0727' then begin
-  flightString='07-27-13'
-  aStart=convertTime(11,49,17)
-  aEnd=convertTime(13,50,00)
-endif
-
-if flightDay eq '0728' then begin
-  flightString='07-28-13'
-  aStart=convertTime(11,47,00)
-  aEnd=convertTime(15,05,00)
-endif
-
-if flightDay eq '0729' then begin
-  flightString='07-29-13'
-  aStart=convertTime(11,49,10)
-  aEnd=convertTime(14,57,00)
-endif
-
-if flightDay eq '0815' then begin
-  flightString='08-15-13'
-  aStart=convertTime(12,25,00)
-  aEnd=convertTime(14,57,00)
-endif
-
-if flightDay eq '0803' then begin
-  flightString='08-03-13'
-  aStart=convertTime(11,34,45)
-  aEnd=convertTime(15,07,00)
-endif
-
-if flightDay eq '0304' then begin
-  flightString='03-04-16'
-  aStart=convertTime(17,25,00)
-  aEnd=convertTime(18,46,00)
-endif
-
-if flightDay eq '0307' then begin
-  flightString='03-07-16'
-  aStart=convertTime(22,11,00)
-  aEnd=convertTime(00,04,00)
-endif
-
-if flightDay eq '1217' then begin
-  flightString='12-17-15'
-  aStart=convertTime(22,11,00)
-  aEnd=convertTime(00,04,00)
-endif
-
+if flightDay eq '0807' then flightString='08-07-13'
+if flightDay eq '0814' then flightString='08-14-13'
+if flightDay eq '0710' then flightString='07-10-13'
+if flightDay eq '0725' then flightString='07-25-13'
+if flightDay eq '0727' then flightString='07-27-13'
+if flightDay eq '0728' then flightString='07-28-13'
+if flightDay eq '0729' then flightString='07-29-13'
+if flightDay eq '0815' then flightString='08-15-13'
+if flightDay eq '0803' then flightString='08-03-13'
+if flightDay eq '0304' then flightString='03-04-16'
+if flightDay eq '0307' then flightString='03-07-16'
+if flightDay eq '1217' then flightString='12-17-15'
+if flightDay eq '1124' then flightString='11-24-15'
+  
 
 
 
@@ -362,7 +372,7 @@ endif
 
 
 
-if cope eq 2 then begin
+if cope eq 2 or cope eq 0 then begin
   if (airspeedType eq 'indicated') and (level eq '700') then kLiq=(-0.0126704)*tas^(0.698457)+(2.01460)
   if (airspeedType eq 'indicated') and (level eq '600') then kLiq=(-0.00956550)*tas^(0.753178)+(2.00092)
   if (airspeedType eq 'indicated') and (level eq '500') then kLiq=(-0.135222)*tas^(0.375551)+(2.43805)
@@ -390,7 +400,7 @@ endif
 
 
 
-if cope eq 2 then begin
+if cope eq 2 or cope eq 0 then begin
   if (airspeedType eq 'indicated') and (level eq '700') then kTot=(-0.0258749)*aiasms^(0.711242)+(1.37937)
   if (airspeedType eq 'indicated') and (level eq '600') then kTot=(-0.104706)*aiasms^(0.468563)+(1.64276)
   if (airspeedType eq 'indicated') and (level eq '500') then kTot=(-0.0249307)*aiasms^(0.698422)+(1.39464)
@@ -479,7 +489,7 @@ if cope eq 1 then threshLiq=.007*mean(rawSignalLiq[0:50])
 
 diffTot=smoothSignalTot
 
-
+threshtot=0.
 uTot2=sort(diffTot)
 uTot3=reverse(uTot2)
 uTot=diffTot[uTot3]
@@ -490,6 +500,8 @@ u2Tot=uTot[50]
 x1Tot=min([u1Tot,u2Tot])
 x2Tot=max([u1Tot,u2Tot])
 if cope eq 0 or cope eq 2 then threshTot=.085*mean(uTot[0:50])
+if (cope eq 0 or cope eq 2) and threshTot lt .003 then threshTot=.004
+
 if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
 
  
@@ -696,6 +708,10 @@ print,'DAYS LARAMIE = 0307, ||0304||'
 print,''
 print,'-------------COMMANDS-----------------'
 print,'SUPERSCRIPT = !U *** !N'
+print,''
+print,'endif else begin'
+print,'.............'
+print,'endelse'
 end
 
 pro setwd
