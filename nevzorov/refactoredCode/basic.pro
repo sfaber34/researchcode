@@ -1,6 +1,58 @@
 pro basic
 
-stuff=2
+stuff='matchSulCope'
+
+
+
+
+
+
+
+if stuff eq 'matchSulCope' then begin
+  cgcleanup
+flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+;flight=['0710']
+color=['black','blue']
+
+zeros=make_array(10000,value=0.)
+for i=0, n_elements(flight)-1 do begin
+  
+  
+  
+  g= nevBase(flight[i],'indicated','400')
+  x=where(g.cdplwc gt .02 and g.cdplwc lt 1.3)
+
+  p1=plot([0,2],[0,2],dimensions=[1000,1000],color='green',thick=2,linestyle=2,title=flight[i])
+  p2=scatterplot(g.cdplwc[x],g.lwc[x],dimensions=[1000,1000],sym_color='black',symbol='+',title=flight[i],/overplot)
+  
+  cdplwclin=[zeros,g.cdplwc[x]]
+  lwclin=[zeros,g.lwc[x]]
+  
+;  dev=dindgen(n_elements(lwclin),increment=0)
+;  for i=0,n_elements(lwclin)-1 do begin
+;    if i le 10000 then dev[i]=.00001
+;    if i gt 10000 then dev[i]=stddev(lwclin[10000:n_elements(lwclin)-1])
+;  endfor
+  
+  ;dev[0]=dev[1]
+  
+  
+  lin=ladfit(cdplwclin,lwclin)
+  p3=plot([0,2],[0+lin[0],2*lin[1]+lin[0]],color='red',thick=2,/overplot)
+
+  print,'--------------------------------------------------------'
+  print,flight[i]
+  print,'n=',n_elements(x),'/',n_elements(g.pmb)
+  print,'y=',lin[1]
+
+;  lwccon=[lwccon,g.lwc]
+;  lwc2con=[lwc2con,g.lwc2]
+;  lwcnev1con=[lwcnev1con,g.lwcnev1]
+
+endfor
+stop
+endif
+
 
 
 
