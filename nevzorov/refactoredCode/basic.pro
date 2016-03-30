@@ -1,6 +1,264 @@
 pro basic
 
-stuff='matchSulCope'
+stuff='liqOnlyPoints'
+
+
+
+
+
+
+
+
+
+
+
+if stuff eq 'liqOnlyPoints' then begin
+  cgcleanup
+  lwccon=[]
+  cdplwccon=[]
+  twccon=[]
+  lwcconx=[]
+  cdplwcconx=[]
+  twcconx=[]
+
+
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;flight='0814'
+
+  color=['black','blue']
+
+
+  for i=0, n_elements(flight)-1 do begin
+
+
+
+    g= nevBase(flight[i],'indicated','400')
+
+    x=where(g.lwc gt .05 and g.trf gt 5. and g.clearairliq eq 0 and g.clearairtot eq 0)
+
+  
+    ;p1=scatterplot(g.lwc,g.twc,dimensions=[1400,1000],symbol='+',/overplot)
+    p2=scatterplot(g.trf,g.twcTest-g.lwc,sym_color='red',symbol='+',/overplot,dimensions=[968,1000])
+    ;p2=scatterplot(g.lwc[x],g.twcTest[x],sym_color='black',symbol='+',/overplot)
+    ;p3=scatterplot(g.cdplwc[x],g.lwc[x],sym_color='green',symbol='+',/overplot)
+
+    print,'--------------------------------------------------------'
+    print,flight[i]
+    print,n_elements(x)
+    ;p2.yrange=[0,3]
+    ;p2.xrange=[0,3]
+
+    lwccon=[lwccon,g.lwc]
+    cdplwccon=[cdplwccon,g.cdplwc]
+    twccon=[twccon,g.twc]
+    lwcconx=[lwcconx,g.lwc[x]]
+    cdplwcconx=[cdplwcconx,g.cdplwc[x]]
+    twcconx=[twcconx,g.twc[x]]
+
+  endfor
+  p5=plot([0,3],[0,3],dimensions=[1000,1000],color='green',thick=2,linestyle=2,/overplot)
+  
+  stop
+  p2=scatterplot(lwclinx,twclinx,dimensions=[1000,1000],sym_color='red',symbol='+',/overplot)
+
+
+  lin=ladfit(lwclinx,twclinx)
+  p3=plot([0,2.],[0+lin[0],2.*lin[1]+lin[0]],color='blue',thick=2,/overplot)
+  p5=plot([0,2],[0,2],dimensions=[1000,1000],color='green',thick=2,linestyle=2,/overplot)
+  p1.xrange=[0,2.]
+  p1.yrange=[0,2.]
+  print,'diff=',lin[1]-1.
+
+  stop
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if stuff eq 'matchSulCope2' then begin
+  
+  lwccon=[]
+  cdplwccon=[]
+  twccon=[]
+  lwcconx=[]
+  cdplwcconx=[]
+  twcconx=[]
+  
+
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  flight='0727'
+
+  color=['black','blue']
+
+  
+  for i=0, n_elements(flight)-1 do begin
+
+    
+
+    g= nevBase(flight[i],'indicated','400')
+
+    x=where(g.cdpconc gt 10. and g.cdpdbar lt 10. and g.cdplwc gt .02)
+
+    
+
+    print,'--------------------------------------------------------'
+    print,flight[i]
+    
+
+      lwccon=[lwccon,g.lwc]
+      cdplwccon=[cdplwccon,g.cdplwc]
+      twccon=[twccon,g.twc]
+      lwcconx=[lwcconx,g.lwc[x]]
+      cdplwcconx=[cdplwcconx,g.cdplwc[x]]
+      twcconx=[twcconx,g.twc[x]]
+
+  endfor
+  zeros=make_array(1000000,value=0.)
+  cdplwclin=[zeros,cdplwccon]
+  lwclin=[zeros,lwccon]
+  twclin=[zeros,twccon]
+  cdplwclinx=[zeros,cdplwcconx]
+  lwclinx=[zeros,lwcconx]
+  twclinx=[zeros,twcconx]
+  
+  pline=dindgen(150001,start=0,increment=.00001)
+  
+  ;p2=scatterplot(cdplwclin,lwclin,dimensions=[1000,1000],sym_color='black',symbol='+')
+  p3=scatterplot(lwclinx,twclinx,dimensions=[1000,1000],sym_color='red',symbol='+',/overplot)
+  
+  
+  lin=ladfit(lwclinx,twclinx)
+  p3=plot([0,2.],[0+lin[0],2.*lin[1]+lin[0]],color='blue',thick=2,/overplot)
+  p1=plot([0,2],[0,2],dimensions=[1000,1000],color='green',thick=2,linestyle=2,/overplot)
+  p1.xrange=[0,2.]
+  p1.yrange=[0,2.]
+  print,'diff=',lin[1]-1.
+  
+  stop
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+if stuff eq 'liqonly' then begin
+  cgcleanup
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;flight=['0728','0814','0815']
+  flight='0727'
+  color=['black','blue']
+
+  zeros=make_array(100000,value=0.)
+  for i=0, n_elements(flight)-1 do begin
+
+
+
+    g= nevBase(flight[i],'indicated','400')
+    x=where(g.cdpconc gt 10. and g.cdpdbar lt 10. and g.cdplwc gt .02)
+    pline=dindgen(150001,start=0,increment=.00001)
+
+    p1=plot(g.timeflight,g.twc-g.lwc,dimensions=[1000,1000],color='green',title=flight[i])
+    p2=scatterplot(g.timeflight[x],g.twc[x]-g.lwc[x],dimensions=[1000,1400],sym_color='black',symbol='+',title=flight[i],/overplot)
+    cdplwclin=[zeros,g.twc[x]]
+    lwclin=[zeros,g.lwc[x]]
+    p1.yrange=[-.2,.2]
+
+
+    lin=ladfit(cdplwclin,lwclin)
+;    p3=plot([0,1.5],[0+lin[0],1.5*lin[1]+lin[0]],color='red',thick=2,/overplot)
+
+    print,'--------------------------------------------------------'
+    print,flight[i]
+    print,'n=',n_elements(x),'/',n_elements(g.pmb)
+    print,'y=',1.-lin[1]
+
+    ;  lwccon=[lwccon,g.lwc]
+    ;  lwc2con=[lwc2con,g.lwc2]
+    ;  lwcnev1con=[lwcnev1con,g.lwcnev1]
+
+  endfor
+  stop
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+if stuff eq 'compCalc' then begin
+  cgcleanup
+  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;flight=['1124','1217','0304','0307']
+  flight=['0728','0814','0815']
+
+  color=['black','blue','red','pink','green','purple']
+  type=['indicated']
+
+
+
+  lwccon=[]
+  cdplwccon=[]
+  diffcon=[]
+  twccon=[]
+  pmbcon=[]
+  econ=[]
+  xcon=[]
+  ascon=[]
+  twcnevcon=[]
+  for i=0, n_elements(flight)-1 do begin
+    g= nevBase(flight[i],'indicated','600')
+    ;g.cdplwc=g.lwc100
+    ;x=where(g.cdplwc gt .02 and g.cdplwc lt 1.3)
+    x=where(g.cdplwc gt .02 and abs(g.cdplwc - g.twc) lt .05 and abs(g.cdplwc - g.lwc) lt .05)
+    cdplwccon=[cdplwccon,g.cdplwc[x]]
+    lwccon=[lwccon,g.lwcnev1[x]]
+
+    p10=scatterplot(g.timeFlight[x],g.lwc[x],dimensions=[1800,1400],symbol='+',sym_color=color[1])
+    p11=scatterplot(g.timeFlight[x],g.twc[x],symbol='+',sym_color=color[2],/overplot)
+
+    ;p10.xrange=[8200,8700]
+    stop
+    p10.yrange=[-.1,2.5]
+    p10.xtitle='Flight Time sec'
+    p10.ytitle='Pressure mb'
+    ;p10=scatterplot(g.twcnev[x],g.twcnev[x]-g.twc[x],sym_size=.8,symbol='.',sym_color='red',/overplot)
+
+  endfor
+
+  x=where(finite(lwccon) eq 1)
+  lin=linfit(cdplwccon[x],lwccon[x])
+  p11=plot([0,2.5],[0,2.5],thick=2,'r',/overplot)
+
+  p12=plot([0,2.5],[0,lin[1]*2.5],thick=2,'orange',linestyle=2,/overplot)
+
+endif
+
+
 
 
 
@@ -11,39 +269,39 @@ stuff='matchSulCope'
 if stuff eq 'matchSulCope' then begin
   cgcleanup
 flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-;flight=['0710']
+flight=['0710','0727','0807','0814','0815']
+
 color=['black','blue']
 
-zeros=make_array(10000,value=0.)
+zeros=make_array(100000,value=0.)
 for i=0, n_elements(flight)-1 do begin
   
   
   
   g= nevBase(flight[i],'indicated','400')
   x=where(g.cdplwc gt .02 and g.cdplwc lt 1.3)
-
-  p1=plot([0,2],[0,2],dimensions=[1000,1000],color='green',thick=2,linestyle=2,title=flight[i])
-  p2=scatterplot(g.cdplwc[x],g.lwc[x],dimensions=[1000,1000],sym_color='black',symbol='+',title=flight[i],/overplot)
+  x=where(g.cdplwc gt .02 and abs(g.cdplwc - g.twc) lt .05 and abs(g.cdplwc - g.lwc) lt .05)
+  x=where(g.cdpconc gt 10. and g.cdpdbar lt 10.)
   
-  cdplwclin=[zeros,g.cdplwc[x]]
+  pline=dindgen(150001,start=0,increment=.00001)
+  
+  p1=plot([0,2],[0,2],dimensions=[1000,1000],color='green',thick=2,linestyle=2,title=flight[i])
+  p2=scatterplot(g.lwc,g.twc,dimensions=[1000,1000],sym_color='black',symbol='+',title=flight[i],/overplot)
+  p3=scatterplot(g.twc[x],g.lwc[x],dimensions=[1000,1000],sym_color='red',symbol='+',title=flight[i],/overplot)
+  p1.xrange=[0,2.]
+  p1.yrange=[0,2.]
+  cdplwclin=[zeros,g.twc[x]]
   lwclin=[zeros,g.lwc[x]]
   
-;  dev=dindgen(n_elements(lwclin),increment=0)
-;  for i=0,n_elements(lwclin)-1 do begin
-;    if i le 10000 then dev[i]=.00001
-;    if i gt 10000 then dev[i]=stddev(lwclin[10000:n_elements(lwclin)-1])
-;  endfor
-  
-  ;dev[0]=dev[1]
   
   
   lin=ladfit(cdplwclin,lwclin)
-  p3=plot([0,2],[0+lin[0],2*lin[1]+lin[0]],color='red',thick=2,/overplot)
+  p3=plot([0,2.],[0+lin[0],2.*lin[1]+lin[0]],color='red',thick=2,/overplot)
 
   print,'--------------------------------------------------------'
   print,flight[i]
   print,'n=',n_elements(x),'/',n_elements(g.pmb)
-  print,'y=',lin[1]
+  print,'y=',(1.-lin[1])*100.
 
 ;  lwccon=[lwccon,g.lwc]
 ;  lwc2con=[lwc2con,g.lwc2]

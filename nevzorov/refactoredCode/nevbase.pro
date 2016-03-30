@@ -662,7 +662,13 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
 
+colETotTest=pTot/(lwc*tas*lIceStar*aTot)
+gto=where(colETotTest gt 1.)
+ltz=where(colETotTest lt 0.)
+colETotTest[gto]=1.
+colETotTest[ltz]=.2
 
+twcTest=pTot/(colETotTest*tas*aTot*lIceStar)
 
 
 
@@ -676,7 +682,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,colETot:colETot,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
-  vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar}
+  vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
+  twcTest:twcTest,colETotTest:colETotTest}
 
   
 return,g
