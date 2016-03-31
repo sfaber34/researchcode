@@ -1,9 +1,66 @@
 pro basic
 
-stuff='liqOnlyPoints'
+stuff='liqOnlyPoints2'
 
 
 
+
+
+
+
+
+
+if stuff eq 'liqOnlyPoints2' then begin
+  restore,'liqOnly.sav'
+  cgcleanup
+  x=where(colETotTestCon gt 0. and colETotTestCon lt 1. and cdpdbarcon gt 4.)
+  
+  eights=dindgen(10000,start=0.2, increment=0)
+  zeros=dindgen(10000,start=0., increment=0)
+  
+  lwccon=lwccon[x]
+  twccon=twccon[x]
+  colETotTestCon=colETotTestCon[x]
+  cdpdbarcon=cdpdbarcon[x]
+  
+  
+;  lwccon=[zeros,lwccon]
+;  twccon=[zeros,twccon]
+;  colETotTestCon=[eights,colETotTestCon]
+  
+  
+  p1=scatterplot(cdpdbarcon,colETotTestCon,sym_color='red',symbol='+',dimensions=[968,1000])
+  p5=plot([0,3],[0,0],dimensions=[1400,1000],color='green',thick=2,linestyle=2,/overplot)
+  
+  ;p1.xrange=[-.1,2.6]
+  p1.yrange=[0,1.2]
+  
+  
+  unitVector=dindgen(296, start=4., increment=.1)
+  
+  x=[3.,4.5,6.,7.5,9.,11.5,15.,21.5]
+  y=[.2,.3,.4,.5,.6,.7,.8,.9]
+  
+  
+    geofitb=poly_fit(x,y,2)
+    geoFit=comfit(x,y,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its) ;400 true
+  
+    regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
+    regLine2=geofitb[0]+geofitb[1]*unitVector+geofitb[2]*unitVector^2.
+  
+    p6=scatterplot(x,y,/overplot)
+  
+;  geofitb=poly_fit(cdpdbarcon,colETotTestCon,2)
+;  geoFit=comfit(cdpdbarcon,colETotTestCon,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its) ;400 true
+;  
+;  regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
+;  regLine2=geofitb[0]+geofitb[1]*unitVector+geofitb[2]*unitVector^2.
+  
+  plot1b=plot(unitVector,regLine,'blue',/overplot)
+  plot1b=plot(unitVector,regLine2,'green',/overplot)
+  stop
+  
+endif
 
 
 
@@ -20,10 +77,12 @@ if stuff eq 'liqOnlyPoints' then begin
   lwcconx=[]
   cdplwcconx=[]
   twcconx=[]
+  colETotTestCon=[]
+  cdpdbarcon=[]
 
 
-  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
-  ;flight='0814'
+  flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
+  ;flight='0806'
 
   color=['black','blue']
 
@@ -34,30 +93,30 @@ if stuff eq 'liqOnlyPoints' then begin
 
     g= nevBase(flight[i],'indicated','400')
 
-    x=where(g.lwc gt .05 and g.trf gt 5. and g.clearairliq eq 0 and g.clearairtot eq 0)
+    x=where(g.lwc gt .01 and g.trf gt 5. and g.cdpconc gt 100.)
 
   
-    ;p1=scatterplot(g.lwc,g.twc,dimensions=[1400,1000],symbol='+',/overplot)
-    p2=scatterplot(g.trf,g.twcTest-g.lwc,sym_color='red',symbol='+',/overplot,dimensions=[968,1000])
-    ;p2=scatterplot(g.lwc[x],g.twcTest[x],sym_color='black',symbol='+',/overplot)
-    ;p3=scatterplot(g.cdplwc[x],g.lwc[x],sym_color='green',symbol='+',/overplot)
+    p2=scatterplot(g.lwc[x],g.twc[x],sym_color='red',symbol='+',/overplot,dimensions=[968,1000])
+
 
     print,'--------------------------------------------------------'
     print,flight[i]
     print,n_elements(x)
-    ;p2.yrange=[0,3]
-    ;p2.xrange=[0,3]
+    p2.yrange=[0,3]
+    p2.xrange=[0,3]
 
-    lwccon=[lwccon,g.lwc]
+    lwccon=[lwccon,g.lwc[x]]
     cdplwccon=[cdplwccon,g.cdplwc]
-    twccon=[twccon,g.twc]
+    twccon=[twccon,g.twc[x]]
     lwcconx=[lwcconx,g.lwc[x]]
     cdplwcconx=[cdplwcconx,g.cdplwc[x]]
+    cdpdbarcon=[cdpdbarcon,g.cdpdbar[x]]
     twcconx=[twcconx,g.twc[x]]
+    colETotTestCon=[colETotTestCon,g.colETotTest[x]]
 
   endfor
   p5=plot([0,3],[0,3],dimensions=[1000,1000],color='green',thick=2,linestyle=2,/overplot)
-  
+  save,filename='liqOnly.sav',lwccon,twccon,colETotTestCon,cdpdbarcon
   stop
   p2=scatterplot(lwclinx,twclinx,dimensions=[1000,1000],sym_color='red',symbol='+',/overplot)
 

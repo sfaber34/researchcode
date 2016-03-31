@@ -34,6 +34,7 @@ if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '0304' then nclPath='Z:\research\nevzorov\data\030416\20160304.c1.nc'
   if flightDay eq '1217' then nclPath='Z:\research\nevzorov\data\121715\20151217.c1.nc'
   if flightDay eq '1124' then nclPath='Z:\research\nevzorov\data\112415\20151124.c1.nc'
+  if flightDay eq '0806' then nclPath='Z:\research\nevzorov\data\080613\20130806.c1.nc'
 endif else begin
   if flightDay eq '0709' then nclPath='../data/070913/20130709.c1.nc'
   if flightDay eq '0710' then nclPath='../data/20130710.c1.nc'
@@ -49,6 +50,7 @@ endif else begin
   if flightDay eq '0307' then nclPath='../data/030716/20160307.c1.nc'
   if flightDay eq '1217' then nclPath='../data/121715/20151217.c1.nc'
   if flightDay eq '1124' then nclPath='../data/112415/20151124.c1.nc'
+  if flightDay eq '0806' then nclPath='../data/080613/20130806.c1.nc'
 endelse
 
 if strmatch(nclpath,'*2013*') eq 1 then cope=1
@@ -137,16 +139,28 @@ if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
 if cope ne 1 then hivs=0
 
 ;liquid water content from Nevzorov probe [g/m^3]
-if cope eq 1 then lwcNev1=loadvar('nevlwc1', filename=nclPath)
-if cope ne 1 then lwcNev1=0
+if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 then begin
+  lwcNev1=loadvar('nevlwc1', filename=nclPath)
+endif else begin
+  lwcNev1=dindgen(n_elements(pmb),increment=0)
+endelse  
+
 
 ;liquid water content from Nevzorov probe [g/m^3]
-if cope eq 1 then lwcNev2=loadvar('nevlwc2', filename=nclPath)
-if cope ne 1 then lwcNev2=0
+if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 then begin
+   lwcNev2=loadvar('nevlwc2', filename=nclPath)
+endif else begin   
+  lwcNev2=dindgen(n_elements(pmb),increment=0)
+endelse
+
 
 ;Total water content from Nevzorov probe [g/m^3]
-if cope eq 1 then twcNev=loadvar('nevtwc', filename=nclPath)
-if cope ne 1 then twcNev=0
+if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 then begin
+  twcNev=loadvar('nevtwc', filename=nclPath)
+endif else begin  
+  twcNev=dindgen(n_elements(pmb),increment=0)
+endelse
+ 
 
 ;Sideslip Angle [deg]
 betaB=loadvar('beta', filename=nclPath)
@@ -273,6 +287,7 @@ endif else begin
 endelse
 
 if flightDay eq '0807' then flightString='08-07-13'
+if flightDay eq '0806' then flightString='08-06-13'
 if flightDay eq '0814' then flightString='08-14-13'
 if flightDay eq '0710' then flightString='07-10-13'
 if flightDay eq '0725' then flightString='07-25-13'
@@ -663,10 +678,9 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 twc=pTot/(colETot*tas*aTot*lIceStar)
 
 colETotTest=pTot/(lwc*tas*lIceStar*aTot)
-gto=where(colETotTest gt 1.)
-ltz=where(colETotTest lt 0.)
-colETotTest[gto]=1.
-colETotTest[ltz]=.2
+;gto=where(colETotTest lt 1. and colETotTest gt .2)
+;colETotTest=colETotTest[gto]
+
 
 twcTest=pTot/(colETotTest*tas*aTot*lIceStar)
 
