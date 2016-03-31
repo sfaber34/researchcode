@@ -1,6 +1,156 @@
 pro basic
 
-stuff='liqOnlyPoints2'
+stuff='liqOnlyPoints'
+
+
+
+
+
+
+
+
+if stuff eq 'testVarColETot2' then begin
+  ;cgcleanup
+  lwccon=[]
+  cdplwccon=[]
+  twccon=[]
+  lwcconx=[]
+  cdplwcconx=[]
+  twcconx=[]
+  colETotTestCon=[]
+  cdpdbarcon=[]
+  twcnocolecorcon=[]
+  zeros=dindgen(1000,start=0.,increment=0.)
+
+  flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
+  ;flight='0806'
+
+  color=['black','blue']
+
+
+  for i=0, n_elements(flight)-1 do begin
+
+
+
+    g= nevBase(flight[i],'indicated','400')
+
+    x=where(g.trf gt 5. and g.cdpconc gt 10.)
+
+
+    ;p2=scatterplot(g.lwc[x],g.twc[x],sym_color='red',symbol='+',/overplot,dimensions=[968,1000])
+
+
+    print,'--------------------------------------------------------'
+    print,flight[i]
+    print,n_elements(x)
+
+
+    lwccon=[lwccon,g.lwc[x]]
+    cdplwccon=[cdplwccon,g.cdplwc]
+    twccon=[twccon,g.twc[x]]
+    twcnocolecorcon=[twcnocolecorcon,g.twcNoECor[x]]
+    lwcconx=[lwcconx,g.lwc[x]]
+    cdplwcconx=[cdplwcconx,g.cdplwc[x]]
+    cdpdbarcon=[cdpdbarcon,g.cdpdbar[x]]
+    twcconx=[twcconx,g.twc[x]]
+    colETotTestCon=[colETotTestCon,g.colETotTest[x]]
+
+  endfor
+  p2=scatterplot(cdpdbarcon,lwccon-twcnocolecorcon,dimensions=[1000,1400],sym_color='blue',symbol='+')
+
+
+
+
+  stop
+endif
+
+
+
+
+
+
+
+
+
+if stuff eq 'testVarColETot' then begin
+  ;cgcleanup
+  lwccon=[]
+  cdplwccon=[]
+  twccon=[]
+  lwcconx=[]
+  cdplwcconx=[]
+  twcconx=[]
+  colETotTestCon=[]
+  cdpdbarcon=[]
+  twcnocolecorcon=[]
+  zeros=dindgen(1000,start=0.,increment=0.)
+
+  flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
+  ;flight='0806'
+
+  color=['black','blue']
+ 
+
+  for i=0, n_elements(flight)-1 do begin
+
+
+
+    g= nevBase(flight[i],'indicated','400')
+
+    x=where(g.trf gt 5. and g.cdpconc gt 10.)
+
+
+    ;p2=scatterplot(g.lwc[x],g.twc[x],sym_color='red',symbol='+',/overplot,dimensions=[968,1000])
+
+
+    print,'--------------------------------------------------------'
+    print,flight[i]
+    print,n_elements(x)
+    
+
+    lwccon=[lwccon,g.lwc[x]]
+    cdplwccon=[cdplwccon,g.cdplwc]
+    twccon=[twccon,g.twc[x]]
+    twcnocolecorcon=[twcnocolecorcon,g.twcNoECor[x]]
+    lwcconx=[lwcconx,g.lwc[x]]
+    cdplwcconx=[cdplwcconx,g.cdplwc[x]]
+    cdpdbarcon=[cdpdbarcon,g.cdpdbar[x]]
+    twcconx=[twcconx,g.twc[x]]
+    colETotTestCon=[colETotTestCon,g.colETotTest[x]]
+
+  endfor
+  p2=scatterplot(lwccon,twcnocolecorcon,dimensions=[1000,1000],sym_color='blue',symbol='+')
+  p5=scatterplot(lwccon,twccon,/overplot,sym_color='orange',symbol='+')
+  
+  p2.yrange=[0,3]
+  p2.xrange=[0,3]
+  p5=plot([0,3],[0,3],dimensions=[1000,1000],color='green',thick=2,linestyle=2,/overplot)
+  ;save,filename='liqOnly.sav',lwccon,twccon,colETotTestCon,cdpdbarcon
+
+  
+
+
+  lin=ladfit([zeros,lwccon],[zeros,twcnocolecorcon])
+  p3=plot([0,2.],[0+lin[0],2.*lin[1]+lin[0]],color='purple',thick=2,/overplot)
+  print,'diff=',lin[1]-1.
+  
+  lin=ladfit([zeros,lwccon],[zeros,twccon])
+  p4=plot([0,2.],[0+lin[0],2.*lin[1]+lin[0]],color='red',thick=2,/overplot)
+  print,'diff cor=',lin[1]-1.
+  
+  
+  p5=plot([0,2],[0,2],dimensions=[1000,1000],color='green',thick=2,linestyle=2,/overplot)
+  p3.xrange=[0,2.]
+  p3.yrange=[0,2.]
+  
+
+  stop
+endif
+
+
+
+
+
 
 
 
@@ -12,54 +162,66 @@ stuff='liqOnlyPoints2'
 
 if stuff eq 'liqOnlyPoints2' then begin
   restore,'liqOnly.sav'
-  cgcleanup
-  x=where(colETotTestCon gt 0. and colETotTestCon lt 1. and cdpdbarcon gt 4.)
   
-  eights=dindgen(10000,start=0.2, increment=0)
-  zeros=dindgen(10000,start=0., increment=0)
+  x=where(colETotTestCon gt 0. and colETotTestCon lt .9)
+  
+  
+  ay=dindgen(10000,start=.1, increment=0)
+  ax=dindgen(10000,start=1., increment=0)
+  
+;  by=dindgen(100,start=.70, increment=0)
+;  bx=dindgen(100,start=7., increment=0)
+by=dindgen(700,start=.880, increment=0)
+bx=dindgen(700,start=9., increment=0)
+cy=dindgen(10000,start=.820, increment=0)
+cx=dindgen(10000,start=40, increment=0)
+  
+  
   
   lwccon=lwccon[x]
   twccon=twccon[x]
-  colETotTestCon=colETotTestCon[x]
-  cdpdbarcon=cdpdbarcon[x]
+;  colETotTestCon=[twotens,colETotTestCon[x],ones]
+;  cdpdbarcon=[threes,cdpdbarcon[x],fourty]
   
   
-;  lwccon=[zeros,lwccon]
-;  twccon=[zeros,twccon]
-;  colETotTestCon=[eights,colETotTestCon]
-  
+  cdpdbarcon=[ax,cdpdbarcon[x],bx,cx]
+  colETotTestCon=[ay,colETotTestCon[x],by,cy]
   
   p1=scatterplot(cdpdbarcon,colETotTestCon,sym_color='red',symbol='+',dimensions=[968,1000])
-  p5=plot([0,3],[0,0],dimensions=[1400,1000],color='green',thick=2,linestyle=2,/overplot)
   
   ;p1.xrange=[-.1,2.6]
   p1.yrange=[0,1.2]
   
   
-  unitVector=dindgen(296, start=4., increment=.1)
+  unitVector=dindgen(370, start=3., increment=.1)
   
   x=[3.,4.5,6.,7.5,9.,11.5,15.,21.5]
   y=[.2,.3,.4,.5,.6,.7,.8,.9]
   
   
-    geofitb=poly_fit(x,y,2)
-    geoFit=comfit(x,y,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its) ;400 true
+    geofitb=poly_fit(cdpdbarcon,colETotTestCon,4)
+    geoFit=comfit(cdpdbarcon,colETotTestCon,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its,yerror=yerror) ;400 true
   
     regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
-    regLine2=geofitb[0]+geofitb[1]*unitVector+geofitb[2]*unitVector^2.
-  
+    
+    
+    regLine2=dindgen(n_elements(unitVector))
+    for i=0,n_elements(unitVector)-1 do begin
+      if unitVector[i] le 25 then begin
+        regLine2[i]=geofitb[0]+geofitb[1]*unitVector[i]+geofitb[2]*unitVector[i]^2.+geofitb[3]*unitVector[i]^3.+geofitb[4]*unitVector[i]^4.
+      endif else begin
+        regLine2[i]=0.72314992+unitVector[i]*0.0030687526
+      endelse
+    endfor
+    
     p6=scatterplot(x,y,/overplot)
-  
-;  geofitb=poly_fit(cdpdbarcon,colETotTestCon,2)
-;  geoFit=comfit(cdpdbarcon,colETotTestCon,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its) ;400 true
-;  
-;  regLine=(geoFit[0])*unitVector^geoFit[1]+geoFit[2]
-;  regLine2=geofitb[0]+geofitb[1]*unitVector+geofitb[2]*unitVector^2.
+
+  print,mean(abs(yerror))
   
   plot1b=plot(unitVector,regLine,'blue',/overplot)
   plot1b=plot(unitVector,regLine2,'green',/overplot)
+
   stop
-  
 endif
 
 
@@ -70,7 +232,7 @@ endif
 
 
 if stuff eq 'liqOnlyPoints' then begin
-  cgcleanup
+  ;;cgcleanup
   lwccon=[]
   cdplwccon=[]
   twccon=[]
@@ -93,7 +255,7 @@ if stuff eq 'liqOnlyPoints' then begin
 
     g= nevBase(flight[i],'indicated','400')
 
-    x=where(g.lwc gt .01 and g.trf gt 5. and g.cdpconc gt 100.)
+    x=where(g.trf gt 5. and g.cdpconc gt 20.)
 
   
     p2=scatterplot(g.lwc[x],g.twc[x],sym_color='red',symbol='+',/overplot,dimensions=[968,1000])
@@ -107,7 +269,7 @@ if stuff eq 'liqOnlyPoints' then begin
 
     lwccon=[lwccon,g.lwc[x]]
     cdplwccon=[cdplwccon,g.cdplwc]
-    twccon=[twccon,g.twc[x]]
+    twccon=[twccon,g.twcNoECor[x]]
     lwcconx=[lwcconx,g.lwc[x]]
     cdplwcconx=[cdplwcconx,g.cdplwc[x]]
     cdpdbarcon=[cdpdbarcon,g.cdpdbar[x]]
@@ -219,10 +381,10 @@ endif
 
 
 if stuff eq 'liqonly' then begin
-  cgcleanup
-  flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
+  ;;cgcleanup
+  flight=['0815','0725','0727','0728','0729','0803','0807','0814','0815']
   ;flight=['0728','0814','0815']
-  flight='0727'
+
   color=['black','blue']
 
   zeros=make_array(100000,value=0.)
@@ -231,11 +393,11 @@ if stuff eq 'liqonly' then begin
 
 
     g= nevBase(flight[i],'indicated','400')
-    x=where(g.cdpconc gt 10. and g.cdpdbar lt 10. and g.cdplwc gt .02)
+    x=where(g.trf gt 5. and g.cdpconc gt 40.)
     pline=dindgen(150001,start=0,increment=.00001)
 
-    p1=plot(g.timeflight,g.twc-g.lwc,dimensions=[1000,1000],color='green',title=flight[i])
-    p2=scatterplot(g.timeflight[x],g.twc[x]-g.lwc[x],dimensions=[1000,1400],sym_color='black',symbol='+',title=flight[i],/overplot)
+    p1=plot(g.timeflight,g.twc-g.twcNoECor,dimensions=[1000,1000],color='green',title=flight[i])
+    p2=scatterplot(g.timeflight[x],g.twc[x]-g.twcNoECor[x],dimensions=[1000,1400],sym_color='black',symbol='+',title=flight[i],/overplot)
     cdplwclin=[zeros,g.twc[x]]
     lwclin=[zeros,g.lwc[x]]
     p1.yrange=[-.2,.2]
@@ -252,7 +414,7 @@ if stuff eq 'liqonly' then begin
     ;  lwccon=[lwccon,g.lwc]
     ;  lwc2con=[lwc2con,g.lwc2]
     ;  lwcnev1con=[lwcnev1con,g.lwcnev1]
-
+stop
   endfor
   stop
 endif
@@ -270,7 +432,7 @@ endif
 
 
 if stuff eq 'compCalc' then begin
-  cgcleanup
+  ;;cgcleanup
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   ;flight=['1124','1217','0304','0307']
   flight=['0728','0814','0815']
@@ -326,7 +488,7 @@ endif
 
 
 if stuff eq 'matchSulCope' then begin
-  cgcleanup
+  ;;cgcleanup
 flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
 flight=['0710','0727','0807','0814','0815']
 
@@ -381,7 +543,7 @@ endif
 
 
 if stuff eq 2 then begin
-  cgcleanup
+  ;;cgcleanup
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   ;flight=['1124','1217','0304','0307']
   flight='0815'
@@ -434,7 +596,7 @@ stop
 
 
 if stuff eq 1 then begin
-  cgcleanup
+  ;;cgcleanup
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   flight=['1124','1217','0304','0307']
   color=['black','blue','red','pink','green','purple']
@@ -484,7 +646,7 @@ stop
 
 
 if stuff eq 1123 then begin
-  cgcleanup
+  ;;cgcleanup
   flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815']
   color=['black','blue','red','pink','green','purple']
   type=['indicated','true']
@@ -577,7 +739,7 @@ if stuff eq 13 then begin
   level=['400']
   flightb=['0727']
 colors=['red','green','blue','black']
-;cgcleanup
+;;;cgcleanup
 for i=0,n_elements(flightb)-1 do begin
   g= nevBase(flightb[i],'indicated','400')
   p1=plot(g.timeFlight,g.rawsignal,dimensions=[1400,1000])
@@ -679,7 +841,7 @@ if stuff eq 22 then begin
   meancon=[]
   stddevcon=[]
   r=0
-  ;cgcleanup
+  ;;cgcleanup
   lwccon=[]
   lwc2con=[]
   lwcnev1con=[]
@@ -803,7 +965,7 @@ endif
 
 
 if stuff eq 21 then begin
-   ;cgcleanup
+   ;;cgcleanup
   lwccon=[]
   lwc2con=[]
   lwcnev1con=[]
@@ -821,7 +983,7 @@ if stuff eq 21 then begin
   ;flight=['0710','0729','0729']
   level=['400']
   color=['black','blue','red']
-  cgcleanup
+  ;cgcleanup
 
   for i=0, n_elements(flight)-1 do begin
     g= nevBase(flight[i],'indicated','400')
@@ -931,7 +1093,7 @@ endif
 
 
 if stuff eq 20 then begin
-;  cgcleanup
+;  ;cgcleanup
   lwccon=[]
   lwcnev1con=[]
   low=0.
@@ -1247,7 +1409,7 @@ for i=0,n_elements(levels)-1 do begin
   plot1=scatterplot(g.pmb[g.clearair],g.lwc[g.clearair])
   print, mean(abs(g.lwc))
 endfor
-;cgcleanup
+;;cgcleanup
 endif  
 flight=['0710','0725','0727','0728','0729','0803','0807','0814','0815','0307']
 

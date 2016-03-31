@@ -612,12 +612,31 @@ betaLiq=0.11
 aTot=5.02d-5
 ;aTot=4.82d-5
 
+colETot=dindgen(n_elements(pmb),start=0.,increment=0.)
 ;total collection efficiency
-colETot=1.
+for i=0,n_elements(pmb)-1 do begin
+  if cdpdbar_NRB[i] lt 3. then begin
+    colETot[i]=.2
+;  endif 
+;  else if cdpdbar_NRB[i] gt 50. then begin
+;    colETot[i]=1.
+  endif
+  if cdpdbar_NRB[i] gt 3. and cdpdbar_NRB[i] le 24. then  begin
+    ;colETot[i]=(-47.818453547592071)*cdpdbar_NRB[i]^(-2.6463297036717788)+0.93889567063683976 SECOND TRY
+    ;colETot[i]=(-53.016993971726663)*cdpdbar_NRB[i]^(-2.7226686697540066)+0.91278679043470801 THIRD TRY
+    ;colETot[i]=(-4.6139604956452915)*cdpdbar_NRB[i]^(-1.7400670850809621)+0.88203355000591155 FORTH TRY
+    ;colETot[i]=(-0.073409467182500521)+(0.18619052616213594)*cdpdbar_NRB[i]+(-0.013267119912654834)*cdpdbar_NRB[i]^2.+(0.00038970869616683501)*cdpdbar_NRB[i]^3.+(-4.0110048488972705e-06)*cdpdbar_NRB[i]^4.
+    colETot[i]=(-0.087750286538039290)+(0.20180101126243244)*cdpdbar_NRB[i]+(-0.014706043962462445)*cdpdbar_NRB[i]^2.+(0.00043313199039829442)*cdpdbar_NRB[i]^3.+(-4.4355684652996885e-06)*cdpdbar_NRB[i]^4.
+  endif
+  if cdpdbar_NRB[i] gt 24. then  begin
+    colETot[i]=0.72314992+cdpdbar_NRB[i]*0.0030687526
+  endif
+    
 
-;-------PAR BY TRF---------
-;-------SEE 3/23/16 IN LOG---------
-;colETot=0.49964736687174566+trf*(-0.0030369760138078371)
+endfor
+
+
+
 
 
 ;EXPENDED HEAT FOR LIQUID
@@ -677,11 +696,10 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
 
+
+twcNoECor=pTot/(1.*tas*aTot*lIceStar)
+
 colETotTest=pTot/(lwc*tas*lIceStar*aTot)
-;gto=where(colETotTest lt 1. and colETotTest gt .2)
-;colETotTest=colETotTest[gto]
-
-
 twcTest=pTot/(colETotTest*tas*aTot*lIceStar)
 
 
@@ -697,7 +715,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,colETot:colETot,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  twcTest:twcTest,colETotTest:colETotTest}
+  twcTest:twcTest,colETotTest:colETotTest,twcNoECor:twcNoECor}
 
   
 return,g
