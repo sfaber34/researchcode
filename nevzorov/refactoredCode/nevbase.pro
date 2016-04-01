@@ -19,6 +19,41 @@ common t,t
   ;-----------------------------------------SET FILE PATH----------------------------------------------------------------------------------------------------------------------
   ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+;if !version.OS_FAMILY eq 'Windows' then begin
+;  if flightDay eq '0709' then nclPath='Z:\research\nevzorov\data\070913\20130709.c1.nc'
+;  if flightDay eq '0710' then nclPath='Z:\research\nevzorov\data\20130710.c1.nc'
+;  if flightDay eq '0725' then nclPath='Z:\research\nevzorov\data\072513\20130725.c1.nc' ;tons of level ca
+;  if flightDay eq '0727' then nclPath='Z:\research\nevzorov\data\072713\20130727.c1.nc'
+;  if flightDay eq '0728' then nclPath='Z:\research\nevzorov\data\072813\20130728.c1.nc'
+;  if flightDay eq '0729' then nclPath='Z:\research\nevzorov\data\072913\20130729.c1.nc'
+;  if flightDay eq '0807' then nclPath='Z:\research\nevzorov\data\080713\20130807.c1.nc'
+;  if flightDay eq '0814' then nclPath='Z:\research\nevzorov\data\081413\20130814.c1.nc'
+;  if flightDay eq '0815' then nclPath='Z:\research\nevzorov\data\081513\20130815.c1.nc'
+;  if flightDay eq '0803' then nclPath='Z:\research\nevzorov\data\080313\20130803.c1.nc'
+;  if flightDay eq '0307' then nclPath='Z:\research\nevzorov\data\030716\20160307.c1.nc'
+;  if flightDay eq '0304' then nclPath='Z:\research\nevzorov\data\030416\20160304.c1.nc'
+;  if flightDay eq '1217' then nclPath='Z:\research\nevzorov\data\121715\20151217.c1.nc'
+;  if flightDay eq '1124' then nclPath='Z:\research\nevzorov\data\112415\20151124.c1.nc'
+;  if flightDay eq '0806' then nclPath='Z:\research\nevzorov\data\080613\20130806.c1.nc'
+;endif else begin
+;  if flightDay eq '0709' then nclPath='../data/070913/20130709.c1.nc'
+;  if flightDay eq '0710' then nclPath='../data/20130710.c1.nc'
+;  if flightDay eq '0725' then nclPath='../data/072513/20130725.c1.nc' ;tons of level ca
+;  if flightDay eq '0727' then nclPath='../data/072713/20130727.c1.nc'
+;  if flightDay eq '0728' then nclPath='../data/072813/20130728.c1.nc'
+;  if flightDay eq '0729' then nclPath='../data/072913/20130729.c1.nc'
+;  if flightDay eq '0807' then nclPath='../data/080713/20130807.c1.nc'
+;  if flightDay eq '0814' then nclPath='../data/081413/20130814.c1.nc'
+;  if flightDay eq '0815' then nclPath='../data/081513/20130815.c1.nc'
+;  if flightDay eq '0803' then nclPath='../data/080313/20130803.c1.nc'
+;  if flightDay eq '0304' then nclPath='../data/030416/20160304.c1.nc'
+;  if flightDay eq '0307' then nclPath='../data/030716/20160307.c1.nc'
+;  if flightDay eq '1217' then nclPath='../data/121715/20151217.c1.nc'
+;  if flightDay eq '1124' then nclPath='../data/112415/20151124.c1.nc'
+;  if flightDay eq '0806' then nclPath='../data/080613/20130806.c1.nc'
+;endelse
+
+
 if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '0709' then nclPath='Z:\research\nevzorov\data\070913\20130709.c1.nc'
   if flightDay eq '0710' then nclPath='Z:\research\nevzorov\data\20130710.c1.nc'
@@ -36,21 +71,21 @@ if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '1124' then nclPath='Z:\research\nevzorov\data\112415\20151124.c1.nc'
   if flightDay eq '0806' then nclPath='Z:\research\nevzorov\data\080613\20130806.c1.nc'
 endif else begin
-  if flightDay eq '0709' then nclPath='../data/070913/20130709.c1.nc'
-  if flightDay eq '0710' then nclPath='../data/20130710.c1.nc'
-  if flightDay eq '0725' then nclPath='../data/072513/20130725.c1.nc' ;tons of level ca
-  if flightDay eq '0727' then nclPath='../data/072713/20130727.c1.nc'
-  if flightDay eq '0728' then nclPath='../data/072813/20130728.c1.nc'
-  if flightDay eq '0729' then nclPath='../data/072913/20130729.c1.nc'
-  if flightDay eq '0807' then nclPath='../data/080713/20130807.c1.nc'
-  if flightDay eq '0814' then nclPath='../data/081413/20130814.c1.nc'
-  if flightDay eq '0815' then nclPath='../data/081513/20130815.c1.nc'
-  if flightDay eq '0803' then nclPath='../data/080313/20130803.c1.nc'
-  if flightDay eq '0304' then nclPath='../data/030416/20160304.c1.nc'
-  if flightDay eq '0307' then nclPath='../data/030716/20160307.c1.nc'
-  if flightDay eq '1217' then nclPath='../data/121715/20151217.c1.nc'
-  if flightDay eq '1124' then nclPath='../data/112415/20151124.c1.nc'
-  if flightDay eq '0806' then nclPath='../data/080613/20130806.c1.nc'
+  if flightDay eq '0709' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/070913/20130709.c1.nc'
+  if flightDay eq '0710' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/20130710.c1.nc'
+  if flightDay eq '0725' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072513/20130725.c1.nc' ;tons of level ca
+  if flightDay eq '0727' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072713/20130727.c1.nc'
+  if flightDay eq '0728' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072813/20130728.c1.nc'
+  if flightDay eq '0729' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072913/20130729.c1.nc'
+  if flightDay eq '0807' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080713/20130807.c1.nc'
+  if flightDay eq '0814' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081413/20130814.c1.nc'
+  if flightDay eq '0815' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081513/20130815.c1.nc'
+  if flightDay eq '0803' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080313/20130803.c1.nc'
+  if flightDay eq '0304' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/030416/20160304.c1.nc'
+  if flightDay eq '0307' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/030716/20160307.c1.nc'
+  if flightDay eq '1217' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/121715/20151217.c1.nc'
+  if flightDay eq '1124' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/112415/20151124.c1.nc'
+  if flightDay eq '0806' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080613/20130806.c1.nc'
 endelse
 
 if strmatch(nclpath,'*2013*') eq 1 then cope=1
@@ -519,20 +554,37 @@ if (cope eq 0 or cope eq 2) and threshTot lt .003 then threshTot=.004
 
 if cope eq 1 then threshTot=0.0025*mean(uTot[0:50])
 
+
  
+
+
+clearairLiqi=findgen(n_elements(pmb),start=0.,increment=0.)
+clearairToti=findgen(n_elements(pmb),start=0.,increment=0.)
     
-clearairLiq=where(abs(diffLiq) le threshLiq and shift(abs(diffLiq),1) le threshLiq and shift(abs(diffLiq),-1) le threshLiq and shift(abs(diffLiq),2) le threshLiq and shift(abs(diffLiq),-2) le threshLiq)
-clearairTot=where(abs(diffTot) le threshTot and abs(shift(diffTot,1)) le threshTot and abs(shift(diffTot,-1)) le threshTot and abs(shift(diffTot,2)) le threshTot and abs(shift(diffTot,-2)) le threshTot)
+for i=0,n_elements(pmb)-1 do begin
+  if abs(diffLiq[i]) le threshLiq and shift(abs(diffLiq[i]),1) le threshLiq and $
+    shift(abs(diffLiq[i]),-1) le threshLiq and shift(abs(diffLiq[i]),2) le threshLiq and $
+    shift(abs(diffLiq[i]),-2) le threshLiq then clearairLiqi[i]=1
 
+  
+  if abs(diffTot[i]) le threshTot and abs(shift(diffTot[i],1)) le threshTot and $
+     abs(shift(diffTot[i],-1)) le threshTot and abs(shift(diffTot[i],2)) le threshTot and $
+     abs(shift(diffTot[i],-2)) le threshTot then clearairToti[i]=1
+endfor    
+    
+clearairLiq=where(clearairLiqi eq 1)
+clearairTot=where(clearairToti eq 1)
 
-clearairLiq=clearairLiq[30:n_elements(clearairLiq)-30]
-clearairTot=clearairTot[30:n_elements(clearairTot)-30]
+signalLiq=where(clearairLiqi eq 0)
+signalTot=where(clearairToti eq 0)
+
 
 
 
 clearairTotsort=sort(vtwccol[clearairTot])
 clearairTotsortsorted=clearairTot[clearairTotsort]
 clearairTotsortsorted=clearairTotsortsorted[n_elements(clearairTotsortsorted)*.01:n_elements(clearairTotsortsorted)*.99]
+
 
 
 
@@ -612,30 +664,7 @@ betaLiq=0.11
 aTot=5.02d-5
 ;aTot=4.82d-5
 
-colETot=dindgen(n_elements(pmb),start=0.,increment=0.)
-;total collection efficiency
-for i=0,n_elements(pmb)-1 do begin
-  if cdpdbar_NRB[i] lt 3. then begin
-    colETot[i]=.2
-;  endif 
-;  else if cdpdbar_NRB[i] gt 50. then begin
-;    colETot[i]=1.
-  endif
-  if cdpdbar_NRB[i] gt 3. and cdpdbar_NRB[i] le 24. then  begin
-    ;colETot[i]=(-47.818453547592071)*cdpdbar_NRB[i]^(-2.6463297036717788)+0.93889567063683976 SECOND TRY
-    ;colETot[i]=(-53.016993971726663)*cdpdbar_NRB[i]^(-2.7226686697540066)+0.91278679043470801 THIRD TRY
-    ;colETot[i]=(-4.6139604956452915)*cdpdbar_NRB[i]^(-1.7400670850809621)+0.88203355000591155 FORTH TRY
-    ;colETot[i]=(-0.073409467182500521)+(0.18619052616213594)*cdpdbar_NRB[i]+(-0.013267119912654834)*cdpdbar_NRB[i]^2.+(0.00038970869616683501)*cdpdbar_NRB[i]^3.+(-4.0110048488972705e-06)*cdpdbar_NRB[i]^4.
-    colETot[i]=(-0.087750286538039290)+(0.20180101126243244)*cdpdbar_NRB[i]+(-0.014706043962462445)*cdpdbar_NRB[i]^2.+(0.00043313199039829442)*cdpdbar_NRB[i]^3.+(-4.4355684652996885e-06)*cdpdbar_NRB[i]^4.
-  endif
-  if cdpdbar_NRB[i] gt 24. then  begin
-    colETot[i]=0.72314992+cdpdbar_NRB[i]*0.0030687526
-  endif
-    
-
-endfor
-
-
+colETot=1.
 
 
 
@@ -697,11 +726,6 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 twc=pTot/(colETot*tas*aTot*lIceStar)
 
 
-twcNoECor=pTot/(1.*tas*aTot*lIceStar)
-
-colETotTest=pTot/(lwc*tas*lIceStar*aTot)
-twcTest=pTot/(colETotTest*tas*aTot*lIceStar)
-
 
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
@@ -712,10 +736,10 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, threshTot:threshTot,$
   lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
   avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
-  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,colETot:colETot,$
+  rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  twcTest:twcTest,colETotTest:colETotTest,twcNoECor:twcNoECor}
+  signalTot:signalTot,signalLiq:signalLiq}
 
   
 return,g
