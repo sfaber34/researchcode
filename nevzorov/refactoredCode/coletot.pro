@@ -1,11 +1,6 @@
 pro colETot
 
-  stuff='testVarColETot'
-
-
-  restore,'loopdata.sav' 
-  ;x=where(trfcon gt -3. and lwccon gt .02 and cdpconccon gt 10)
-
+  stuff='fitcurve3'
 
 
 
@@ -13,43 +8,27 @@ pro colETot
   if stuff eq 'fitcurve3' then begin
     cgcleanup
 
+    restore,'loopdata.sav'
+    
+    
        
-    
-    
-    print,'n filtered=',n_elements(x)
-
-
     zeros=dindgen(10000,start=.2, increment=0)
+   
+
+    p1=scatterplot(lwc[liqOnly],lwc[liqOnly]-twc[liqOnly],sym_color='black',symbol='+',dimensions=[1600,1000])
 
 
+    ;geofitb=poly_fit(lwc,TWC,3,yfit=yfitb)
+    linfit=ladfit(lwc,lwc-twc)
 
-    lwccon=lwccon[liqonlycon]
-    twccon=twccon[liqonlycon]
-    CDPDBARCON=CDPDBARCON[liqonlycon]
-    CDPLWCCON=CDPLWCCON[liqonlycon]
-    TRFCON=[liqonlycon]
-    PMBCON=PMBCON[liqonlycon]
+
+    lwcsort=sort(lwc)
+    lwcsorted=lwc[lwcsort]
+    ;yfitb=yfitb[lwcsort]
+stop
+    p2=plot([],[],'r',/overplot)
+    ;p2=plot(lwcsorted,yfitb,'r',/overplot)
     
-    
-
-    p1=scatterplot(lwccon,twccon,sym_color='black',symbol='+',dimensions=[1600,1000])
-
-
-    
-
-
-
-    geofitb=poly_fit(lwccon,TWCcon,3,yfit=yfitb)
-
-    
-
-
-    lwcconsort=sort(lwccon)
-    lwcconsorted=lwccon[lwcconsort]
-    yfitb=yfitb[lwcconsort]
-
-    p2=plot(lwcconsorted,yfitb,'r',/overplot)
-
     stop
   endif
 
@@ -66,18 +45,18 @@ pro colETot
 
     zeros=dindgen(10000,start=0., increment=0.)
 
-    lwccon=lwccon[liqonlycon]
-    twccon=twccon[liqonlycon]
-    CDPDBARCON=CDPDBARCON[liqonlycon]
-    CDPLWCCON=CDPLWCCON[liqonlycon]
-    TRFCON=[liqonlycon]
-    PMBCON=PMBCON[liqonlycon]
+    lwc=lwc[liqonly]
+    twc=twc[liqonly]
+    CDPDBAR=CDPDBAR[liqonly]
+    CDPLWC=CDPLWC[liqonly]
+    TRF=[liqonly]
+    PMB=PMB[liqonly]
 
-    lwccon=[zeros,lwccon]
-    twccon=[zeros,twccon]
+    lwc=[zeros,lwc]
+    twc=[zeros,twc]
     
 
-    p1=scatterplot(lwccon,twccon,sym_color='black',symbol='+',dimensions=[1100,1100])
+    p1=scatterplot(lwc,twc,sym_color='black',symbol='+',dimensions=[1100,1100])
 
   
 
@@ -87,7 +66,7 @@ pro colETot
     p2=plot([0,2.6],[0,2.6],'g',thick=2,/overplot)
 
 
-    geofitb=ladfit([zeros,lwccon],[zeros,TWCcon])
+    geofitb=ladfit([zeros,lwc],[zeros,TWC])
 
     print,(geofitb[1]-1.)*100.
 
@@ -101,73 +80,6 @@ pro colETot
 
 
 
-
-
-
-
-
-
-
-  if stuff eq 'fitcurve2' then begin
-    cgcleanup
-
-    restore,'concatsavesb.sav'
-
-    x=where(trfcon gt 5. and lwccon gt .02)
-
-
-    ay=dindgen(10000,start=.2, increment=0)
-    ax=dindgen(10000,start=0., increment=0)
-
-
-    by=dindgen(700,start=.880, increment=0)
-    bx=dindgen(700,start=9., increment=0)
-    cy=dindgen(10000,start=.820, increment=0)
-    cx=dindgen(10000,start=40, increment=0)
-
-
-
-    lwccon=lwccon[x]
-    twccon=twccon[x]
-    COLETOTTESTCON=COLETOTTESTCON[x]
-    CDPDBARCON=CDPDBARCON[x]
-    CDPLWCCON=CDPLWCCON[x]
-    TRFCON=[x]
-    PMBCON=PMBCON[x]
-    TWCNOECORCON=TWCNOECORCON[x]
-
-
-    ;  lwccon=lwccon[x]
-    ;  twccon=twccon[x]
-    ;  TWCNOECORCON=[x]
-
-    ;  colETotTestCon=[twotens,colETotTestCon[x],ones]
-    ;  cdpdbarcon=[threes,cdpdbarcon[x],fourty]
-
-
-    p1=scatterplot(lwccon,lwccon-TWCNOECORCON,sym_color='red',symbol='+',dimensions=[1600,1000])
-
-
-
-    geofitb=poly_fit(lwccon,lwccon-TWCNOECORCON,4,yfit=yfitb)
-    geoFit=comfit(lwccon,lwccon-TWCNOECORCON,[geofitb[0],.2,geofitb[2]],yfit=yfit,/geometric,itmax=4000,iter=its,yerror=yerror) ;400 true
-
-
-
-    print,mean(abs(yerror))
-
-
-
-    lwcconsort=sort(lwccon)
-    lwcconsorted=lwccon[lwcconsort]
-    yfit=yfit[lwcconsort]
-    yfitb=yfitb[lwcconsort]
-
-    plot1b=plot(lwcconsorted,yfit,'blue',/overplot)
-    plot1b=plot(lwcconsorted,yfitb,'green',/overplot)
-
-    stop
-  endif
 
 
 
@@ -229,7 +141,7 @@ pro colETot
     clearairTotCon=[]
     zeros=dindgen(1000,start=0.,increment=0.)
 
-    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815','0821','0722','0718']
+    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
     ;flight='0806'
 
     color=['black','blue']

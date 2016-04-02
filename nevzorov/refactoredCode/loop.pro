@@ -1,28 +1,28 @@
 pro loop
 
 
-    lwccon=[]
-    ascon=[]
-    pmbcon=[]
-    cdplwccon=[]
-    twccon=[]
-    lwcconx=[]
-    cdplwcconx=[]
-    twcconx=[]
-    colETotTestCon=[]
-    cdpdbarcon=[]
-    twcnocolecorcon=[]
-    trfcon=[]
-    signalLiqcon=[]
-    signalTotcon=[]
-    clearairLiqCon=[]
-    clearairTotCon=[]
-    liqonlycon=[]
- 
+    lwc=[]
+    as=[]
+    pmb=[]
+    cdplwc=[]
+    twc=[]
+    lwcx=[]
+    cdplwcx=[]
+    twcx=[]
+    colETotTest=[]
+    cdpdbar=[]
+    twcnocolecor=[]
+    trf=[]
+    signalLiq=[]
+    signalTot=[]
+    clearairLiq=[]
+    clearairTot=[]
+    liqonly=[]
+    cdpconc=[]
     
 
 
-    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815','0821','0813','0722','0718']
+    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
 
 
 
@@ -33,27 +33,31 @@ pro loop
 
       print,flight[i]
 
-      liqOnly=where(g.trf gt -3. and g.lwc gt .02 and g.cdpconc gt 10.)
       
-      lwccon=[lwccon,g.lwc]
-      ascon=[ascon,g.as]
-      pmbcon=[pmbcon,g.pmb]
-      cdplwccon=[cdplwccon,g.cdplwc]
-      twccon=[twccon,g.twc]
-      cdpdbarcon=[cdpdbarcon,g.cdpdbar]
-      trfcon=[trfcon,g.trf]
-      signalLiqcon=[signalLiqcon,g.signalLiq]
-      signalTotcon=[signalTotcon,g.signalTot]
-      clearairLiqCon=[clearairLiqCon,g.clearairLiq]
-      clearairTotCon=[clearairTotCon,g.clearairTot]
-      liqonlycon=[liqonlycon,g.liqonly]
+      lwc=[lwc,g.lwc]
+      as=[as,g.as]
+      pmb=[pmb,g.pmb]
+      cdplwc=[cdplwc,g.cdplwc]
+      twc=[twc,g.twc]
+      cdpdbar=[cdpdbar,g.cdpdbar]
+      trf=[trf,g.trf]
+      signalLiq=[signalLiq,g.signalLiq]
+      signalTot=[signalTot,g.signalTot]
+      clearairLiq=[clearairLiq,g.clearairLiq]
+      clearairTot=[clearairTot,g.clearairTot]
+      liqonly=[liqonly,g.liqonly]
+      cdpconc=[cdpconc,g.cdpconc]
       
       p1=scatterplot(g.lwc[g.liqOnly],g.twc[g.liqOnly],sym_color='blue',symbol='+',dimensions=[1100,1100],/overplot)
    
     endfor
+    
+    liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc gt 10.)
     stop
 
-    save,filename='loopdata.sav',lwccon,twccon,cdpdbarcon,trfcon,ascon,pmbcon,cdplwccon,clearairLiqCon,clearairTotCon,signalLiqcon,signalTotcon,liqonlycon
+    save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
+      as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
+      signalTot,liqonly,cdpconc
 
     stop
 
