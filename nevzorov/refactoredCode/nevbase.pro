@@ -734,6 +734,7 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 
 
 
+
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
 
@@ -742,6 +743,25 @@ twc=pTot/(colETot*tas*aTot*lIceStar)
 liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_NRB gt 10.)
 
 
+;DIFFERENCES
+ltdiff=lwc-twc
+tldiff=twc-lwc
+
+
+;FOR HISTOGRAMS
+for i=0,n_elements(cdpdbar_NRB)-1 do begin
+  if cdpacc[i] lt 1. then cdpdbar_NRB[i]=!values.F_nan
+endfor
+
+
+cdpdbarint=5.
+
+cdpdbarhist=histogram(cdpdbar_NRB, binsize=cdpdbarint,locations=binlocations)
+
+stop
+
+
+stop
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
   pLiq:pLiq, lwc:lwc, lwcnev1:lwcnev1, twcNev:twcNev, lwcNoPresCor:lwcNoPresCor, twc:twc,$
@@ -754,7 +774,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  signalTot:signalTot,signalLiq:signalLiq,liqonly:liqonly}
+  signalTot:signalTot,signalLiq:signalLiq,liqonly:liqonly,ltdiff:ltdiff,tldiff:tldiff}
 
   
 return,g

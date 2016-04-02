@@ -1,5 +1,8 @@
 pro histogram
 
+run=2
+
+if run eq 1 then begin
   g= nevBase('0727','indicated','400')
 
   clear=where(lwcnev1 lt .02)
@@ -24,5 +27,33 @@ stop
 plot1=barplot(dindgen(n_elements(h)),h,histogram=1)
 plot1.xtickname=ticks
 plot1.xtext_orientation=270
+plot1.yrange=[1,1d5]
+endif
+
+if run eq 2 then begin
+  restore, 'loopdata.sav'
+  
+  inc=2.
+  
+  dbar3m=cdpdbar^3.
+  
+  dbar=cdpdbar[where(cdpacc gt 0.)]
+  dbar3=dbar3m[where(cdpacc gt 0.)]
+  
+  
+  
+
+
+  h=histogram(dbar,binsize=inc,REVERSE_INDICES=r)
+;  tickstart=string(dindgen(n_elements(
+;  ticks=[,' ',' ']
+
+  plot1=barplot(dindgen(n_elements(h)),h,histogram=1,ylog=1)
+  ;plot1.xrange=[1,3.9d13]
+  ;plot1.xtickname=ticks
+  plot1.xtext_orientation=270
+  stop
+endif
+
 
 end

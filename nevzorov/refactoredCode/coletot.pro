@@ -1,6 +1,71 @@
 pro colETot
 
-  stuff='fitcurve3'
+  stuff='testdbins'
+  
+  
+  
+  
+  
+  if stuff eq 'testdbins' then begin
+    restore,'loopdata.sav'
+    
+    binint=0
+
+    binsize=10
+    bincount=60/binsize
+    dbarbinn=dindgen(bincount,start=0,increment=0)
+    dbarbinmean=dindgen(bincount,start=0,increment=0)
+    dbar3m=dindgen(bincount,start=0,increment=0)
+    dbarbinind=dblarr(bincount,n_elements(pmb))
+    dbarcube=cdpdbar^3.
+    
+    for i=0,n_elements(cdpdbar)-1 do begin
+      if cdpacc[i] lt 1. then cdpdbar[i]=!values.F_nan
+    endfor
+
+    for i=0,bincount-1 do begin
+      ind=where(cdpdbar ge binint and cdpdbar le binint+binsize)
+      
+      dbarbinn[i]=n_elements(ind)
+      
+      p=n_elements(dbarbinind[i,*])-n_elements(ind)
+      ind=[ind,replicate(!values.F_nan,p)]
+      
+      dbarbinind[i,*]=ind
+      
+      binint=binint+binsize
+    endfor
+    
+    
+    cgcleanup
+    
+    color=['black','blue','red','green','purple','orange','pink','yellow','sky']
+    for i=0,bincount-1 do begin
+      p1=scatterplot(lwc[dbarbinind[i,*]],ltdiff[dbarbinind[i,*]],dimensions=[1600,1000],sym_color=color[i],sym_size=1,symbol='.',/overplot)
+    endfor
+    
+    
+    
+    stop
+;    
+;    
+;    
+;    for i=0,bincount-1 do begin
+;      if i eq 0 then step=binsize-1
+;      if i gt 0 then step=binsize
+;
+;      ind=where(cdpdbar ge binint and cdpdbar le binint+step)
+;
+;      dbarbinn[i]=n_elements(ind)
+;      dbarbinmean[i]=mean(cdpdbar[ind])
+;      dbar3m[i]=mean(dbarcube[ind])
+;      binint=binint+step
+;    endfor
+      
+    
+    
+    stop
+  endif
 
 
 
@@ -12,22 +77,27 @@ pro colETot
     
     
        
-    zeros=dindgen(10000,start=.2, increment=0)
+    unit=dindgen(14, start=0, increment=.2)
    
+    lwcliqonly=lwc[liqonly]
+    twcliqonly=twc[liqonly]
+    p1=scatterplot(lwcliqonly,lwcliqonly-twcliqOnly,sym_color='black',symbol='+',dimensions=[1600,1000])
 
-    p1=scatterplot(lwc[liqOnly],lwc[liqOnly]-twc[liqOnly],sym_color='black',symbol='+',dimensions=[1600,1000])
+    
+    geo=poly_fit(lwcliqonly,lwcliqonly-twcliqonly,3,yfit=yfitb)
+    lin=ladfit(lwc,lwc-twc)
 
 
-    ;geofitb=poly_fit(lwc,TWC,3,yfit=yfitb)
-    linfit=ladfit(lwc,lwc-twc)
+    lwcsort=sort(lwcliqonly)
+    lwcsorted=lwcliqonly[lwcsort]
+    yfitb=yfitb[lwcsort]
 
-
-    lwcsort=sort(lwc)
-    lwcsorted=lwc[lwcsort]
-    ;yfitb=yfitb[lwcsort]
-stop
-    p2=plot([],[],'r',/overplot)
-    ;p2=plot(lwcsorted,yfitb,'r',/overplot)
+    ;p2=plot([],[],'r',/overplot)
+    p2=plot(lwcsorted,yfitb,'r',/overplot)
+    
+    m=geo[0]+geo[1]*unit+geo[2]*unit^2.+geo[3]*unit^3.
+    mshift=shift(m,1)
+    mdiff=m-mshift
     
     stop
   endif
