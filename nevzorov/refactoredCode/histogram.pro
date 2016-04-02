@@ -35,13 +35,16 @@ if run eq 2 then begin
   
   inc=2.
   
+  dbarsort=sort(dbar)
+  
+  
   dbar3m=cdpdbar^3.
   
   dbar=cdpdbar[where(cdpacc gt 0.)]
   dbar3=dbar3m[where(cdpacc gt 0.)]
   
   
-  
+  dbarsort=sort(dbar)
 
 
   h=histogram(dbar,binsize=inc,REVERSE_INDICES=r)
