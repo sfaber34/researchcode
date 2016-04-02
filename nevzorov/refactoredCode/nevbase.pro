@@ -56,8 +56,8 @@ common t,t
 
 if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '0709' then nclPath='Z:\research\nevzorov\data\070913\20130709.c1.nc'
-  if flightDay eq '0710' then nclPath='Z:\research\nevzorov\data\20130710.c1.nc'
-  if flightDay eq '0725' then nclPath='Z:\research\nevzorov\data\072513\20130725.c1.nc' ;tons of level ca
+  if flightDay eq '0710' then nclPath='Z:\research\nevzorov\data\071013\20130710.c1.nc'
+  if flightDay eq '0725' then nclPath='Z:\research\nevzorov\data\072513\20130725.c1.nc'
   if flightDay eq '0727' then nclPath='Z:\research\nevzorov\data\072713\20130727.c1.nc'
   if flightDay eq '0728' then nclPath='Z:\research\nevzorov\data\072813\20130728.c1.nc'
   if flightDay eq '0729' then nclPath='Z:\research\nevzorov\data\072913\20130729.c1.nc'
@@ -72,8 +72,8 @@ if !version.OS_FAMILY eq 'Windows' then begin
   if flightDay eq '0806' then nclPath='Z:\research\nevzorov\data\080613\20130806.c1.nc'
 endif else begin
   if flightDay eq '0709' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/070913/20130709.c1.nc'
-  if flightDay eq '0710' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/20130710.c1.nc'
-  if flightDay eq '0725' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072513/20130725.c1.nc' ;tons of level ca
+  if flightDay eq '0710' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/071013/20130710.c1.nc'
+  if flightDay eq '0725' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072513/20130725.c1.nc'
   if flightDay eq '0727' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072713/20130727.c1.nc'
   if flightDay eq '0728' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072813/20130728.c1.nc'
   if flightDay eq '0729' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072913/20130729.c1.nc'
@@ -86,6 +86,11 @@ endif else begin
   if flightDay eq '1217' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/121715/20151217.c1.nc'
   if flightDay eq '1124' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/112415/20151124.c1.nc'
   if flightDay eq '0806' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080613/20130806.c1.nc'
+  if flightDay eq '0821' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/082113/20130821.c1.nc'
+  if flightDay eq '0813' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081313/20130813.c1.nc'
+  if flightDay eq '0722' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072213/20130722.c1.nc'
+  if flightDay eq '0718' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/071813/20130718.c1.nc'
+  if flightDay eq '0125' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/012513/20160125.c1.nc'
 endelse
 
 if strmatch(nclpath,'*2013*') eq 1 then cope=1
@@ -174,7 +179,7 @@ if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
 if cope ne 1 then hivs=0
 
 ;liquid water content from Nevzorov probe [g/m^3]
-if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 then begin
+if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*') eq 0 and strmatch(nclpath,'*0718*') eq 0 then begin
   lwcNev1=loadvar('nevlwc1', filename=nclPath)
 endif else begin
   lwcNev1=dindgen(n_elements(pmb),increment=0)
@@ -182,7 +187,7 @@ endelse
 
 
 ;liquid water content from Nevzorov probe [g/m^3]
-if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 then begin
+if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*') eq 0 and strmatch(nclpath,'*0718*') eq 0 then begin
    lwcNev2=loadvar('nevlwc2', filename=nclPath)
 endif else begin   
   lwcNev2=dindgen(n_elements(pmb),increment=0)
@@ -190,7 +195,7 @@ endelse
 
 
 ;Total water content from Nevzorov probe [g/m^3]
-if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 then begin
+if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*') eq 0 and strmatch(nclpath,'*0718*') eq 0  then begin
   twcNev=loadvar('nevtwc', filename=nclPath)
 endif else begin  
   twcNev=dindgen(n_elements(pmb),increment=0)
@@ -334,8 +339,17 @@ if flightDay eq '0803' then flightString='08-03-13'
 if flightDay eq '0304' then flightString='03-04-16'
 if flightDay eq '0307' then flightString='03-07-16'
 if flightDay eq '1217' then flightString='12-17-15'
-if flightDay eq '1124' then flightString='11-24-15'
-  
+if flightDay eq '1124' then flightString='11-24-15'  
+if flightDay eq '0821' then flightString='08-21-13'
+if flightDay eq '0802' then flightString='08-02-13'
+if flightDay eq '0722' then flightString='07-22-13'
+if flightDay eq '0718' then flightString='07-18-13'
+if flightDay eq '0125' then flightString='01-25-13'
+if flightDay eq '0813' then flightString='08-13-13'
+if flightDay eq '0722' then flightString='07-21-13'
+if flightDay eq '0718' then flightString='07-18-13'
+if flightDay eq '0125' then flightString='01-25-13'
+
 
 
 
@@ -634,8 +648,6 @@ levelclearairLiq=where(baselineIB eq 1)
 
 
 
-
-
 ;-----------------------------------------CONSTANTS-------------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -697,7 +709,7 @@ twcNoPresCor=pTot/(colETot*tas*aTot*lIceStar)
 
 linPresCorLiq=linfit(pmb[clearairLiq],pLiqNoPresCor[clearairLiq])
 
-;poly=poly_fit(pmb[clearairLiq],pLiqNoPresCor[clearairLiq],2)
+
 pLiq=pLiqNoPresCor - ( linPresCorLiq[1]*pmb + linPresCorLiq[0] )
 
 
@@ -706,7 +718,7 @@ pLiq=pLiqNoPresCor - ( linPresCorLiq[1]*pmb + linPresCorLiq[0] )
 
 linPresCorTot=linfit(pmb[clearairTot],pTotNoPresCor[clearairTot])
 
-;poly=poly_fit(pmb[clearairTot],pTot[clearairTot],2)
+
 pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 
@@ -726,6 +738,9 @@ lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 twc=pTot/(colETot*tas*aTot*lIceStar)
 
 
+;FILTER LIQ ONLY
+liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_NRB gt 10.)
+
 
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
@@ -739,7 +754,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  signalTot:signalTot,signalLiq:signalLiq}
+  signalTot:signalTot,signalLiq:signalLiq,liqonly:liqonly}
 
   
 return,g

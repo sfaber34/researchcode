@@ -1,10 +1,10 @@
 pro colETot
 
-  stuff='directComp'
+  stuff='testVarColETot'
 
 
-  restore,'concatsavesb2.sav' 
-  x=where(trfcon gt -3. and lwccon gt .02 and cdpconccon gt 10)
+  restore,'loopdata.sav' 
+  ;x=where(trfcon gt -3. and lwccon gt .02 and cdpconccon gt 10)
 
 
 
@@ -23,12 +23,12 @@ pro colETot
 
 
 
-    lwccon=lwccon[x]
-    twccon=twccon[x]
-    CDPDBARCON=CDPDBARCON[x]
-    CDPLWCCON=CDPLWCCON[x]
-    TRFCON=[x]
-    PMBCON=PMBCON[x]
+    lwccon=lwccon[liqonlycon]
+    twccon=twccon[liqonlycon]
+    CDPDBARCON=CDPDBARCON[liqonlycon]
+    CDPLWCCON=CDPLWCCON[liqonlycon]
+    TRFCON=[liqonlycon]
+    PMBCON=PMBCON[liqonlycon]
     
     
 
@@ -66,12 +66,12 @@ pro colETot
 
     zeros=dindgen(10000,start=0., increment=0.)
 
-    lwccon=lwccon[x]
-    twccon=twccon[x]
-    CDPDBARCON=CDPDBARCON[x]
-    CDPLWCCON=CDPLWCCON[x]
-    TRFCON=[x]
-    PMBCON=PMBCON[x]
+    lwccon=lwccon[liqonlycon]
+    twccon=twccon[liqonlycon]
+    CDPDBARCON=CDPDBARCON[liqonlycon]
+    CDPLWCCON=CDPLWCCON[liqonlycon]
+    TRFCON=[liqonlycon]
+    PMBCON=PMBCON[liqonlycon]
 
     lwccon=[zeros,lwccon]
     twccon=[zeros,twccon]
@@ -229,7 +229,7 @@ pro colETot
     clearairTotCon=[]
     zeros=dindgen(1000,start=0.,increment=0.)
 
-    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
+    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815','0821','0722','0718']
     ;flight='0806'
 
     color=['black','blue']
@@ -245,7 +245,7 @@ pro colETot
 
 
       ;p2=scatterplot(g.cdpdbar[x],g.lwc[x]-g.twcnoecor[x],sym_color='black',symbol='+',dimensions=[968,1000])
-      p3=scatterplot(g.lwc[x],g.lwc[x]-g.twc[x],sym_color='green',symbol='+',dimensions=[1400,1000],/overplot)
+      p3=scatterplot(g.lwc[g.liqonly],g.twc[g.liqonly],sym_color='green',symbol='+',dimensions=[1400,1000],/overplot)
 
 
       print,'--------------------------------------------------------'
@@ -253,19 +253,18 @@ pro colETot
       print,n_elements(x)
 
 
-      lwccon=[lwccon,g.lwc[x]]
-      ascon=[ascon,g.as[x]]
-      pmbcon=[pmbcon,g.pmb[x]]
-      cdplwccon=[cdplwccon,g.cdplwc[x]]
-      twccon=[twccon,g.twc[x]]
-      ;twcnocolecorcon=[twcnocolecorcon,g.twcNoECor[x]]
-      cdpdbarcon=[cdpdbarcon,g.cdpdbar[x]]
-      colETotTestCon=[colETotTestCon,g.colETotTest[x]]
-      trfcon=[trfcon,g.trf[x]]
-      signalLiqcon=[signalLiqcon,g.signalLiq[x]]
-      signalTotcon=[signalTotcon,g.signalTot[x]]
-      clearairLiqCon=[clearairLiqCon,g.clearairLiq[x]]
-      clearairTotCon=[clearairTotCon,g.clearairTot[x]]
+      lwccon=[lwccon,g.lwc[g.liqonly]]
+      ascon=[ascon,g.as[g.liqonly]]
+      pmbcon=[pmbcon,g.pmb[g.liqonly]]
+      cdplwccon=[cdplwccon,g.cdplwc[g.liqonly]]
+      twccon=[twccon,g.twc[g.liqonly]]
+      ;twcnocolecorcon=[twcnocolecorcon,g.twcNoECor[g.liqonly]]
+      cdpdbarcon=[cdpdbarcon,g.cdpdbar[g.liqonly]]
+      
+      trfcon=[trfcon,g.trf[g.liqonly]]
+
+      clearairLiqCon=[clearairLiqCon,g.clearairLiq[g.liqonly]]
+      clearairTotCon=[clearairTotCon,g.clearairTot[g.liqonly]]
 
     endfor
     stop
@@ -395,7 +394,7 @@ pro colETot
     pmbcon=[]
     cdpconccon=[]
 
-    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815']
+    flight=['0710','0725','0727','0728','0729','0803','0806','0807','0814','0815','0821','0802','0722','0718']
     ;flight='0806'
 
     color=['black','blue']
