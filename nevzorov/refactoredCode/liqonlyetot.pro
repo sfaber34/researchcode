@@ -1,36 +1,61 @@
 pro liqonlyETot
  
-    
 
-    stuff=1
- 
+
+
+plots=2
+
+;STARTING LEFT VALUE
+binint=0
+
+;WIDTH OF BINS
+binsize=4
+
+;LIQUID ONLY POINTS OR ALL
+liq=0
+
+
 ;---------------------------------------------------------------------------------------------------
 ;---------------------------------------------------------------------------------------------------
 ;---------------------------------------------------------------------------------------------------
-;---------------------------------------------------------------------------------------------------
+
+
+
+  color=['black','blue','red','green','purple','orange','pink','yellow','sky','black','blue','red','green','purple']
+
+
 
    restore,'loopdata.sav'
+stop
 
 
-    binint=0
+    if liq eq 1 then begin
+      lwc=lwc[liqonly]
+      twc=twc[liqonly]
+      cdpdbar=cdpdbar[liqonly]
+      cdpconc=cdpconc[liqonly]
+    endif
+    
 
-    binsize=15
+    
     
     binint2=binint+binsize
     bincount=60/binsize
 
     dBarBI=dblarr(bincount,n_elements(pmb))
     dbarbinn=dindgen(bincount,start=0,increment=0)
-    lwc=lwc[liqonly]
-    twc=twc[liqonly]
-    cdpdbar=cdpdbar[liqonly]
-    cdpconc=cdpconc[liqonly]
+    
 
     binstart=[]
     binend=[]
     binindex=[]
     binistarti=[]
     biniendi=[]
+    binscon=[]
+    countscon=[]
+    ncountscon=[0]
+    ticks=[]
+    
     starti=0
     endi=0
 
@@ -59,15 +84,33 @@ pro liqonlyETot
     
     
     
+    for i=0,n_elements(binistarti)-1 do begin
+
+      bins=binindex[binistarti[i]:biniendi[i]]
+      binscon=[binscon,bins]
+      countscon=[countscon,n_elements(bins)]
+      ncountscon=[ncountscon+n_elements(bins)]
+
+      tickname=strsplit(string(min(cdpdbar[bins])),'.',/extract)
+      ticks=[ticks,tickname[0]]
+
+
+    endfor
+    
+    
+    ticks=[ticks,' ',' ']
+    ncountscon=dindgen(n_elements(binistarti),start=ncountscon, increment=0)
     
     
     
     
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------LWC VS LWC,TWC DIFF-------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
     
     
     
-    
-    if stuff eq 0 then begin
+    if plots eq 0 then begin
 
 
     cgcleanup
@@ -75,10 +118,12 @@ pro liqonlyETot
       zeros=dindgen(100000,start=0,increment=0)
       twos=dindgen(100000,start=0,increment=0)
 
-      color=['black','blue','red','green','purple','orange','pink','yellow','sky','black','blue','red','green','purple']
+      
       for i=0,n_elements(binistarti)-1 do begin
       
       bins=binindex[binistarti[i]:biniendi[i]]
+      binscon=[binscon,bins]
+      countscon=[countscon,n_elements(bins)]
      
      p1=scatterplot(lwc[bins],lwc[bins]-twc[bins],/overplot,sym_color=color[i],sym_size=.2,dimensions=[1600,1000])
         
@@ -95,11 +140,13 @@ pro liqonlyETot
     
     
     
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------LWC/TWC 1:1 COMP----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
     
     
     
-    
-    if stuff eq 1 then begin
+    if plots eq 1 then begin
 
 
       cgcleanup
@@ -107,7 +154,7 @@ pro liqonlyETot
       zeros=dindgen(100000,start=0,increment=0)
       twos=dindgen(100000,start=0,increment=0)
 
-      color=['black','blue','red','green','purple','orange','pink','yellow','sky','black','blue','red','green','purple']
+      
       for i=0,n_elements(binistarti)-1 do begin
 
         bins=binindex[binistarti[i]:biniendi[i]]
@@ -126,6 +173,37 @@ pro liqonlyETot
 
 
       endfor
+    endif
+    
+    
+    
+    
+    
+    
+    
+    ;--------------------------------------------------------------------------------------------------------
+    ;---------------------------------------------------HISTOGRAM---------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+    
+    if plots eq 2 then begin
+
+      
+      
+      cgcleanup
+
+
+      
+      
+      p1=barplot(dindgen(n_elements(countscon)),countscon, histogram=1,dimensions=[1600,1400])
+      
+      p1.xtext_orientation=270
+      p1.xrange=[0,n_elements(countscon)]
+      p1.xmajor=n_elements(countscon)+1
+      p1.xminor=0
+      p1.xtickname=ticks
+      p1.xtitle='diameter um'
+      p1.ytitle='Frequency'
+      stop
     endif
 
 

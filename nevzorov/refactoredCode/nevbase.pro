@@ -740,7 +740,7 @@ twc=pTot/(colETot*tas*aTot*lIceStar)
 
 
 ;FILTER LIQ ONLY
-liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_NRB gt 10.)
+;liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_NRB gt 10.) ;done in loop.pro
 
 
 
