@@ -9,70 +9,102 @@ pro colETot
   if stuff eq 'testdbins' then begin
     restore,'loopdata.sav'
     
-    binint=0
+    
+    
+    
+    binint=3
 
     binsize=5
     bincount=60/binsize
-    dbarbinn=dindgen(bincount,start=0,increment=0)
-    dbarbinmean=dindgen(bincount,start=0,increment=0)  
-    dBarBI=dblarr(bincount,n_elements(pmb))
-    
 
-    
-;    for i=0,n_elements(cdpdbar)-1 do begin
-;      if cdpacc[i] lt 1. then cdpdbar[i]=!values.F_nan
-;    endfor
-    
-    dbarcube=cdpdbar^3.
-    
-    
-    
-    
+    dBarBI=dblarr(bincount,n_elements(pmb))
+    dbarbinn=dindgen(bincount,start=0,increment=0)
+    lwcliqonly=lwc[liqonly]
+    twcliqonly=twc[liqonly]
+    cdpdbarliqonly=cdpdbar[liqonly]
+    cdpconcliqonly=cdpconc[liqonly]
+
 
     for i=0,bincount-1 do begin
-      ind=where(cdpdbar ge binint and cdpdbar le binint+binsize)
-      
+      ind=where(cdpdbarliqonly ge binint and cdpdbarliqonly le binint+binsize)
+
       dbarbinn[i]=n_elements(ind)
-      
+
       p=n_elements(dBarBI[i,*])-n_elements(ind)
       ind=[ind,replicate(!values.F_nan,p)]
-      
+
       dBarBI[i,*]=ind
-      
+
+
       binint=binint+binsize
     endfor
     
     
-    
-    
-    binint3m=0
-
-    binsize3m=1000
-    bincount3m=1.2d5/binsize3m
-    
-    dbarbinn=dindgen(bincount3m,start=0,increment=0)
-    dbarbi3m=dblarr(bincount3m,n_elements(pmb))
-    
-    for i=0,bincount3m-1 do begin
-      ind=where(dbarcube ge binint3m and dbarcube le binint3m+binsize3m)
-
-      dbarbinn[i]=n_elements(ind)
-
-      p=n_elements(dBarBI3m[i,*])-n_elements(ind)
-      ind=[ind,replicate(!values.F_nan,p)]
-
-      dBarBI3m[i,*]=ind
-
-      binint3m=binint3m+binsize3m
-    endfor
-    
-    
     cgcleanup
-    
+
     color=['black','blue','red','green','purple','orange','pink','yellow','sky']
-    for i=0,bincount3m-1 do begin
-      p1=scatterplot(lwc[dBarBI[i,*]],ltdiff[dBarBI[i,*]],dimensions=[1600,1000],sym_color=color[i],sym_size=1,/overplot)
+    for i=0,n_elements(dbarbi[*,0])-1 do begin
+      
+      liqonlyind=where(finite(dbarbi[i,*]) eq 1)
+      
+      
+      
+      p1=scatterplot(lwcliqonly[dbarbi[i,*]],lwcliqonly[dbarbi[i,*]]-twcliqonly[dbarbi[i,*]],dimensions=[1600,1000],sym_color=color[i],sym_size=.5,/overplot)
+      cole=linfit(lwcliqonly[dbarbi[i,*]],lwcliqonly[dbarbi[i,*]]-twcliqonly[dbarbi[i,*]])
+      print,1.-cole[1]
     endfor
+    
+   stop
+    
+    for i=0,n_elements(dBarBI[*,0])-1 do begin
+      k=0
+      for j=0,n_elements(dBarBI[0,*])-1 do begin
+        if dBarBI[i,j] gt 0 and dBarBI[i,j] ne !values.F_nan then begin
+          dBarBISave[i,k]=dBarBI[i,j]
+          k++
+        endif
+      endfor  
+    endfor  
+    
+    firstM=dindgen(n_elements(dBarBISave[*,0]),start=0,increment=0)
+    thirdM=dindgen(n_elements(dBarBISave[*,0]),start=0,increment=0)
+    
+    firstM=dblarr(n_elements(dBarBISave[*,0]),n_elements(dBarBISave[0,*]))
+    
+    for i=0,n_elements(dBarBISave[*,0])-1 do begin
+      savedvals=[]
+      for j=0,n_elements(dBarBISave[0,*])-1 do begin
+        savedvals=[savedvals,cdpdbar[dBarBISave[i,j]]]
+      endfor
+      firstM[i,*]=savedvals
+      ;thirdM=(savedvals)^3.
+    endfor
+    
+    stop
+    
+;    binint3m=0
+;
+;    binsize3m=1000
+;    bincount3m=1.2d5/binsize3m
+;    
+;    dbarbinn=dindgen(bincount3m,start=0,increment=0)
+;    dbarbi3m=dblarr(bincount3m,n_elements(pmb))
+;    
+;    for i=0,bincount3m-1 do begin
+;      ind=where(dbarcube ge binint3m and dbarcube le binint3m+binsize3m)
+;
+;      dbarbinn[i]=n_elements(ind)
+;
+;      p=n_elements(dBarBI3m[i,*])-n_elements(ind)
+;      ind=[ind,replicate(!values.F_nan,p)]
+;
+;      dBarBI3m[i,*]=ind
+;
+;      binint3m=binint3m+binsize3m
+;    endfor
+    
+    stop
+    
     
     
     

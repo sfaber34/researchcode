@@ -1,6 +1,18 @@
 pro loop
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     lwc=[]
     as=[]
     pmb=[]
@@ -50,13 +62,19 @@ pro loop
       clearairTot=[clearairTot,g.clearairTot]
       liqonly=[liqonly,g.liqonly]
       cdpconc=[cdpconc,g.cdpconc]
-      ltdiff=[ltdiff,g.ltdiff]
-      tldiff=[tldiff,g.tldiff]
       cdpacc=[cdpacc,g.cdpacc]
       
+      p1=scatterplot(g.lwc,g.lwc-g.twc,sym_color='red',symbol='+',dimensions=[1100,1100],/overplot)
       p1=scatterplot(g.lwc[g.liqOnly],g.lwc[g.liqOnly]-g.twc[g.liqOnly],sym_color='blue',symbol='+',dimensions=[1100,1100],/overplot)
    
     endfor
+    
+    
+    
+    
+    
+
+    
     
 ;    dbar5=where(cdpdbar ge 0. and cdpdbar le 5.)
 ;    dbar10=where(cdpdbar ge 5. and cdpdbar le 10.)
@@ -88,6 +106,12 @@ pro loop
 ;    endfor
     
     
+    
+    
+
+    
+    
+    
 
     liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc gt 10.)
 
@@ -97,7 +121,7 @@ pro loop
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
-      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,/verbose
+      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,dBarBI,/verbose
 
     stop
 
