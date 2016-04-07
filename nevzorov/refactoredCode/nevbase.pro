@@ -156,23 +156,26 @@ pvmlwc=loadvar('pvmlwc', filename=nclPath)
 ;liquid water content from lwc100 probe [g/m^3]
 lwc100=loadvar('lwc100', filename=nclPath)
 
-;CDP hydrometeor concentration
-cdpconc_NRB=loadvar('cdpconc_NRB', filename=nclPath)
+;CDP concentration
+cdpconc_1_NRB=loadvar('cdpconc_1_NRB', filename=nclPath)
 
 ;liquid water content from CDP [g/m^3]
-cdplwc_NRB=loadvar('cdplwc_NRB', filename=nclPath)
+cdplwc_1_NRB=loadvar('cdplwc_1_NRB', filename=nclPath)
 
 ;CDP accepted particles
-cdpacc=loadvar('cdpacc_NRB', filename=nclPath)
+cdpacc=loadvar('cdpacc_1_NRB', filename=nclPath)
 
 ;CDP droplet mean diamter [um]
-cdpdbar_NRB=loadvar('cdpdbar_NRB', filename=nclPath)
+cdpdbar_1_NRB=loadvar('cdpdbar_1_NRB', filename=nclPath)
 
 ;Pitch [degrees]
 avpitch=loadvar('avpitch', filename=nclPath)
 
 ;roll [degrees]
 avroll=loadvar('avroll', filename=nclPath)
+
+;CDP diameter per bin
+cdpdbins=loadvar('ACDP_1_NRB', filename=nclPath)
 
 ;Vertical Speed [m/s]
 if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
@@ -200,6 +203,7 @@ if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') 
 endif else begin  
   twcNev=dindgen(n_elements(pmb),increment=0)
 endelse
+
  
 
 ;Sideslip Angle [deg]
@@ -375,15 +379,16 @@ trose=trose[aStart:aEnd]
 z=z[aStart:aEnd]
 pvmlwc=pvmlwc[aStart:aEnd]
 lwc100=lwc100[aStart:aEnd]
-cdpconc_NRB=cdpconc_NRB[aStart:aEnd]
+cdpconc_1_NRB=cdpconc_1_NRB[aStart:aEnd]
 cdpacc=cdpacc[aStart:aEnd]
-cdpdbar_NRB=cdpdbar_NRB[aStart:aEnd]
+cdpdbar_1_NRB=cdpdbar_1_NRB[aStart:aEnd]
 avpitch=avpitch[aStart:aEnd]
 avroll=avroll[aStart:aEnd]
 avyawr=avyawr[aStart:aEnd]
 alpha=alpha[aStart:aEnd]
-cdplwc_NRB=cdplwc_NRB[aStart:aEnd]
+cdplwc_1_NRB=cdplwc_1_NRB[aStart:aEnd]
 timeFlight=timeFlight[aStart:aEnd]
+cdpdbins=cdpdbins[*,*,aStart:aEnd]
 
 if cope eq 1 then begin
   lwcNev1=lwcNev1[aStart:aEnd]
@@ -740,14 +745,14 @@ twc=pTot/(colETot*tas*aTot*lIceStar)
 
 
 ;FILTER LIQ ONLY
-;liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_NRB gt 10.) ;done in loop.pro
+;liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_1_NRB gt 10.) ;done in loop.pro
 
 
 
 
 ;FOR HISTOGRAMS
-for i=0,n_elements(cdpdbar_NRB)-1 do begin
-  if cdpacc[i] lt 1. then cdpdbar_NRB[i]=!values.F_nan
+for i=0,n_elements(cdpdbar_1_NRB)-1 do begin
+  if cdpacc[i] lt 1. then cdpdbar_1_NRB[i]=!values.F_nan
 endfor
 
 
@@ -760,13 +765,13 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   clearairLiq:clearairLiq, levelclearairLiq:levelclearairLiq,timeFlight:timeFlight,$
   flightString:flightString, kLiq:kLiq,threshLiq:threshLiq, clearairTot:clearairTot,$
   aiasMs:aiasMs, tas:tas,vlwcref:vlwcref, ilwcref:ilwcref, twcNoPresCor:twcNoPresCor,$
-  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_NRB, trf:trf, threshTot:threshTot,$
-  lwc100:lwc100, cdpdbar:cdpdbar_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
-  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_NRB,pLiqNoPresCor:pLiqNoPresCor,$
+  vlwccol:vlwccol, ilwccol:ilwccol, cdpconc:cdpconc_1_NRB, trf:trf, threshTot:threshTot,$
+  lwc100:lwc100, cdpdbar:cdpdbar_1_NRB,lwcnev2:lwcnev2, timePretty:timePretty,$
+  avyaw:avyawr,pvmlwc:pvmlwc,cdplwc:cdplwc_1_NRB,pLiqNoPresCor:pLiqNoPresCor,$
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  signalTot:signalTot,signalLiq:signalLiq,liqonly:liqonly}
+  signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins}
 
   
 return,g

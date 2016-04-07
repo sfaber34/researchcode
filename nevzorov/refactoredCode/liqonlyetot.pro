@@ -3,16 +3,16 @@ pro liqonlyETot
 
 
 
-plots=2
+plots=1
 
 ;STARTING LEFT VALUE
-binint=0
+binint=0.
 
 ;WIDTH OF BINS
-binsize=4
+binsize=2.
 
 ;LIQUID ONLY POINTS OR ALL
-liq=0
+liq=1
 
 
 ;---------------------------------------------------------------------------------------------------
@@ -26,8 +26,8 @@ liq=0
 
 
    restore,'loopdata.sav'
-stop
 
+   
 
     if liq eq 1 then begin
       lwc=lwc[liqonly]
@@ -37,7 +37,7 @@ stop
     endif
     
 
-    
+    ;cdpdbar=cdpdbar^3.
     
     binint2=binint+binsize
     bincount=60/binsize
