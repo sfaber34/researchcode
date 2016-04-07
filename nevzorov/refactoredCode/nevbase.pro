@@ -758,6 +758,27 @@ endfor
 
 
 
+;MOMENT CALCULATIONS
+firstM=make_array(n_elements(pmb))
+diff=make_array(n_elements(pmb))
+if n_elements(cdpdbins[*,0,0]) eq 28 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,9.,11.,13.,15.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
+if n_elements(cdpdbins[*,0,0]) eq 27 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,10.5,14.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
+
+
+
+
+for m=0, n_elements(pmb)-1 do begin
+  x=[]
+  for j=0,n_elements(cdpdbins[*,0,0])-1 do begin
+    x=[x,diam[j]*(cdpdbins[j,0,m])]
+  endfor
+    y=total(x)/total(cdpdbins[*,0,m])
+    firstM[m]=y
+endfor
+
+
+
+
 
 
 g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpitch, $
@@ -771,7 +792,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins}
+  signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,firstM:firstM}
 
   
 return,g
