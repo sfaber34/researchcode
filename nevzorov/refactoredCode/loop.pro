@@ -74,7 +74,7 @@ pro loop
       
 ;      p1=plot(dindgen(n_elements(g.pmb)),g.firstM-g.cdpdbar,dimensions=[1100,1100],thick=4)
 ;      p1.yrange=[-1,1]
-stop
+
 
     endfor
     
@@ -89,7 +89,7 @@ stop
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
-      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,dBarBI,/verbose
+      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,dBarBI,firstM,/verbose
 
     stop
 

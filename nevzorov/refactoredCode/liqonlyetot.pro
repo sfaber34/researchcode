@@ -3,7 +3,7 @@ pro liqonlyETot
 
 
 
-plots=1
+plots=2
 
 ;STARTING LEFT VALUE
 binint=0.
@@ -12,7 +12,7 @@ binint=0.
 binsize=2.
 
 ;LIQUID ONLY POINTS OR ALL
-liq=1
+liq=0
 
 
 ;---------------------------------------------------------------------------------------------------
@@ -26,8 +26,10 @@ liq=1
 
 
    restore,'loopdata.sav'
-
    
+   
+
+
 
     if liq eq 1 then begin
       lwc=lwc[liqonly]
@@ -37,7 +39,6 @@ liq=1
     endif
     
 
-    ;cdpdbar=cdpdbar^3.
     
     binint2=binint+binsize
     bincount=60/binsize
@@ -60,7 +61,7 @@ liq=1
     endi=0
 
     for i=0,bincount-1 do begin
-      selectinds=where(cdpdbar ge binint and cdpdbar le binint2)
+      selectinds=where(firstM ge binint and firstM le binint2)
       
       
       if selectinds[0] ne -1 then begin
@@ -91,7 +92,7 @@ liq=1
       countscon=[countscon,n_elements(bins)]
       ncountscon=[ncountscon+n_elements(bins)]
 
-      tickname=strsplit(string(min(cdpdbar[bins])),'.',/extract)
+      tickname=strsplit(string(min(firstM[bins])),'.',/extract)
       ticks=[ticks,tickname[0]]
 
 
@@ -189,7 +190,7 @@ liq=1
 
       
       
-      cgcleanup
+      ;cgcleanup
 
 
       
