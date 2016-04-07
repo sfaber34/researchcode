@@ -29,7 +29,7 @@ pro loop
     signalTot=[]
     clearairLiq=[]
     clearairTot=[]
-    firstM=[]
+    cdpThirdM=[]
     cdpconc=[]
     ltdiff=[]
     tldiff=[]
@@ -62,7 +62,7 @@ pro loop
       signalTot=[signalTot,g.signalTot]
       clearairLiq=[clearairLiq,g.clearairLiq]
       clearairTot=[clearairTot,g.clearairTot]
-      firstM=[firstM,g.firstM]
+      cdpThirdM=[cdpThirdM,g.cdpThirdM]
       cdpconc=[cdpconc,g.cdpconc]
       cdpacc=[cdpacc,g.cdpacc]
 
@@ -72,7 +72,7 @@ pro loop
 
 
       
-;      p1=plot(dindgen(n_elements(g.pmb)),g.firstM-g.cdpdbar,dimensions=[1100,1100],thick=4)
+;      p1=plot(dindgen(n_elements(g.pmb)),g.cdpThirdM-g.cdpdbar,dimensions=[1100,1100],thick=4)
 ;      p1.yrange=[-1,1]
 
 
@@ -89,7 +89,7 @@ pro loop
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
-      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,dBarBI,firstM,/verbose
+      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,dBarBI,cdpThirdM,/verbose
 
     stop
 
