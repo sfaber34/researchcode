@@ -3,7 +3,7 @@ pro liqonlyETot
 
 
 
-plots=0
+plots=4
 
 ;STARTING LEFT VALUE
 binint=0.
@@ -249,15 +249,17 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
     
     if plots eq 2 then begin
 
+    cgcleanup
 
-
-      for k=0,1 do begin
+      for k=0,3 do begin
         
        if k eq 0 then vars=cdpdbar
-       if k eq 1 then vars=cdpDEff
+       if k eq 1 then vars=cdpVolmean
+       if k eq 2 then vars=cdpDEff
+       if k eq 3 then vars=cdpMassMean
        
         h1=histogram(vars,min=2,binsize=2)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=2,index=k,fill_color=color[k],/overplot)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=4,index=k,fill_color=color[k],/overplot)
         
         p1.xrange=[0,n_elements(countscon)]
         p1.xmajor=n_elements(countscon)+1
@@ -332,15 +334,17 @@ stop
 
     if plots eq 4 then begin
 
+cgcleanup
+
+      for k=0,3 do begin
+
+       if k eq 0 then vars=cdpdbar[0:150]
+       if k eq 1 then vars=cdpVolmean[0:150]
+       if k eq 2 then vars=cdpDEff[0:150]
+       if k eq 3 then vars=cdpMassMean[0:150]
 
 
-      for k=0,1 do begin
-
-        if k eq 0 then vars=cdpDeff[0:100]
-        if k eq 1 then vars=cdpVolMean[0:100]
-
-
-        p1=scatterplot(dindgen(n_elements(vars)),vars, dimensions=[1400,1200],sym_color=color[k],/overplot)
+        p1=plot(dindgen(n_elements(vars)),vars, dimensions=[1400,1200],color=color[k],/overplot)
 
         p1.xtitle='Bin Edge um'
         p1.ytitle='Frequency'

@@ -771,6 +771,7 @@ if n_elements(cdpdbins[*,0,0]) eq 27 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,
 
 cdpDEff=[]
 cdpMassMean=[]
+cdpVolMean=[]
 
 
 ;MOMENTS
@@ -778,20 +779,13 @@ for m=0, n_elements(pmb)-1 do begin
   xa=[]
   xb=[]
   xc=[]
-  ya=[]
-  yb=[]
-  yc=[]
   for j=0,n_elements(cdpdbins[*,0,0])-1 do begin
     xa=[xa,(diam[j])^2.*(cdpdbins[j,0,m])]
     xb=[xb,(diam[j])^3.*(cdpdbins[j,0,m])]
     xc=[xc,(diam[j])^4.*(cdpdbins[j,0,m])]    
   endfor
-    ya=(total(xa)/total(cdpdbins[*,0,m]))^(1./2.)
-    yb=(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)
-    yc=(total(xc)/total(cdpdbins[*,0,m]))^(1./4.)
-    cdpDEff=[cdpDEff,total(xb)/total(xa)]
-    
-    cdpVolMean[m]=yb
+    cdpDEff=[cdpDEff,total(xb)/total(xa)]  
+    cdpVolMean=[cdpVolMean,(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)]
     cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
 endfor
 
