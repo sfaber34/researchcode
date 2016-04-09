@@ -731,33 +731,6 @@ pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 ;-----------------------------------------CALCULATIONS---------------------------------------------------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-;WATER CONTENT LIQUID
-lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
-
-
-
-
-
-
-;WATER CONTENT TOTAL
-twc=pTot/(colETot*tas*aTot*lIceStar)
-
-
-;FILTER LIQ ONLY
-;liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_1_NRB gt 10.) ;done in loop.pro
-
-
-
-
-;FOR HISTOGRAMS
-for i=0,n_elements(cdpdbar_1_NRB)-1 do begin
-  if cdpacc[i] lt 1. then cdpdbar_1_NRB[i]=!values.F_nan
-endfor
-
-
-
-
 ;MOMENT CALCULATIONS
 cdpDEff=make_array(n_elements(pmb))
 cdpVolMean=make_array(n_elements(pmb))
@@ -782,12 +755,53 @@ for m=0, n_elements(pmb)-1 do begin
   for j=0,n_elements(cdpdbins[*,0,0])-1 do begin
     xa=[xa,(diam[j])^2.*(cdpdbins[j,0,m])]
     xb=[xb,(diam[j])^3.*(cdpdbins[j,0,m])]
-    xc=[xc,(diam[j])^4.*(cdpdbins[j,0,m])]    
+    xc=[xc,(diam[j])^4.*(cdpdbins[j,0,m])]
   endfor
-    cdpDEff=[cdpDEff,total(xb)/total(xa)]  
-    cdpVolMean=[cdpVolMean,(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)]
-    cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
+  cdpDEff=[cdpDEff,total(xb)/total(xa)]
+  cdpVolMean=[cdpVolMean,(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)]
+  cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
 endfor
+
+;coletot=dindgen(n_elements(pmb))
+;for n=0,n_elements(pmb)-1 do begin
+;  if finite(cdpMassMean[n]) eq 1 then begin
+;    if cdpMassMean[n] lt 3.5 then colETot[n]=0.6864
+;    if cdpMassMean[n] gt 27.5 then colETot[n]=1.
+;    if cdpMassMean[n] gt 3.5 and cdpMassMean[n] lt 27.5 then begin
+;      coletot[n]=0.70056861+0.015825834*cdpMassMean[n]-0.00025280356*cdpMassMean[n]^2.+2.6203974e-06*cdpMassMean[n]^3.
+;    endif
+;  endif
+;endfor
+
+
+
+
+
+
+
+;WATER CONTENT LIQUID
+lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
+
+
+
+;WATER CONTENT TOTAL
+twc=pTot/(colETot*tas*aTot*lIceStar)
+
+
+;FILTER LIQ ONLY
+;liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc_1_NRB gt 10.) ;done in loop.pro
+
+
+
+
+;FOR HISTOGRAMS
+for i=0,n_elements(cdpdbar_1_NRB)-1 do begin
+  if cdpacc[i] lt 1. then cdpdbar_1_NRB[i]=!values.F_nan
+endfor
+
+
+
+
 
 
 

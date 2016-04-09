@@ -3,13 +3,13 @@ pro liqonlyETot
 
 
 
-plots=4
+plots=3
 
 ;STARTING LEFT VALUE
 binint=0.
 
 ;WIDTH OF BINS
-binsize=2.
+binsize=5.
 
 ;LIQUID ONLY POINTS OR ALL
 liq=1
@@ -76,7 +76,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
     
     
     ;-------------------------------SET VAR---------------------------------------
-    var=cdpdeff
+    var=cdpMassMean
     ;-------------------------------SET VAR---------------------------------------
     
 
@@ -176,7 +176,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
       
      cole0=[cole0,cole[0]]
      cole1=[cole1,cole[1]]
-     ;print,1.-cole[1]
+     
      
      
      
@@ -189,10 +189,15 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
         t1=text(i*.11,.94,perDiff,font_size=16,color=color[i])
         print,perDiff
       endfor
+      
+     cole1=1.-cole1
+     stop
     endif
-
-
     
+
+;    stop
+
+
     
     ;--------------------------------------------------------------------------------------------------------
     ;------------------------------------------LWC/TWC 1:1 COMP----------------------------------------------
@@ -355,6 +360,105 @@ cgcleanup
 
 
 
+    endif
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------ROLL OFF----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+
+
+    if plots eq 5 then begin
+
+    cgcleanup
+
+
+      zeros=dindgen(100000,start=0,increment=0)
+      twos=dindgen(100000,start=0,increment=0)
+
+
+
+
+        p1=scatterplot(lwc,lwc-twc,sym_color=grey,sym_size=.4,dimensions=[1600,1200],/overplot)
+
+
+      p1.xrange=[0,.6]
+      p1.yrange=[-.5,.5]
+
+      fit=poly_fit([lwc],[lwc-twc],2,yfit=yfit)
+      p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)
+
+
+      lwcsort=sort(lwc)
+      lwcsorted=lwc[lwcsort]
+      fitsort=yfit[lwcsort]
+
+      p2=plot(lwcsorted,fitsort,/overplot,color='green',thick=2,linestyle=2)
+      p2=plot([0,2.5],[0,0],/overplot,color='Black',thick=1)
+      p1.xtitle='LWC g m!u-3!n'
+      p1.ytitle='TWC g m!u-3!n'
+      p1.font_size=22
+      
+      stop
+    endif
+    
+    
+    
+
+
+
+
+
+
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------COLE E----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+
+
+    if plots eq 6 then begin
+
+      cgcleanup
+      restore,'col.sav'
+
+      zeros=dindgen(100000,start=0,increment=0)
+
+      
+      cole1[0:4]=.6864
+      cole1[26]=1.
+      cole1[30:42]=1.
+      
+      cole1=cole1[5:30]
+
+      xvar=dindgen(n_elements(cole1),start=2.5,increment=1)
+
+      p1=scatterplot(xvar,cole1,sym_color='black',sym_size=1,dimensions=[1600,1200],/overplot)
+
+
+     
+
+      fit=poly_fit(xvar,cole1,3,yfit=yfit)
+      
+
+
+
+      p2=plot(xvar,yfit,/overplot,color='green',thick=2,linestyle=2)
+      
+      p1.xtitle='LWC g m!u-3!n'
+      p1.ytitle='TWC g m!u-3!n'
+      p1.font_size=22
+
+      stop
     endif
 
 
