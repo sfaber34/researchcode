@@ -2,17 +2,6 @@ pro loop
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     lwc=[]
     as=[]
     pmb=[]
@@ -35,6 +24,11 @@ pro loop
     tldiff=[]
     dbar3m=[]
     cdpacc=[]
+    deff=[]
+    othervar=[]
+    cdpDEff=[]
+    cdpVolMean=[]
+    cdpMassMean=[]
 
     
 
@@ -62,7 +56,9 @@ pro loop
       signalTot=[signalTot,g.signalTot]
       clearairLiq=[clearairLiq,g.clearairLiq]
       clearairTot=[clearairTot,g.clearairTot]
-      cdpThirdM=[cdpThirdM,g.cdpThirdM]
+      cdpDEff=[cdpDEff,g.cdpDEff]
+      cdpVolMean=[cdpVolMean,g.cdpVolMean]
+      cdpMassMean=[cdpMassMean,g.cdpMassMean]
       cdpconc=[cdpconc,g.cdpconc]
       cdpacc=[cdpacc,g.cdpacc]
 
@@ -72,8 +68,8 @@ pro loop
 
 
       
-;      p1=plot(dindgen(n_elements(g.pmb)),g.cdpThirdM-g.cdpdbar,dimensions=[1100,1100],thick=4)
-;      p1.yrange=[-1,1]
+      ;p1=plot(dindgen(n_elements(g.pmb)),g.cdpThirdM-g.cdpdbar,dimensions=[1100,1100],thick=4)
+      ;p1.yrange=[-1,1]
 
 
     endfor
@@ -84,14 +80,14 @@ pro loop
     
     
 
-    liqOnly=where(trf gt -3. and lwc gt .02 and cdpconc gt 10.)
+    liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt 1.2 and cdpacc gt 5.)
 
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
-      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,dBarBI,cdpThirdM,/verbose
+      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,$
+      dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,/verbose
 
-    stop
 
 
 

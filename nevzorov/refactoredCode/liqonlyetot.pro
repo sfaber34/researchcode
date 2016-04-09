@@ -3,18 +3,18 @@ pro liqonlyETot
 
 
 
-plots=1
+plots=0
 
 ;STARTING LEFT VALUE
-binint=4.
+binint=0.
 
 ;WIDTH OF BINS
-binsize=5.
+binsize=2.
 
 ;LIQUID ONLY POINTS OR ALL
 liq=1
 
-moment=3
+
 
 
 
@@ -37,13 +37,30 @@ ticks=[strcompress(ticks2),' ',' ']
 
 
 
-  color=['black','deep sky blue','green','firebrick','purple','dark orange','sienna','midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black','deep sky blue','green','firebrick','purple','dark orange','sienna','midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black','deep sky blue','green','firebrick','purple','dark orange']
+;  color=['black','deep sky blue','green','firebrick','purple','dark orange','sienna',$
+;    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+;    'deep sky blue','green','firebrick','purple','dark orange','sienna','midnight blue',$
+;    'dark olive green','firebrick','dark slate grey','dark khaki','black','deep sky blue',$
+;    'green','firebrick','purple','dark orange']
+
+
+color=['black','deep sky blue','green','firebrick','purple','dark orange','sienna',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+  'deep sky blue','green','firebrick','purple','dark orange','sienna','midnight blue',$
+  'dark olive green','firebrick','dark slate grey','dark khaki','black','deep sky blue',$
+  'green','firebrick','purple','dark orange',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+  'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black']
 
 
 
    restore,'loopdata.sav'
    
-   
+
 
 
 
@@ -52,11 +69,15 @@ ticks=[strcompress(ticks2),' ',' ']
       twc=twc[liqonly]
       cdpdbar=cdpdbar[liqonly]
       cdpconc=cdpconc[liqonly]
-      cdpThirdM=cdpThirdM[liqonly]
+      cdpDEff=cdpDEff[liqonly]
+      cdpVolMean=cdpVolMean[liqonly]
+      cdpMassMean=cdpMassMean[liqonly]
     endif
     
-    if moment eq 1 then var=cdpdbar
-    if moment eq 3 then var=cdpThirdM
+    
+    ;-------------------------------SET VAR---------------------------------------
+    var=cdpdeff
+    ;-------------------------------SET VAR---------------------------------------
     
 
 
@@ -123,7 +144,7 @@ ticks=[strcompress(ticks2),' ',' ']
     ncountscon=dindgen(n_elements(binistarti),start=ncountscon, increment=0)
     
     
-    
+
     
     ;--------------------------------------------------------------------------------------------------------
     ;------------------------------------------LWC VS LWC,TWC DIFF-------------------------------------------
@@ -155,7 +176,7 @@ ticks=[strcompress(ticks2),' ',' ']
       
      cole0=[cole0,cole[0]]
      cole1=[cole1,cole[1]]
-     print,1.-cole[1]
+     ;print,1.-cole[1]
      
      
      
@@ -163,9 +184,10 @@ ticks=[strcompress(ticks2),' ',' ']
       endfor
       
       for i=0,n_elements(cole0)-1 do begin
-        p2=plot([.02,2.5],[cole0[i],2.5*cole1[i]+cole0[i]],/overplot,color=color[i],thick=2)
-        perDiff=strcompress(ticks2[i]+'-'+ticks2[i+1]+'='+string(cole1[i],format='(f8.4)'))
+        p2=plot([.02,1.2],[cole0[i],1.2*cole1[i]+cole0[i]],/overplot,color=color[i],thick=2)
+        perDiff=strcompress(ticks2[i]+'-'+ticks2[i+1]+'='+string(1.-cole1[i],format='(f8.4)'))
         t1=text(i*.11,.94,perDiff,font_size=16,color=color[i])
+        print,perDiff
       endfor
     endif
 
@@ -206,8 +228,8 @@ ticks=[strcompress(ticks2),' ',' ']
         p1.ytitle='TWC g m!u-3!n'
         p1.font_size=22
         
-        savename=STRCOMPRESS('individual'+string(i)+'.jpg')
-        p2.save,savename
+        ;savename=STRCOMPRESS('individual'+string(i)+'.jpg')
+        ;p2.save,savename
 
         print,cole[1]
 
@@ -227,26 +249,29 @@ ticks=[strcompress(ticks2),' ',' ']
     
     if plots eq 2 then begin
 
-      
-      
-      ;cgcleanup
 
 
-      
-      
-      p1=barplot(dindgen(n_elements(countscon)),countscon, histogram=1,dimensions=[1400,1200],nbars=2,index=1,fill_color='grey',/overplot)
-      
-      p1.xrange=[0,n_elements(countscon)]
-      p1.xmajor=n_elements(countscon)+1
-      p1.xminor=0
-      p1.xtickname=ticks
-      p1.xtitle='Bin Edge um'
-      p1.ytitle='Normalized Frequency'
-      p1.title='CDP Diameter Dist (Liquid Only Points)'
-      p1.font_size=22
-      ;p1.yrange=[0,.15]
-      p1.xticklen=1
-      stop
+      for k=0,1 do begin
+        
+       if k eq 0 then vars=cdpdbar
+       if k eq 1 then vars=cdpDEff
+       
+        h1=histogram(vars,min=2,binsize=2)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=2,index=k,fill_color=color[k],/overplot)
+        
+        p1.xrange=[0,n_elements(countscon)]
+        p1.xmajor=n_elements(countscon)+1
+        p1.xminor=0
+        p1.xtickname=ticks
+        p1.xtitle='Bin Edge um'
+        p1.ytitle='Frequency'
+        p1.title='CDP Diameter Dist (Liquid Only Points)'
+        p1.font_size=22
+        p1.xticklen=1
+      endfor
+
+
+
     endif
     
     
@@ -290,6 +315,42 @@ ticks=[strcompress(ticks2),' ',' ']
         t1=text(.2,.2,perDiff,font_size=18)
 
 stop
+    endif
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ;--------------------------------------------------------------------------------------------------------
+    ;---------------------------------------------------HISTOGRAM---------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+    if plots eq 4 then begin
+
+
+
+      for k=0,1 do begin
+
+        if k eq 0 then vars=cdpDeff[0:100]
+        if k eq 1 then vars=cdpVolMean[0:100]
+
+
+        p1=scatterplot(dindgen(n_elements(vars)),vars, dimensions=[1400,1200],sym_color=color[k],/overplot)
+
+        p1.xtitle='Bin Edge um'
+        p1.ytitle='Frequency'
+        p1.title='CDP Diameter Dist (Liquid Only Points)'
+        p1.font_size=22
+  
+      endfor
+
+
+
     endif
 
 
