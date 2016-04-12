@@ -3,13 +3,13 @@ pro liqonlyETot
 
 
 
-plots=3
+plots=9
 
 ;STARTING LEFT VALUE
 binint=0.
 
 ;WIDTH OF BINS
-binsize=5.
+binsize=4.
 
 ;LIQUID ONLY POINTS OR ALL
 liq=1
@@ -35,13 +35,6 @@ ticks=[strcompress(ticks2),' ',' ']
 ;---------------------------------------------------------------------------------------------------
 ;---------------------------------------------------------------------------------------------------
 
-
-
-;  color=['black','deep sky blue','green','firebrick','purple','dark orange','sienna',$
-;    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
-;    'deep sky blue','green','firebrick','purple','dark orange','sienna','midnight blue',$
-;    'dark olive green','firebrick','dark slate grey','dark khaki','black','deep sky blue',$
-;    'green','firebrick','purple','dark orange']
 
 
 color=['black','deep sky blue','green','firebrick','purple','dark orange','sienna',$
@@ -72,6 +65,8 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
       cdpDEff=cdpDEff[liqonly]
       cdpVolMean=cdpVolMean[liqonly]
       cdpMassMean=cdpMassMean[liqonly]
+      cdplwc=cdplwc[liqonly]
+      trf=trf[liqonly]
     endif
     
     
@@ -218,7 +213,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
 
         bins=binindex[binistarti[i]:biniendi[i]]
 
-        p1=scatterplot(lwc[bins],twc[bins],sym_color=color[i],sym_size=.4,dimensions=[1000,1000])
+        p1=scatterplot(lwc[bins],twc[bins],dimensions=[1000,1000],sym_color=color[0],/overplot)
         p1.xrange=[0,2.5]
         p1.yrange=[0,2.5]
         
@@ -228,7 +223,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
         t2=text(.8,.92,eff,font_size=22)
                 
         p2=plot([0,2.5],[0,2.5],/overplot,color='black',thick=2,linestyle=2)
-        p2=plot([0,2.5],[cole[0],2.5*cole[1]+cole[0]],/overplot,color=color[i],thick=2)
+        p2=plot([0,2.5],[cole[0],2.5*cole[1]+cole[0]],/overplot,color=color[0],thick=2)
         p1.xtitle='LWC g m!u-3!n'
         p1.ytitle='TWC g m!u-3!n'
         p1.font_size=22
@@ -460,7 +455,158 @@ cgcleanup
 
       stop
     endif
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------ROLL OFF 2----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
 
+
+
+    if plots eq 7 then begin
+
+      cgcleanup
+
+
+      zeros=dindgen(100000,start=0,increment=0)
+      twos=dindgen(100000,start=0,increment=0)
+
+
+
+
+      p1=scatterplot(trf,lwc-twc,sym_color=grey,sym_size=.4,dimensions=[1600,1200])
+
+
+
+      fit=poly_fit([trf],[lwc-twc],10,yfit=yfit)
+      p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)
+
+
+      lwcsort=sort(cdpMassMean)
+      lwcsorted=cdpMassMean[lwcsort]
+      fitsort=yfit[lwcsort]
+
+      p2=plot(lwcsorted,fitsort,/overplot,color='green',thick=2,linestyle=2)
+      p2=plot([0,50],[0,0],/overplot,color='Red',thick=1, linestyle=2)
+      p1.xtitle='LWC g m!u-3!n'
+      p1.ytitle='TWC g m!u-3!n'
+      p1.font_size=22
+
+      stop
+    endif
+    
+    
+    
+
+
+
+
+
+
+
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------COL E ----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+
+
+    if plots eq 8 then begin
+
+      cgcleanup
+
+      korX=[2,2.5,5,7.5,10,12.5,15,17.5,20,22.5,23.75]
+      korY=[.06,.1,.34,.5,.64,.73,.8,.85,.88,.9,.91]
+
+
+
+
+      p1=scatterplot(korX,korY,sym_color=grey,sym_size=.4,symbol=0,dimensions=[1600,1200])
+
+
+
+      fit=poly_fit(korX,korY,6,yfit=yfit)     
+
+
+
+      p2=plot(korX,yfit,/overplot,color='green',thick=2,linestyle=1)
+      p3=plot(korX,yfit+.12,/overplot,color='green',thick=2,linestyle=2)
+      p4=plot(korX,yfit-.12,/overplot,color='green',thick=2,linestyle=2)
+      
+      
+      restore,'cole1.sav'
+      
+      cole1x=dindgen(n_elements(cole1),start=1,increment=2)
+      
+      p5=scatterplot(cole1x,cole1,sym_size=.5,sym_color='black',/overplot)
+;      
+;      
+;      
+;      restore,'cole2.sav'
+;
+;      cole2x=dindgen(n_elements(cole2),start=1,increment=5)
+;
+;      p5=scatterplot(cole2x,cole2,sym_size=.5,sym_color='red',/overplot)
+      
+      
+      
+      
+;      restore,'cole3.sav'
+;
+;      cole3x=dindgen(n_elements(cole3),start=1,increment=.5)
+;
+;      p5=scatterplot(cole3x,cole3,sym_size=.5,sym_color='blue',/overplot)
+      p5.YRANGE=[0,1]
+      p5.xrange=[0,25]
+      
+      
+      
+      p1.font_size=22
+
+      stop
+    endif
+
+
+
+
+
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------CDP D VS. DIFF ----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+
+
+    if plots eq 9 then begin
+
+      ;cgcleanup
+
+
+
+
+      p1=scatterplot(lwc,lwc-twc,sym_color='orange',sym_size=.4,dimensions=[1600,1200],/overplot)
+
+
+
+      fit=poly_fit(lwc,lwc-twc,6,yfit=yfit)
+
+
+
+      ;p2=plot(lwc,yfit,/overplot,color='green',thick=2,linestyle=1)
+
+
+      p1.font_size=22
+
+      stop
+    endif
 
 
 

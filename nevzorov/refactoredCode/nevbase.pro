@@ -762,16 +762,6 @@ for m=0, n_elements(pmb)-1 do begin
   cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
 endfor
 
-;coletot=dindgen(n_elements(pmb))
-;for n=0,n_elements(pmb)-1 do begin
-;  if finite(cdpMassMean[n]) eq 1 then begin
-;    if cdpMassMean[n] lt 3.5 then colETot[n]=0.6864
-;    if cdpMassMean[n] gt 27.5 then colETot[n]=1.
-;    if cdpMassMean[n] gt 3.5 and cdpMassMean[n] lt 27.5 then begin
-;      coletot[n]=0.70056861+0.015825834*cdpMassMean[n]-0.00025280356*cdpMassMean[n]^2.+2.6203974e-06*cdpMassMean[n]^3.
-;    endif
-;  endif
-;endfor
 
 
 

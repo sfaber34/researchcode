@@ -80,8 +80,11 @@ pro loop
     
     
 
-    liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt 1.2 and cdpacc gt 5.)
+    ;liqOnly=where(trf gt -3. and lwc gt .02 and cdpacc gt 5.)
+    liqOnly=where(trf gt -3. and cdpdbar gt 2.)
 
+
+    
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
