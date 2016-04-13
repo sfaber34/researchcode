@@ -3,13 +3,13 @@ pro liqonlyETot
 
 
 
-plots=8
+plots=2
 
 ;STARTING LEFT VALUE
 binint=2.
 
 ;WIDTH OF BINS
-binsize=1.
+binsize=2.
 
 ;LIQUID ONLY POINTS OR ALL
 liq=1
@@ -20,7 +20,7 @@ liq=1
 
 
 bincount=60/binsize
-ticks=string(dindgen(bincount,start=binint,increment=binsize))
+ticks=string(dindgen(bincount,start=bicnint,increment=binsize))
 ticks=strsplit(ticks,'.',/extract)
 
 ticks2=make_array(n_elements(ticks),/string)
@@ -53,13 +53,14 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
 
    restore,'loopdata.sav'
    
-    liqOnly=where(trf gt -3. and lwc lt .8 and cdpdbar gt 4. and lwc gt 0. and cdpconc gt 10.)
+    liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt .9)
+    liqOnly2=where(trf gt -3. and lwc gt .02 and lwc lt .9)
 
 
     if liq eq 1 then begin
       lwc=lwc[liqonly]
       twc=twc[liqonly]
-      cdpdbar=cdpdbar[liqonly]
+      ;cdpdbar=cdpdbar[liqonly]
       cdpconc=cdpconc[liqonly]
       cdpDEff=cdpDEff[liqonly]
       cdpVolMean=cdpVolMean[liqonly]
@@ -252,15 +253,13 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
 
     cgcleanup
 
-      for k=0,3 do begin
+      for k=0,1 do begin
         
-       if k eq 0 then vars=cdpdbar
-       if k eq 1 then vars=cdpVolmean
-       if k eq 2 then vars=cdpDEff
-       if k eq 3 then vars=cdpMassMean
+       if k eq 0 then vars=cdpdbar[liqonly]
+       if k eq 1 then vars=cdpdbar[liqonly2]
        
         h1=histogram(vars,min=2,binsize=2)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=4,index=k,fill_color=color[k],/overplot)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=2,index=k,fill_color=color[k],/overplot)
         
         p1.xrange=[0,n_elements(countscon)]
         p1.xmajor=n_elements(countscon)+1
@@ -594,7 +593,7 @@ cgcleanup
 
 
 
-      p1=scatterplot(lwc,lwc-twc,sym_color='orange',sym_size=.4,dimensions=[1600,1200],/overplot)
+      p1=scatterplot(cdpmassmean,lwc-twc,sym_color='orange',sym_size=.4,dimensions=[1600,1200],/overplot)
 
 
 
@@ -651,6 +650,56 @@ cgcleanup
       t1=text(.2,.2,perDiff,font_size=18)
 
       stop
+    endif
+    
+    
+    
+    
+    
+    
+    
+    
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------------LWC/TWC 1:1 COMP----------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+
+
+    if plots eq 1 then begin
+
+
+
+
+      zeros=dindgen(100000,start=0,increment=0)
+      twos=dindgen(100000,start=0,increment=0)
+
+
+      for i=0,n_elements(binistarti)-1 do begin
+
+        bins=binindex[binistarti[i]:biniendi[i]]
+
+        p1=scatterplot(lwc[bins],twc[bins],dimensions=[1000,1000],sym_color=color[0])
+        p1.xrange=[0,.2]
+        p1.yrange=[0,.2]
+
+        cole=ladfit([zeros,lwc[bins]],[zeros,twc[bins]])
+        p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)
+        eff=strcompress(string(1.-cole[1]))
+        t2=text(.8,.92,eff,font_size=22)
+
+        p2=plot([0,2.5],[0,2.5],/overplot,color='black',thick=2,linestyle=2)
+        p2=plot([0,2.5],[cole[0],2.5*cole[1]+cole[0]],/overplot,color=color[0],thick=2)
+        p1.xtitle='LWC g m!u-3!n'
+        p1.ytitle='TWC g m!u-3!n'
+        p1.font_size=22
+
+        ;savename=STRCOMPRESS('individual'+string(i)+'.jpg')
+        ;p2.save,savename
+
+        print,cole[1]
+
+
+      endfor
     endif
 
 

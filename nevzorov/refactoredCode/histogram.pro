@@ -1,62 +1,173 @@
 pro histogram
 
-run=2
-
-if run eq 1 then begin
-  g= nevBase('0727','indicated','400')
-
-  clear=where(lwcnev1 lt .02)
-  rawdiff=ts_diff(g.rawsignal)
-
-  p1=plot(g.timeFlight,g.rawsignal,sym_color=colors[i],symbol='+',dimensions=[1400,1000],title='raw')
-  p2=scatterplot(g.timeFlight[clear],g.rawsignal[clear],sym_color=colors[i],symbol='+',sym_color='red',/overplot)
-  p3=plot(g.timeFlight,rawdiff,sym_color=colors[i],symbol='+',dimensions=[1400,1000],title='diff')
-  p4=scatterplot(g.timeFlight[clear],rawdiff[clear],sym_color=colors[i],symbol='+',sym_color='red',/overplot)
-  stop
-
-restore,'cons.sav',/verbose
-restore,'consca.sav',/verbose
-
-inc=.005
 
 
-h=histogram(lwcConca,binsize=inc)
-ticks=['.02','.04',' ',' ']
 
-stop
-plot1=barplot(dindgen(n_elements(h)),h,histogram=1)
-plot1.xtickname=ticks
-plot1.xtext_orientation=270
-plot1.yrange=[1,1d5]
-endif
+  plots=2
 
-if run eq 2 then begin
-  restore, 'loopdata.sav'
-  
-  inc=2.
-  
-  dbarsort=sort(dbar)
-  
-  
-  dbar3m=cdpdbar^3.
-  
-  dbar=cdpdbar[where(cdpacc gt 0.)]
-  dbar3=dbar3m[where(cdpacc gt 0.)]
-  
-  
-  dbarsort=sort(dbar)
+  ;STARTING LEFT VALUE
+  binint=2.
+
+  ;WIDTH OF BINS
+  binsize=2.
+
+  ;LIQUID ONLY POINTS OR ALL
+  liq=1
 
 
-  h=histogram(dbar,binsize=inc,REVERSE_INDICES=r)
-;  tickstart=string(dindgen(n_elements(
-;  ticks=[,' ',' ']
 
-  plot1=barplot(dindgen(n_elements(h)),h,histogram=1,ylog=1)
-  ;plot1.xrange=[1,3.9d13]
-  ;plot1.xtickname=ticks
-  plot1.xtext_orientation=270
-  stop
-endif
 
+
+
+  bincount=60/binsize
+  ticks=string(dindgen(bincount,start=binint,increment=binsize))
+  ticks=strsplit(ticks,'.',/extract)
+
+  ticks2=make_array(n_elements(ticks),/string)
+  for u=0,n_elements(ticks)-1 do begin
+    ticks2[u]=ticks[u,0]
+  endfor
+
+  ticks=[strcompress(ticks2),' ',' ']
+
+
+  ;---------------------------------------------------------------------------------------------------
+  ;---------------------------------------------------------------------------------------------------
+  ;---------------------------------------------------------------------------------------------------
+
+
+
+  color=['black','deep sky blue','green','firebrick','purple','dark orange','sienna',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+    'deep sky blue','green','firebrick','purple','dark orange','sienna','midnight blue',$
+    'dark olive green','firebrick','dark slate grey','dark khaki','black','deep sky blue',$
+    'green','firebrick','purple','dark orange',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black',$
+    'midnight blue','dark olive green','firebrick','dark slate grey','dark khaki','black']
+
+
+
+  restore,'loopdata.sav'
+
+  liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt .9)
+  liqOnly2=where(trf gt -3. and lwc gt .02 and lwc lt .9)
+
+
+  if liq eq 1 then begin
+    lwc=lwc[liqonly]
+    twc=twc[liqonly]
+    ;cdpdbar=cdpdbar[liqonly]
+    cdpconc=cdpconc[liqonly]
+    cdpDEff=cdpDEff[liqonly]
+    cdpVolMean=cdpVolMean[liqonly]
+    cdpMassMean=cdpMassMean[liqonly]
+    cdplwc=cdplwc[liqonly]
+    trf=trf[liqonly]
+  endif
+
+
+
+
+  ;-------------------------------SET VAR---------------------------------------
+  var=cdpMassMean
+  ;-------------------------------SET VAR---------------------------------------
+
+
+
+  binint2=binint+binsize
+
+
+  dBarBI=dblarr(bincount,n_elements(pmb))
+  dbarbinn=dindgen(bincount,start=0,increment=0)
+
+
+  binstart=[]
+  binend=[]
+  binindex=[]
+  binistarti=[]
+  biniendi=[]
+  binscon=[]
+  countscon=[]
+  ncountscon=[0]
+  cole0=[]
+  cole1=[]
+
+
+  starti=0
+  endi=0
+
+  for i=0,bincount-1 do begin
+    selectinds=where(var ge binint and var le binint2)
+
+
+    if selectinds[0] ne -1 then begin
+
+
+      binindex=[binindex,selectinds]
+      binistarti=[binistarti,starti]
+
+      endi=starti+n_elements(selectinds)
+      biniendi=[biniendi,endi-1]
+
+    endif
+    starti=endi
+
+
+
+    binint=binint+binsize
+    binint2=binint2+binsize
+  endfor
+
+
+
+
+  for i=0,n_elements(binistarti)-1 do begin
+
+    bins=double(binindex[binistarti[i]:biniendi[i]])
+    binscon=[binscon,bins]
+    countscon=double([countscon,n_elements(bins)])
+    ;ncountscon=double([ncountscon+n_elements(bins)])
+
+
+  endfor
+
+
+
+
+  ncountscon=dindgen(n_elements(binistarti),start=ncountscon, increment=0)
+
+
+
+
+   ;--------------------------------------------------------------------------------------------------------
+    ;---------------------------------------------------HISTOGRAM---------------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+    
+
+
+    cgcleanup
+
+      for k=0,1 do begin
+        
+       if k eq 0 then vars=cdpdbar[liqonly]
+       if k eq 1 then vars=cdpdbar[liqonly2]
+       
+        h1=histogram(vars,min=2,binsize=2)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=2,index=k,fill_color=color[k],/overplot)
+        
+        p1.xrange=[0,n_elements(countscon)]
+        p1.xmajor=n_elements(countscon)+1
+        p1.xminor=0
+        p1.xtickname=ticks
+        p1.xtitle='Bin Edge um'
+        p1.ytitle='Frequency'
+        p1.title='CDP Diameter Dist (Liquid Only Points)'
+        p1.font_size=22
+        p1.xticklen=1
+      endfor
 
 end
