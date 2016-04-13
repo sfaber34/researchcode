@@ -3,13 +3,13 @@ pro liqonlyETot
 
 
 
-plots=9
+plots=8
 
 ;STARTING LEFT VALUE
-binint=0.
+binint=2.
 
 ;WIDTH OF BINS
-binsize=4.
+binsize=1.
 
 ;LIQUID ONLY POINTS OR ALL
 liq=1
@@ -53,8 +53,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
 
    restore,'loopdata.sav'
    
-
-
+    liqOnly=where(trf gt -3. and lwc lt .8 and cdpdbar gt 4. and lwc gt 0. and cdpconc gt 10.)
 
 
     if liq eq 1 then begin
@@ -68,6 +67,8 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
       cdplwc=cdplwc[liqonly]
       trf=trf[liqonly]
     endif
+    
+    
     
     
     ;-------------------------------SET VAR---------------------------------------
@@ -166,7 +167,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
      p1.xtitle='LWC g m!u-3!n'
      p1.ytitle='LWC - TWC g m!u-3!n' 
      p1.font_size=22  
-     cole=ladfit([zeros,lwc[bins]],[twos,lwc[bins]-twc[bins]])
+     cole=ladfit([zeros,lwc[bins]],[zeros,lwc[bins]-twc[bins]])
       
       
      cole0=[cole0,cole[0]]
@@ -213,9 +214,9 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
 
         bins=binindex[binistarti[i]:biniendi[i]]
 
-        p1=scatterplot(lwc[bins],twc[bins],dimensions=[1000,1000],sym_color=color[0],/overplot)
-        p1.xrange=[0,2.5]
-        p1.yrange=[0,2.5]
+        p1=scatterplot(lwc[bins],twc[bins],dimensions=[1000,1000],sym_color=color[0])
+        p1.xrange=[0,.2]
+        p1.yrange=[0,.2]
         
         cole=ladfit([zeros,lwc[bins]],[zeros,twc[bins]])
         p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)
@@ -526,7 +527,8 @@ cgcleanup
 
       korX=[2,2.5,5,7.5,10,12.5,15,17.5,20,22.5,23.75]
       korY=[.06,.1,.34,.5,.64,.73,.8,.85,.88,.9,.91]
-
+      korX=korX*1.04436
+      
 
 
 
@@ -545,26 +547,26 @@ cgcleanup
       
       restore,'cole1.sav'
       
-      cole1x=dindgen(n_elements(cole1),start=1,increment=2)
+      cole1x=dindgen(n_elements(cole1),start=1,increment=1)
       
       p5=scatterplot(cole1x,cole1,sym_size=.5,sym_color='black',/overplot)
-;      
-;      
-;      
-;      restore,'cole2.sav'
-;
-;      cole2x=dindgen(n_elements(cole2),start=1,increment=5)
-;
-;      p5=scatterplot(cole2x,cole2,sym_size=.5,sym_color='red',/overplot)
+      
+      
+      
+      restore,'cole4.sav'
+
+      cole2x=dindgen(n_elements(cole4),start=1,increment=1)
+
+      p5=scatterplot(cole2x,cole4,sym_size=.5,sym_color='red',/overplot)
       
       
       
       
-;      restore,'cole3.sav'
-;
-;      cole3x=dindgen(n_elements(cole3),start=1,increment=.5)
-;
-;      p5=scatterplot(cole3x,cole3,sym_size=.5,sym_color='blue',/overplot)
+      restore,'cole3.sav'
+
+      cole3x=dindgen(n_elements(cole3),start=1,increment=1)
+
+      p5=scatterplot(cole3x,cole3,sym_size=.5,sym_color='blue',/overplot)
       p5.YRANGE=[0,1]
       p5.xrange=[0,25]
       
@@ -604,6 +606,49 @@ cgcleanup
 
 
       p1.font_size=22
+
+      stop
+    endif
+    
+    
+    
+    
+    ;--------------------------------------------------------------------------------------------------------
+    ;------------------------------------MOMENT 1:1 COMP DIFFERENCE-----------------------------------------
+    ;--------------------------------------------------------------------------------------------------------
+
+
+
+    if plots eq 10 then begin
+
+
+      cgcleanup
+
+      zeros=dindgen(100000,start=0,increment=0)
+      twos=dindgen(100000,start=0,increment=0)
+
+
+
+      p1=scatterplot(cdpmassmean,cdpdeff*1.04436,sym_color='black',sym_size=.5,dimensions=[1000,1000])
+;      p1.xrange=[0,2.5]
+;      p1.yrange=[0,2.5]
+      p1.xtitle='LWC g m!u-3!n'
+      p1.ytitle='TWC g m!u-3!n'
+      p1.TITLE='LWC vs. TWC Liquid Only Points'
+      p1.font_size=22
+      
+      cdpmassmean=cdpmassmean[where(finite(cdpmassmean) eq 1)]
+      cdpdeff=cdpdeff[where(finite(cdpdeff) eq 1)]
+
+
+      cole=ladfit([zeros,cdpmassmean],[zeros,cdpdeff*1.04436])
+      p2=plot([0,50],[0,50],/overplot,color='orange red',thick=2,linestyle=2)
+      p3=plot([0,50],[cole[0],50*cole[1]+cole[0]],/overplot,color='blue',thick=2)
+
+
+      print,1.-cole[1]
+      perDiff=strcompress('Percent Difference='+string((1.-cole[1])*100.)+'%')
+      t1=text(.2,.2,perDiff,font_size=18)
 
       stop
     endif

@@ -80,15 +80,15 @@ pro loop
     
     
 
-    ;liqOnly=where(trf gt -3. and lwc gt .02 and cdpacc gt 5.)
-    liqOnly=where(trf gt -3. and cdpdbar gt 2.)
+    ;liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt .8 and cdpacc gt 10.)
+    ;liqOnly=where(trf gt -3. and lwc lt .8 and cdpdbar gt 2.)
 
 
     
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
-      signalTot,liqonly,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,$
+      signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,$
       dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,/verbose
 
 

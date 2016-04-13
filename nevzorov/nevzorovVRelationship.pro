@@ -263,10 +263,10 @@ liqRefPower=vlwcref*ilwcref
 liqK=liqColPower/liqRefPower
 
 totalColPower=vtwccol*itwccol
-totalRefPower=vtwcref*itwcref
+totalRefPower=vlwcref*ilwcref
 totalK=totalColPower/totalRefPower
 
-
+liqK=totalColPower/totalRefPower
 
 ;--define data ranges--
 
