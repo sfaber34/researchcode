@@ -150,50 +150,48 @@ pro colescatter
 
       cgcleanup
 
-      korX=[2,2.5,5,7.5,10,12.5,15,17.5,20,22.5,23.75]
-      korY=[.06,.1,.34,.5,.64,.73,.8,.85,.88,.9,.91]
-      korX=korX*1.04436
+
+      korX=[1,3,5,6.5,10,15,20,25,30,35,40,45,50]
+      korY=[.06,.1,.3,.4,.58,.76,.85,.905,.93,.95,.96,.97,.975]
+     
+;      korX=[0,5,10,15,20,25,50]
+;      korY=[.2,.85,.97,.98,.99,.995,1]
       
+      xs=dindgen(501,start=0,increment=.1)
+
+      p1=scatterplot(korX,korY,sym_color=grey,sym_size=.1,symbol=0,dimensions=[1600,1200])
 
 
 
-      p1=scatterplot(korX,korY,sym_color=grey,sym_size=.4,symbol=0,dimensions=[1600,1200])
+      fit=poly_fit(korX,korY,5,yfit=yfit) 
+      ;fit=comfit(korX,korY,[.02,.3,fit2[0]],yfit=yfit,/geometric,itmax=400000,iter=its)    
 
+      line=fit[0]+fit[1]*xs+fit[2]*xs^2.+fit[3]*xs^3.+fit[4]*xs^4.+fit[5]*xs^5.
 
+      p2=plot(xs[0:300],line[0:300],/overplot,color='green',thick=2)
+      p2=plot([30,50],[line[300],.975],/overplot,color='green',thick=2)
 
-      fit=poly_fit(korX,korY,6,yfit=yfit)     
-
-
-
-      p2=plot(korX,yfit,/overplot,color='green',thick=2,linestyle=1)
-      p3=plot(korX,yfit+.12,/overplot,color='green',thick=2,linestyle=2)
-      p4=plot(korX,yfit-.12,/overplot,color='green',thick=2,linestyle=2)
+      p1.xrange=[0,50]
       
+      restore,'coletest.sav'
+      coleB=coleTest
       
-      restore,'coleB.sav'
-      
-      coleBx=dindgen(n_elements(coleB),start=2,increment=2)
+      coleBx=dindgen(n_elements(coleB),start=5,increment=.2)
       
       p5=scatterplot(coleBx,coleB,sym_size=.5,sym_color='black',/overplot)
       
+      p5.xrange=[0,50]
+      p5.yrange=[0,1]
       
+restore,'coletest3.sav'
+      coleB=coleTest3
       
-;      restore,'cole4.sav'
-;
-;      cole2x=dindgen(n_elements(cole4),start=1,increment=1)
-;
-;      p5=scatterplot(cole2x,cole4,sym_size=.5,sym_color='red',/overplot)
-;      
-;      
-;      
-;      
-;      restore,'cole3.sav'
-;
-;      cole3x=dindgen(n_elements(cole3),start=1,increment=1)
-;
-;      p5=scatterplot(cole3x,cole3,sym_size=.5,sym_color='blue',/overplot)
-;      p5.YRANGE=[0,1]
-;      p5.xrange=[0,25]
+      coleBx=dindgen(n_elements(coleB),start=5,increment=.2)
+      
+      p5=scatterplot(coleBx,coleB,sym_size=.5,sym_color='red',/overplot)
+      
+      p5.xrange=[0,50]
+      p5.yrange=[0,1]
       
       
       

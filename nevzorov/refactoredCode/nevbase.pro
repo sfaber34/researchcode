@@ -656,6 +656,50 @@ levelclearairLiq=where(baselineIB eq 1)
 ;-----------------------------------------CONSTANTS-------------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+;MOMENT CALCULATIONS
+cdpDEff=make_array(n_elements(pmb))
+cdpVolMean=make_array(n_elements(pmb))
+cdpMassMean=make_array(n_elements(pmb))
+diff=make_array(n_elements(pmb))
+if n_elements(cdpdbins[*,0,0]) eq 28 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,9.,11.,13.,15.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
+if n_elements(cdpdbins[*,0,0]) eq 27 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,10.5,14.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
+
+cdpDEff=[]
+cdpMassMean=[]
+cdpVolMean=[]
+
+
+
+
+;MOMENTS
+for m=0, n_elements(pmb)-1 do begin
+  xa=[]
+  xb=[]
+  xc=[]
+  for j=0,n_elements(cdpdbins[*,0,0])-1 do begin
+    xa=[xa,(diam[j])^2.*(cdpdbins[j,0,m])]
+    xb=[xb,(diam[j])^3.*(cdpdbins[j,0,m])]
+    xc=[xc,(diam[j])^4.*(cdpdbins[j,0,m])]
+  endfor
+  cdpDEff=[cdpDEff,total(xb)/total(xa)]
+  cdpVolMean=[cdpVolMean,(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)]
+  cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
+endfor
+
+
+;colEliq=dindgen(n_elements(pmb))
+;
+;for d=0,n_elements(pmb)-1 do begin
+;  if cdpmassmean[d] lt 26 then colEliq[d]=0.200278+0.225915*cdpmassmean[d]-0.0250030*cdpmassmean[d]^2.+0.00129792*cdpmassmean[d]^3.-3.10386e-05*cdpmassmean[d]^4.+2.68039e-07*cdpmassmean[d]^5.
+;  if cdpmassmean[d] ge 26 then colEliq[d]=1.
+;endfor
+
+
+
+
 ;-----LIQUID-----
 
 ;surface area liquid sensor [m^2]
@@ -671,7 +715,7 @@ lLiqStar=2589.
 
 
 ;LIQUID SENSOR ICE COLLECTION EFFICIENCY
-betaLiq=0.11
+;betaLiq=0.11
 
 
 
@@ -730,42 +774,6 @@ pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 ;-----------------------------------------CALCULATIONS---------------------------------------------------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-;MOMENT CALCULATIONS
-cdpDEff=make_array(n_elements(pmb))
-cdpVolMean=make_array(n_elements(pmb))
-cdpMassMean=make_array(n_elements(pmb))
-diff=make_array(n_elements(pmb))
-if n_elements(cdpdbins[*,0,0]) eq 28 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,9.,11.,13.,15.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
-if n_elements(cdpdbins[*,0,0]) eq 27 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,10.5,14.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
-
-diam=diam-2
-diam[0]=0
-
-
-cdpDEff=[]
-cdpMassMean=[]
-cdpVolMean=[]
-
-
-
-
-;MOMENTS
-for m=0, n_elements(pmb)-1 do begin
-  xa=[]
-  xb=[]
-  xc=[]
-  for j=0,n_elements(cdpdbins[*,0,0])-1 do begin
-    xa=[xa,(diam[j])^2.*(cdpdbins[j,0,m])]
-    xb=[xb,(diam[j])^3.*(cdpdbins[j,0,m])]
-    xc=[xc,(diam[j])^4.*(cdpdbins[j,0,m])]
-  endfor
-  cdpDEff=[cdpDEff,total(xb)/total(xa)]
-  cdpVolMean=[cdpVolMean,(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)]
-  cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
-endfor
-
-
 
 
 

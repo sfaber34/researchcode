@@ -50,7 +50,8 @@ pro lwcvscpdlwcbins
   restore,'loopdata.sav'
 
 
-  liqOnly=where(trf gt -3. and lwc gt -.02 and twc gt -.02 and lwc lt 1.4)
+  ;liqOnly=where(trf gt -3. and lwc gt -.02 and twc gt -.02 and lwc lt 1.4)
+  liqOnly=where(cdplwc gt .02 and cdplwc lt 1.2 and lwc gt .02 and lwc lt 1.2 and trf gt -3.)
 
   if liq eq 1 then begin
     lwc=lwc[liqonly]
@@ -146,23 +147,25 @@ pro lwcvscpdlwcbins
 
   zeros=dindgen(100000,start=0,increment=0)
   twos=dindgen(100000,start=0,increment=0)
-
+  
+  maxx=2
+  
   cole1=[]
   for i=0,n_elements(binistarti)-1 do begin
 
     bins=binindex[binistarti[i]:biniendi[i]]
 
-    p1=scatterplot(lwc[bins],twc[bins],dimensions=[1000,1000],sym_color=color[i],symbol='.')
-    p1.xrange=[-.1,.2]
-    p1.yrange=[-.1,.2]
+    p1=scatterplot(cdplwc[bins],lwc[bins],dimensions=[1000,1000],sym_color=color[i],symbol='.')
+    p1.xrange=[-.1,maxx]
+    p1.yrange=[-.1,maxx]
 
-    cole=linfit([zeros,lwc[bins]],[zeros,twc[bins]])
+    cole=ladfit([zeros,cdplwc[bins]],[zeros,lwc[bins]])
     p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)
     eff=strcompress(string(1.-cole[1]))
     t2=text(.8,.92,eff,font_size=22)
 
-    p2=plot([0,2.5],[0,2.5],/overplot,color='black',thick=2,linestyle=2)
-    p2=plot([0,2.5],[cole[0],2.5*cole[1]+cole[0]],/overplot,thick=2,color='green')
+    p2=plot([0,maxx],[0,maxx],/overplot,color='black',thick=2,linestyle=2)
+    p2=plot([0,maxx],[cole[0],maxx*cole[1]+cole[0]],/overplot,thick=2,color='green')
     p1.xtitle='LWC g m!u-3!n'
     p1.ytitle='TWC g m!u-3!n'
     p1.font_size=22
@@ -170,7 +173,7 @@ pro lwcvscpdlwcbins
     ;savename=STRCOMPRESS('individual'+string(i)+'.jpg')
     ;p2.save,savename
     cole1=[cole1,cole[1]]
-    print,cole[1]
+    print,cole[1],n_elements(bins)
 
 
   endfor
