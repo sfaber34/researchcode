@@ -67,6 +67,7 @@ color=['black','deep sky blue','green','firebrick','purple','dark orange','sienn
       cdpMassMean=cdpMassMean[liqonly]
       cdplwc=cdplwc[liqonly]
       trf=trf[liqonly]
+      lwcfixedE=lwcfixedE[liqonly]
     endif
     
     

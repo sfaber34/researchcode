@@ -690,12 +690,33 @@ for m=0, n_elements(pmb)-1 do begin
 endfor
 
 
-;colEliq=dindgen(n_elements(pmb))
-;
-;for d=0,n_elements(pmb)-1 do begin
-;  if cdpmassmean[d] lt 26 then colEliq[d]=0.200278+0.225915*cdpmassmean[d]-0.0250030*cdpmassmean[d]^2.+0.00129792*cdpmassmean[d]^3.-3.10386e-05*cdpmassmean[d]^4.+2.68039e-07*cdpmassmean[d]^5.
-;  if cdpmassmean[d] ge 26 then colEliq[d]=1.
-;endfor
+colEliq=dindgen(n_elements(pmb),start=1,increment=0)
+
+for d=0,n_elements(pmb)-1 do begin
+  if cdpmassmean[d] le 15 then colEliq[d]=(-0.236989)+0.503008*cdpmassmean[d]-0.0878596*$
+    cdpmassmean[d]^2.+0.00801374*cdpmassmean[d]^3.-0.000397548*cdpmassmean[d]^4.+1.01460e-05*cdpmassmean[d]^5.-1.04243e-07*cdpmassmean[d]^6.
+  if cdpmassmean[d] gt 13 and cdpmassmean[d] le 25 then colEliq[d]=.9697
+  if cdpmassmean[d] gt 25 then begin
+    x1=((cdpMassMean[d]-20.)/90)^2.
+    x2=2.^(1./.26)-1.
+    colEliq[d]=.98/(1.+x1*x2)^.26
+  endif
+endfor
+
+
+
+colETot=dindgen(n_elements(pmb),start=1,increment=0)
+
+for c=0,n_elements(pmb)-1 do begin
+  if cdpmassmean[c] le 50. then begin
+    colETot[c]=-0.0576565+0.0324626*cdpmassmean[c]+0.0105399*cdpmassmean[c]^2.-0.00118195*cdpmassmean[c]^3.+5.50338e-05*cdpmassmean[c]^4.$
+      -1.32812e-06*cdpmassmean[c]^5.+1.63224e-08*cdpmassmean[c]^6.-8.08554e-11*cdpmassmean[c]^7.
+  endif    
+  if cdpmassmean[c] gt 50. and cdpmassmean[c] le 150. then begin
+     colETot[c]=0.907000+0.00164001*cdpmassmean[c]-9.20008e-06*cdpmassmean[c]^2.+1.60003e-08*cdpmassmean[c]^3.  
+  endif
+  if cdpmassmean[c] gt 150. then colETot[c]=1.
+endfor
 
 
 
@@ -707,7 +728,7 @@ aLiq=3.17d-5
 
 
 ;liquid collection efficiency
-colELiq=1.
+;colELiq=1.
 
 
 ;EXPENDED HEAT FOR LIQUID
@@ -725,7 +746,7 @@ lLiqStar=2589.
 aTot=5.02d-5
 ;aTot=4.82d-5
 
-colETot=1.
+;colETot=1.
 
 
 
@@ -782,11 +803,13 @@ pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 ;WATER CONTENT LIQUID
 lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
+lwcFixedE=pLiq/(1.*tas*aLiq*lLiqStar)
 
 
 
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
+twcFixedE=pTot/(1.*tas*aTot*lIceStar)
 
 
 ;FILTER LIQ ONLY
@@ -820,8 +843,9 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   rawSignalLiq:rawSignalLiq, smoothSignalLiq:smoothSignalLiq, cdpacc:cdpacc,$
   rawSignalTot:rawSignalTot, smoothSignalTot:smoothSignalTot, pTot:pTot,pTotNoPresCor:pTotNoPresCor,$
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
-  signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,$
-  cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean}
+  signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,lwcFixedE:lwcFixedE,$
+  cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean,coleliq:coleliq,$
+  twcFixedE:twcFixedE,colETot:colETot}
 
   
 return,g
@@ -873,5 +897,42 @@ pro setwd
     if h ne 1 then cd,'Z:\research\nevzorov/refactoredCode'
   endelse
 end  
+
+
+
+
+
+
+;FOR TOTE UP TO 50
+;-0.0576565
+;0.0324626
+;0.0105399
+;-0.00118195
+;5.50338e-05
+;-1.32812e-06
+;1.63224e-08
+;-8.08554e-11
+
+;FOR TOTE 50-150
+;0.907000
+;0.00164001
+;-9.20008e-06
+;1.60003e-08
+
+
+
+;FOR LIQ E 0-15
+;-0.236989
+;0.503008
+;-0.0878596
+;0.00801374
+;-0.000397548
+;1.01460e-05
+;-1.04243e-07
+
+;FOR LIQ E 15-25
+;0.97000003   0.00039999961
+
+
 
 

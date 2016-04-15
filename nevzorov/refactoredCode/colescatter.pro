@@ -67,6 +67,10 @@ pro colescatter
     cdpMassMean=cdpMassMean[liqonly]
     cdplwc=cdplwc[liqonly]
     trf=trf[liqonly]
+    coletot=coletot[liqonly]
+    coleliq=coleliq[liqonly]
+    lwcfixede=lwcfixede[liqonly]
+    twcfixede=twcfixede[liqonly]
   endif
 
 
@@ -148,56 +152,41 @@ pro colescatter
   ;--------------------------------------------------------------------------------------------------------
 
 
-      cgcleanup
+  cgcleanup
 
 
-      korX=[1,3,5,6.5,10,15,20,25,30,35,40,45,50]
-      korY=[.06,.1,.3,.4,.58,.76,.85,.905,.93,.95,.96,.97,.975]
-     
-;      korX=[0,5,10,15,20,25,50]
-;      korY=[.2,.85,.97,.98,.99,.995,1]
-      
-      xs=dindgen(501,start=0,increment=.1)
+  xs=dindgen(501,start=0,increment=.1)
 
-      p1=scatterplot(korX,korY,sym_color=grey,sym_size=.1,symbol=0,dimensions=[1600,1200])
+  ;p1=scatterplot(korX,korY,sym_color=grey,sym_size=.1,symbol=0,dimensions=[1600,1200])
 
 
 
-      fit=poly_fit(korX,korY,5,yfit=yfit) 
-      ;fit=comfit(korX,korY,[.02,.3,fit2[0]],yfit=yfit,/geometric,itmax=400000,iter=its)    
+  massmeansort=sort(cdpmassmean)
+  massmeansorted=cdpmassmean[massmeansort]
+  coleliqsorted=coleliq[massmeansort]
+  coletotsorted=coletot[massmeansort]
 
-      line=fit[0]+fit[1]*xs+fit[2]*xs^2.+fit[3]*xs^3.+fit[4]*xs^4.+fit[5]*xs^5.
+  p2=plot(massmeansorted,coleliqsorted,color='red',thick=2,linestyle=2,dimensions=[1600,1200])
+  ;p3=plot(massmeansorted,coletotsorted,color='red',thick=2,linestyle=2,dimensions=[1600,1200],/overplot)
 
-      p2=plot(xs[0:300],line[0:300],/overplot,color='green',thick=2)
-      p2=plot([30,50],[line[300],.975],/overplot,color='green',thick=2)
+  
 
-      p1.xrange=[0,50]
-      
-      restore,'coletest.sav'
-      coleB=coleTest
-      
-      coleBx=dindgen(n_elements(coleB),start=5,increment=.2)
-      
-      p5=scatterplot(coleBx,coleB,sym_size=.5,sym_color='black',/overplot)
-      
-      p5.xrange=[0,50]
-      p5.yrange=[0,1]
-      
-restore,'coletest3.sav'
-      coleB=coleTest3
-      
-      coleBx=dindgen(n_elements(coleB),start=5,increment=.2)
-      
-      p5=scatterplot(coleBx,coleB,sym_size=.5,sym_color='red',/overplot)
-      
-      p5.xrange=[0,50]
-      p5.yrange=[0,1]
-      
-      
-      
-      p1.font_size=22
+  restore,'colelwcfix.sav'
+  coleB=colelwcfix
 
-      stop
+  coleBx=dindgen(n_elements(coleB),start=5,increment=1.)
+
+  p5=scatterplot(coleBx,coleB,sym_size=.7,sym_color='black',/overplot)
+
+  p5.xrange=[0,50]
+  p5.yrange=[0,1]
+
+
+
+
+  p1.font_size=22
+
+  stop
 
 
 end

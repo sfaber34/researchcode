@@ -6,10 +6,10 @@ pro lwctwc11B
   plots=2
 
   ;STARTING LEFT VALUE
-  binint=5.
+  binint=4.
 
   ;WIDTH OF BINS
-  binsize=.2
+  binsize=2
 
   ;LIQUID ONLY POINTS OR ALL
   liq=1
@@ -54,7 +54,7 @@ pro lwctwc11B
   restore,'loopdata.sav'
 
 
-  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt .9)
+  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt 1.)
 
   if liq eq 1 then begin
     lwc=lwc[liqonly]
@@ -66,6 +66,8 @@ pro lwctwc11B
     cdpMassMean=cdpMassMean[liqonly]
     cdplwc=cdplwc[liqonly]
     trf=trf[liqonly]
+    lwcfixede=lwcfixede[liqonly]
+    twcfixede=twcfixede[liqonly]
   endif
 
 
@@ -146,12 +148,14 @@ pro lwctwc11B
     ;------------------------------------------LWC/TWC 1:1 COMP----------------------------------------------
     ;--------------------------------------------------------------------------------------------------------
     
-      cgcleanup
+      ;cgcleanup
 
       zeros=dindgen(100000,start=0,increment=0)
       twos=dindgen(100000,start=0,increment=0)
-
-      coletest=[]
+      
+      fixedbotherror=[]
+      fixedlwcerror=[]
+      fixedtwcerror=[]
       maxx=1
       w=window(dimensions=[1000,1000])
 
@@ -159,27 +163,42 @@ pro lwctwc11B
       
           bins=binindex[binistarti[i]:biniendi[i]]
       
-          p1=scatterplot(lwc[bins],twc[bins],sym_color=color[0],symbol='.',/overplot)
-          p1.xrange=[-.1,maxx]
-          p1.yrange=[-.1,maxx]
+          p1=scatterplot(lwcfixede[bins],twcfixede[bins],sym_color='black',symbol='.',dimensions=[1000,1000],/current)
+          p1.xrange=[0,maxx]
+          p1.yrange=[0,maxx]
       
-          cole=ladfit([zeros,lwc[bins]],[zeros,twc[bins]])
+          cole=ladfit([zeros,lwcfixede[bins]],[zeros,twcfixede[bins]])
           p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)
           eff=strcompress(string(1.-cole[1]))
           t2=text(.8,.92,eff,font_size=22)
+          
+          
+          p1=scatterplot(lwc[bins],twc[bins],sym_color='red',symbol='.',/overplot)
+          cole2=ladfit([zeros,lwcfixede[bins]],[zeros,twc[bins]])
+          
+          cole3=ladfit([zeros,lwc[bins]],[zeros,twcfixede[bins]])
+          
       
-          p2=plot([0,maxx],[0,maxx],/overplot,color='black',thick=2,linestyle=2)
-          p2=plot([0,maxx],[cole[0],maxx*cole[1]+cole[0]],/overplot,thick=2,color='green')
+          p2=plot([0,maxx],[cole[0],maxx*cole[1]+cole[0]],/overplot,thick=2,color='black')
+          p2=plot([0,maxx],[cole2[0],maxx*cole2[1]+cole2[0]],/overplot,thick=2,color='red')
+          p2=plot([0,maxx],[0,maxx],/overplot,color='green',thick=2,linestyle=2)
+          
           p1.xtitle='LWC g m!u-3!n'
           p1.ytitle='TWC g m!u-3!n'
           p1.font_size=22
+          
+          p2.xrange=[0,maxx]
+          p2.yrange=[0,maxx]
         
-        ;savename=STRCOMPRESS('individual'+string(i)+'.jpg')
-        ;p2.save,savename
-        coletest=[coletest,cole[1]]
-        print,cole[1]
-
+       
+        fixedbotherror=[fixedbotherror,(1.-cole[1])*100.]
+        fixedlwcerror=[fixedlwcerror,(1.-cole2[1])*100.]
+        fixedtwcerror=[fixedtwcerror,(1.-cole3[1])*100.]
+        print,cole[1],'-',cole2[1],'-',cole3[1]
+        
 
       endfor
-stop
+      save,filename='fixedEError.sav',fixedbotherror,fixedlwcerror,fixedtwcerror,/verbose
+      
+
 end

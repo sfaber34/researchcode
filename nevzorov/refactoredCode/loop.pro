@@ -29,6 +29,10 @@ pro loop
     cdpDEff=[]
     cdpVolMean=[]
     cdpMassMean=[]
+    lwcFixedE=[]
+    coleliq=[]
+    coletot=[]
+    twcfixede=[]
 
     
 
@@ -61,6 +65,10 @@ pro loop
       cdpMassMean=[cdpMassMean,g.cdpMassMean]
       cdpconc=[cdpconc,g.cdpconc]
       cdpacc=[cdpacc,g.cdpacc]
+      lwcFixedE=[lwcFixedE,g.lwcFixedE]
+      coleliq=[coleliq,g.coleliq]
+      coletot=[coletot,g.coletot]
+      twcfixede=[twcfixede,g.twcfixede]
 
       
 
@@ -86,9 +94,9 @@ pro loop
 
     
 
-    save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,$
-      as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,$
-      signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,$
+    save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,twcFixedE,colETot,$
+      as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,colELiq,$
+      signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,lwcFixedE,$
       dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,/verbose
 
 

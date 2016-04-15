@@ -9,7 +9,7 @@ pro lwctwcdiff
   binint=2.
 
   ;WIDTH OF BINS
-  binsize=2.
+  binsize=1.
 
   ;LIQUID ONLY POINTS OR ALL
   liq=1
@@ -53,8 +53,7 @@ pro lwctwcdiff
 
   restore,'loopdata.sav'
 
-  liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt .9)
-  liqOnly2=where(trf gt -3. and lwc gt .02 and lwc lt .9)
+  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt .9)
 
 
   if liq eq 1 then begin
@@ -67,6 +66,8 @@ pro lwctwcdiff
     cdpMassMean=cdpMassMean[liqonly]
     cdplwc=cdplwc[liqonly]
     trf=trf[liqonly]
+    lwcfixede=lwcfixede[liqonly]
+    twcfixede=twcfixede[liqonly]
   endif
 
 
@@ -149,9 +150,6 @@ pro lwctwcdiff
 
 
 
-  if plots eq 0 then begin
-
-
 
 
     zeros=dindgen(100000,start=0,increment=0)
@@ -164,11 +162,11 @@ pro lwctwcdiff
       binscon=[binscon,bins]
       countscon=[countscon,n_elements(bins)]
 
-      p1=scatterplot(lwc[bins],lwc[bins]-twc[bins],/overplot,sym_color=color[i],sym_size=.5,dimensions=[1600,1000])
-      p1.xtitle='LWC g m!u-3!n'
-      p1.ytitle='LWC - TWC g m!u-3!n'
-      p1.font_size=22
-      cole=ladfit([zeros,lwc[bins]],[zeros,lwc[bins]-twc[bins]])
+;      p1=scatterplot(lwcfixede[bins],lwcfixede[bins]-twcfixede[bins],/overplot,sym_color=color[i],sym_size=.5,dimensions=[1600,1000])
+;      p1.xtitle='LWC g m!u-3!n'
+;      p1.ytitle='LWC - TWC g m!u-3!n'
+;      p1.font_size=22
+      cole=ladfit([zeros,lwcfixede[bins]],[zeros,lwcfixede[bins]-twc[bins]])
 
 
       cole0=[cole0,cole[0]]
@@ -181,15 +179,15 @@ pro lwctwcdiff
     endfor
 
     for i=0,n_elements(cole0)-1 do begin
-      p2=plot([.02,1.2],[cole0[i],1.2*cole1[i]+cole0[i]],/overplot,color=color[i],thick=2)
-      perDiff=strcompress(ticks2[i]+'-'+ticks2[i+1]+'='+string(1.-cole1[i],format='(f8.4)'))
-      t1=text(i*.11,.94,perDiff,font_size=16,color=color[i])
-      print,perDiff
+;      p2=plot([.02,1.2],[cole0[i],1.2*cole1[i]+cole0[i]],/overplot,color=color[i],thick=2)
+;      perDiff=strcompress(ticks2[i]+'-'+ticks2[i+1]+'='+string(1.-cole1[i],format='(f8.4)'))
+;      t1=text(i*.11,.94,perDiff,font_size=16,color=color[i])
+      ;print,perDiff
     endfor
 
     cole1=1.-cole1
     stop
-  endif
+
 
 
 end

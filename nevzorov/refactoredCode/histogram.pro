@@ -12,7 +12,7 @@ pro histogram
   binsize=2.
 
   ;LIQUID ONLY POINTS OR ALL
-  liq=1
+  liq=0
 
 
 
@@ -53,7 +53,7 @@ pro histogram
 
   restore,'loopdata.sav'
 
-  liqOnly=where(trf gt -3. and lwc gt .02 and lwc lt .9)
+  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt .9)
   liqOnly2=where(trf gt -3. and lwc gt .02 and lwc lt .9)
 
 
@@ -151,13 +151,13 @@ pro histogram
 
     cgcleanup
 
-      for k=0,1 do begin
+      for k=0,0 do begin
         
-       if k eq 0 then vars=cdpdbar[liqonly]
+       if k eq 0 then vars=cdpmassmean[liqonly]
        if k eq 1 then vars=cdpdbar[liqonly2]
        
         h1=histogram(vars,min=2,binsize=2)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=2,index=k,fill_color=color[k],/overplot)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=1,index=k,fill_color='blue',/overplot)
         
         p1.xrange=[0,n_elements(countscon)]
         p1.xmajor=n_elements(countscon)+1
