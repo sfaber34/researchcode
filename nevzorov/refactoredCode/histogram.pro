@@ -1,9 +1,6 @@
 pro histogram
 
 
-  ;LIQUID ONLY POINTS OR ALL
-  liq=1
-
 
 
 
@@ -28,8 +25,13 @@ pro histogram
 
 
   restore,'loopdata.sav'
+  
+  
+  ;LIQUID ONLY POINTS OR ALL
+  liq=1
 
-  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt .9)
+  liqOnly=where(trf gt -3. and lwc lt 1.1 and cdpconc gt 5)
+  ;liqOnly=where(cdpconc gt 5)
  
 
 
@@ -49,13 +51,12 @@ pro histogram
 
         
     ;STARTING LEFT VALUE
-    binint=2.
+    binint=4.
 
     ;WIDTH OF BINS
     binsize=1
 
-    ;LIQUID ONLY POINTS OR ALL
-    liq=1
+
 
     ;SET VAR
     var=cdpmassmean
@@ -66,8 +67,8 @@ pro histogram
       bincount=60/(binsize*2.)
       ticks=string(dindgen(bincount,start=binint,increment=binsize*2))
     endif else begin
-      bincount=60/(binsize*2.)
-      ticks=string(dindgen(bincount,start=binint,increment=binsize*2))
+      bincount=60/(binsize)
+      ticks=string(dindgen(bincount,start=binint,increment=binsize))
     endelse
     
     
@@ -85,17 +86,16 @@ pro histogram
     
        
         h1=histogram(var,min=binint,binsize=binsize)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=1,index=k,margin=!margins,/device)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1200,1200],nbars=1,index=k)
         
         p1.xrange=[0,n_elements(h1)]
         p1.xmajor=n_elements(h1)/2.+1
         p1.xminor=0
         p1.xtickname=ticks
-        p1.xtitle='Bin Edge um'
+        p1.xtitle='VMD um'
         p1.ytitle='Frequency'
-        p1.title='CDP Diameter Dist (Liquid Only Points)'
         p1.font_size=22
-        p1.xticklen=1
+        p1.xticklen=0
 
-
+stop
 end

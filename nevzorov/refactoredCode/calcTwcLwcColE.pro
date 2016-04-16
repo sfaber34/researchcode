@@ -55,7 +55,7 @@ pro calcTwcLwcColE
 
   restore,'loopdata.sav'
 
-  liqOnly=where(trf gt -3. and lwc lt 1. and cdpconc ge 5)
+  liqOnly=where(trf gt -3. and lwc lt 1.1 and cdpconc ge 5)
 
 
   if liq eq 1 then begin
