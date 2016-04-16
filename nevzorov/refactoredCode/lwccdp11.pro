@@ -9,10 +9,10 @@ pro lwccdp11
   binint=0
 
   ;WIDTH OF BINS
-  binsize=5
+  binsize=1
 
   ;LIQUID ONLY POINTS OR ALL
-  liq=0
+  liq=1
 
 
 
@@ -54,7 +54,7 @@ pro lwccdp11
   restore,'loopdata.sav'
 
 
-  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt 1.)
+  liqOnly=where(trf gt -3. and lwc lt 1. and cdpconc ge 10)
 
   if liq eq 1 then begin
     lwc=lwc[liqonly]
@@ -166,7 +166,7 @@ pro lwccdp11
 
 
 
-    p1=scatterplot(cdplwc[bins],lwc[bins],sym_color='red',symbol='.',/overplot,SYM_TRANSPARENCY=50)
+    p1=scatterplot(lwc[bins],twc[bins],sym_color=color[i],symbol='.',/overplot,SYM_TRANSPARENCY=50)
     cole2=ladfit([zeros,lwcfixede[bins]],[zeros,twc[bins]])
 
     cole3=ladfit([zeros,cdplwc[bins]],[zeros,lwc[bins]])
@@ -180,8 +180,8 @@ stop
 ;    p1.ytitle='TWC g m!u-3!n'
 ;    p1.font_size=22
 
-;    p2.xrange=[0,maxx]
-;    p2.yrange=[0,maxx]
+    p1.xrange=[-.1,.5]
+    p1.yrange=[-.1,.5]
 
 
 ;    fixedbotherror=[fixedbotherror,(1.-cole[1])*100.]

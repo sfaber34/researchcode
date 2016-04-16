@@ -80,14 +80,15 @@ endif else begin
   if flightDay eq '0807' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080713/20130807.c1.nc'
   if flightDay eq '0814' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081413/20130814.c1.nc'
   if flightDay eq '0815' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081513/20130815.c1.nc'
+  if flightDay eq '0802' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080213/20130802.c1.nc'
   if flightDay eq '0803' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080313/20130803.c1.nc'
   if flightDay eq '0304' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/030416/20160304.c1.nc'
   if flightDay eq '0307' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/030716/20160307.c1.nc'
   if flightDay eq '1217' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/121715/20151217.c1.nc'
   if flightDay eq '1124' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/112415/20151124.c1.nc'
-  if flightDay eq '0806' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080613/20130806.c1.nc'
-  if flightDay eq '0821' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/082113/20130821.c1.nc'
+  if flightDay eq '0806' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/080613/20130806.c1.nc'  
   if flightDay eq '0813' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081313/20130813.c1.nc'
+  if flightDay eq '0817' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/081713/20130817.c1.nc'
   if flightDay eq '0722' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/072213/20130722.c1.nc'
   if flightDay eq '0718' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/071813/20130718.c1.nc'
   if flightDay eq '0125' then nclPath='/Users/spencerfaber/batbackup/Research/nevzorov/data/012513/20160125.c1.nc'
@@ -181,8 +182,15 @@ cdpdbins=loadvar('ACDP_1_NRB', filename=nclPath)
 if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
 if cope ne 1 then hivs=0
 
+nonev1=0
+if strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0802*')$
+   eq 0 and strmatch(nclpath,'*0803*') eq 0 and strmatch(nclpath,'*0813*')$
+    eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*')$
+     eq 0 and strmatch(nclpath,'*0718*') eq 0 then nonev1=1
+
+
 ;liquid water content from Nevzorov probe [g/m^3]
-if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*') eq 0 and strmatch(nclpath,'*0718*') eq 0 then begin
+if cope eq 1 and nonev1 eq 1 then begin
   lwcNev1=loadvar('nevlwc1', filename=nclPath)
 endif else begin
   lwcNev1=dindgen(n_elements(pmb),increment=0)
@@ -190,7 +198,7 @@ endelse
 
 
 ;liquid water content from Nevzorov probe [g/m^3]
-if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*') eq 0 and strmatch(nclpath,'*0718*') eq 0 then begin
+if cope eq 1 and nonev1 eq 1 then begin
    lwcNev2=loadvar('nevlwc2', filename=nclPath)
 endif else begin   
   lwcNev2=dindgen(n_elements(pmb),increment=0)
@@ -198,7 +206,7 @@ endelse
 
 
 ;Total water content from Nevzorov probe [g/m^3]
-if cope eq 1 and strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0813*') eq 0 and strmatch(nclpath,'*0821*') eq 0 and strmatch(nclpath,'*0722*') eq 0 and strmatch(nclpath,'*0718*') eq 0  then begin
+if cope eq 1 and nonev1 eq 1 then begin
   twcNev=loadvar('nevtwc', filename=nclPath)
 endif else begin  
   twcNev=dindgen(n_elements(pmb),increment=0)
@@ -915,7 +923,7 @@ end
 
 
 pro setenvs
-  defsysv, '!margins', [110,70,30,70]
+  defsysv, '!margins', [110,70,30,20]
 end
 
 

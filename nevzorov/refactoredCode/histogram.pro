@@ -82,10 +82,10 @@ pro histogram
         
         
         
-        stop
+    
        
         h1=histogram(var,min=binint,binsize=binsize)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=1,index=k,fill_color='blue',margin=!margins,/device)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=1,index=k,margin=!margins,/device)
         
         p1.xrange=[0,n_elements(h1)]
         p1.xmajor=n_elements(h1)/2.+1

@@ -69,7 +69,7 @@ pro colescatterreal
 ;  colevarbothTwc=[]
 
 
-  cgcleanup
+  ;cgcleanup
 
 
   xs=dindgen(501,start=0,increment=.1)
@@ -86,12 +86,26 @@ pro colescatterreal
   
   restore,'colesavefile.sav'
   coleB=colecontrollwc
-
-  ;for TWC
-  ;p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200])
   
+  type='lwc'
+  
+  if type eq 'lwc' then begin
+    var1=colecontrollwc
+    var2=colevarlwc
+    ;var3=colevarbothlwc
+  endif else begin
+    var1=colecontroltwc
+    var2=colevartwc
+    ;var3=colevarbothlwc
+  endelse
+  
+  
+
   ;for LWC
-  p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200])
+  if strmatch(type,'lwc',/fold_case) eq 1 then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200],margin=!margins,/device)
+  
+  ;for TWC
+  if strmatch(type,'twc',/fold_case) eq 1 then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200],margin=!margins,/device)
 
   
 
@@ -101,23 +115,19 @@ pro colescatterreal
   hErr=dindgen(n_elements(coleB),start=2.,increment=0)
   yErr=dindgen(n_elements(coleB),start=0,increment=0)
   
-  e5=errorplot(coleBx,colecontroltwc,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,/overplot)
-  
-;  e6=errorplot(coleBx,colevarlwc,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
-;  
-;  e7=errorplot(coleBx,colevarbothlwc,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='indian red',symbol=0,/overplot)
+  e5=errorplot(coleBx,var1,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,/overplot)
+  e6=errorplot(coleBx,var2,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
+  ;e7=errorplot(coleBx,var3,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light coral',symbol=0,/overplot)
 
-  p5=scatterplot(coleBx,colecontroltwc,sym_size=.7,sym_color='black',/overplot)
+  p5=scatterplot(coleBx,var1,sym_size=.7,sym_color='black',/overplot,name=type+' Eq. Collection Eff.')
+  p6=scatterplot(coleBx,var2,sym_size=.7,sym_color='blue',/overplot,name=type+' Corrected Eq. Collection Eff.') 
+  ;p7=scatterplot(coleBx,var3,sym_size=.7,sym_color='red',/overplot)
   
-;  p6=scatterplot(coleBx,colevarlwc,sym_size=.7,sym_color='blue',/overplot)
-;  
-;  p7=scatterplot(coleBx,colevarbothlwc,sym_size=.7,sym_color='red',/overplot)
-  
-  
+  l1=legend(target=[p5,p6],shadow=0,/device)
   
   
   ;p5=scatterplot(coleBx,colevartwc,sym_size=.7,sym_color='green',/overplot)
-  p5=plot([0,50],[1,1],color='grey',/overplot,linestyle=2)
+  p5=plot([0,50],[1,1],color='grey',/overplot,linestyle=2, thick=2)
 
   p5.xrange=[0,50]
   p5.yrange=[0,1.4]
