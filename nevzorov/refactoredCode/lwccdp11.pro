@@ -166,7 +166,7 @@ pro lwccdp11
 
 
 
-    p1=scatterplot(cdplwc[bins],lwc[bins],sym_color='red',symbol='.',/overplot)
+    p1=scatterplot(cdplwc[bins],lwc[bins],sym_color='red',symbol='.',/overplot,SYM_TRANSPARENCY=50)
     cole2=ladfit([zeros,lwcfixede[bins]],[zeros,twc[bins]])
 
     cole3=ladfit([zeros,cdplwc[bins]],[zeros,lwc[bins]])

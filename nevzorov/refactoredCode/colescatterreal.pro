@@ -69,7 +69,7 @@ pro colescatterreal
 ;  colevarbothTwc=[]
 
 
-  ;cgcleanup
+  cgcleanup
 
 
   xs=dindgen(501,start=0,increment=.1)
@@ -88,22 +88,34 @@ pro colescatterreal
   coleB=colecontrollwc
 
   ;for TWC
-  p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200])
+  ;p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200])
   
   ;for LWC
-  ;p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200])
+  p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1600,1200])
 
   
 
   
 
   coleBx=dindgen(n_elements(coleB),start=binintstart,increment=binsizestart)
+  hErr=dindgen(n_elements(coleB),start=2.,increment=0)
+  yErr=dindgen(n_elements(coleB),start=0,increment=0)
+  
+  e5=errorplot(coleBx,colecontroltwc,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,/overplot)
+  
+;  e6=errorplot(coleBx,colevarlwc,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
+;  
+;  e7=errorplot(coleBx,colevarbothlwc,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='indian red',symbol=0,/overplot)
 
-  p5=scatterplot(coleBx,coleB,sym_size=.7,sym_color='black',/overplot)
+  p5=scatterplot(coleBx,colecontroltwc,sym_size=.7,sym_color='black',/overplot)
   
-  p6=scatterplot(coleBx,colevarlwc,sym_size=.7,sym_color='blue',/overplot)
+;  p6=scatterplot(coleBx,colevarlwc,sym_size=.7,sym_color='blue',/overplot)
+;  
+;  p7=scatterplot(coleBx,colevarbothlwc,sym_size=.7,sym_color='red',/overplot)
   
-  p7=scatterplot(coleBx,colevarbothlwc,sym_size=.7,sym_color='red',/overplot)
+  
+  
+  
   ;p5=scatterplot(coleBx,colevartwc,sym_size=.7,sym_color='green',/overplot)
   p5=plot([0,50],[1,1],color='grey',/overplot,linestyle=2)
 
@@ -115,7 +127,7 @@ pro colescatterreal
 
   p5.font_size=22
 
-  stop
+
 
 
 end
