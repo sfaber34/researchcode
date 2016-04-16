@@ -60,13 +60,14 @@ pro histogram
   if liq eq 1 then begin
     lwc=lwc[liqonly]
     twc=twc[liqonly]
-    ;cdpdbar=cdpdbar[liqonly]
+    cdpdbar=cdpdbar[liqonly]
     cdpconc=cdpconc[liqonly]
     cdpDEff=cdpDEff[liqonly]
     cdpVolMean=cdpVolMean[liqonly]
     cdpMassMean=cdpMassMean[liqonly]
     cdplwc=cdplwc[liqonly]
     trf=trf[liqonly]
+    cdpdbar2=cdpdbar2[liqonly]
   endif
 
 
@@ -149,15 +150,15 @@ pro histogram
     
 
 
-    cgcleanup
+    
 
       for k=0,0 do begin
         
-       if k eq 0 then vars=cdpmassmean[liqonly]
-       if k eq 1 then vars=cdpdbar[liqonly2]
+       if k eq 0 then vars=cdpdbar2
+       if k eq 1 then vars=cdpdbar
        
-        h1=histogram(vars,min=2,binsize=2)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=1,index=k,fill_color='blue',/overplot)
+        h1=histogram(vars,min=0,binsize=2)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1400,1200],nbars=1,index=k,fill_color='blue')
         
         p1.xrange=[0,n_elements(countscon)]
         p1.xmajor=n_elements(countscon)+1

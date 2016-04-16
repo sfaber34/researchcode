@@ -33,6 +33,7 @@ pro loop
     coleliq=[]
     coletot=[]
     twcfixede=[]
+    cdpdbar2=[]
 
     
 
@@ -69,6 +70,7 @@ pro loop
       coleliq=[coleliq,g.coleliq]
       coletot=[coletot,g.coletot]
       twcfixede=[twcfixede,g.twcfixede]
+      cdpdbar2=[cdpdbar2,g.cdpdbar2]
 
       
 
@@ -96,7 +98,7 @@ pro loop
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,twcFixedE,colETot,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,colELiq,$
-      signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,lwcFixedE,$
+      signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,lwcFixedE,cdpdbar2,$
       dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,/verbose
 
 

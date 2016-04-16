@@ -395,12 +395,17 @@ if cope eq 1 then begin
   lwcNev2=lwcNev2[aStart:aEnd]
   twcNev=twcNev[aStart:aEnd]
   hivs=hivs[aStart:aEnd]
-  vtwcref=vlwcref
+  vtwcref=vlwcref 
   itwcref=ilwcref
 endif
 
-
-
+;cdpdbins[*,0,*]=cdpdbins[*,0,*]-2.
+;
+;for o=0,n_elements(cdpdbins[0,0,*])-1 do begin
+;  for p=0,n_elements(cdpdbins[*,0,0])-1 do begin
+;    if cdpdbins[p,0,o] lt 0. then cdpdbins[p,0,o]=0.
+;  endfor
+;endfor
 
 
 
@@ -667,9 +672,11 @@ diff=make_array(n_elements(pmb))
 if n_elements(cdpdbins[*,0,0]) eq 28 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,9.,11.,13.,15.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
 if n_elements(cdpdbins[*,0,0]) eq 27 then diam=[1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,10.5,14.,17.,19.,21.,23.,25.,27.,29.,31.,33.,35.,37.,39.,41.,43.,45.,47.,49.]
 
+
 cdpDEff=[]
 cdpMassMean=[]
 cdpVolMean=[]
+cdpdbar2=[]
 
 
 
@@ -679,12 +686,15 @@ for m=0, n_elements(pmb)-1 do begin
   xa=[]
   xb=[]
   xc=[]
+  xe=[]
   for j=0,n_elements(cdpdbins[*,0,0])-1 do begin
+    xe=[xe,(diam[j])*(cdpdbins[j,0,m])]
     xa=[xa,(diam[j])^2.*(cdpdbins[j,0,m])]
     xb=[xb,(diam[j])^3.*(cdpdbins[j,0,m])]
     xc=[xc,(diam[j])^4.*(cdpdbins[j,0,m])]
   endfor
   cdpDEff=[cdpDEff,total(xb)/total(xa)]
+  cdpdbar2=[cdpdbar2,total(xe)/total(cdpdbins[*,0,m])]
   cdpVolMean=[cdpVolMean,(total(xb)/total(cdpdbins[*,0,m]))^(1./3.)]
   cdpMassMean=[cdpMassMean,total(xc)/total(xb)]
 endfor
@@ -845,7 +855,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
   signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,lwcFixedE:lwcFixedE,$
   cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean,coleliq:coleliq,$
-  twcFixedE:twcFixedE,colETot:colETot}
+  twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2}
 
   
 return,g
