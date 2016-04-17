@@ -50,7 +50,7 @@ pro coleerror
 
   
   
-  coleB=colevarbothtwc
+  coleB=colecontrollwc
   print,coleB
   coleB=abs((.1-coleB)*100.)
 
