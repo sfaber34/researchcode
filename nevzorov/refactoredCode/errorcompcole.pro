@@ -1,14 +1,18 @@
 pro errorCompCole
 
-  restore,'fixedEError.sav',/verbose
+  restore,'colesavefile.sav'
   
-  holder=dindgen(n_elements(FIXEDLWCERROR))
+  var=colevarlwc
+  
+  holder=dindgen(n_elements(var))
+  
+  var=(1.-var)*100.
 
   ytickvals=[]
   
-  plot1=scatterplot(holder,FIXEDbothERROR,dimensions=[1600,1200], name='900 mb K')
-  plot1=scatterplot(holder,FIXEDLWCERROR,/overplot,sym_color='blue', name='900 mb K')
-  plot2=scatterplot(holder,FIXEDTWCERROR,sym_color='red',/overplot, name='600 mb K')
+  plot1=scatterplot(holder,var,dimensions=[1600,1200], name='900 mb K')
+  ;plot1=scatterplot(holder,FIXEDLWCERROR,/overplot,sym_color='blue', name='900 mb K')
+  ;plot2=scatterplot(holder,FIXEDTWCERROR,sym_color='red',/overplot, name='600 mb K')
 
   plot1.yrange=[-100,100]
   plot1.xtickname=day

@@ -10,7 +10,7 @@ pro calcTwcLwcColE
   binintstart=binint
 
   ;WIDTH OF BINS
-  binsize=.5
+  binsize=2
   binsizestart=binsize
 
   ;LIQUID ONLY POINTS OR ALL
@@ -69,7 +69,7 @@ pro calcTwcLwcColE
     cdplwc=cdplwc[liqonly]
     trf=trf[liqonly]
     lwcfixede=lwcfixede[liqonly]
-    twcfixede=twcfixede[liqonly]
+    twcfixede=twcfixede[liqonly]    
   endif
 
 
@@ -103,6 +103,19 @@ pro calcTwcLwcColE
   colevarTwc=[]
   colevarbothLwc=[]
   colevarbothTwc=[]
+  cdpVLwcFixedE=[]
+  cdpVTwcFixedE=[]
+  cdpVLwcCor=[]
+  cdpVTwcCor=[]
+  cdpVLwcFixedESD=[]
+  cdpVTwcFixedESD=[]
+  cdpVLwcCorSD=[]
+  cdpVTwcCorSD=[]
+  cole11con=[]
+  cole12con=[]
+  cole13con=[]
+  cole14con=[]
+  
 
   starti=0
   endi=0
@@ -175,8 +188,29 @@ pro calcTwcLwcColE
     cole4=ladfit([zeros,twc[bins]],[zeros,lwcfixede[bins]])
     cole5=ladfit([zeros,lwc[bins]],[zeros,twc[bins]])
     cole6=ladfit([zeros,twc[bins]],[zeros,lwc[bins]])
+    cole7=ladfit([zeros,cdplwc[bins]],[zeros,lwcfixede[bins]])
+    cole8=ladfit([zeros,cdplwc[bins]],[zeros,twcfixede[bins]])
+    cole9=ladfit([zeros,cdplwc[bins]],[zeros,lwc[bins]])
+    cole10=ladfit([zeros,cdplwc[bins]],[zeros,twc[bins]])
+    
+
+    
+;    for e=0,n_elements(bins)-1 do begin
+;      cole11=ladfit([zeros,cdplwc[bins[e]]],[zeros,lwcfixede[bins[e]]])
+;      cole12=ladfit([zeros,cdplwc[bins[e]]],[zeros,twcfixede[bins[e]]])
+;      cole13=ladfit([zeros,cdplwc[bins[e]]],[zeros,lwc[bins[e]]])
+;      cole14=ladfit([zeros,cdplwc[bins[e]]],[zeros,twc[bins[e]]])
+;      
+;      cole11con=[cole11con,(1.-cole11[1])*100.]
+;      cole12con=[cole12con,(1.-cole12[1])*100.]
+;      cole13con=[cole13con,(1.-cole13[1])*100.]
+;      cole14con=[cole14con,(1.-cole14[1])*100.]
+;    endfor
+    
     ;p1.xrange=[0,1.2]
     ;p1.yrange=[0,1.2]
+    
+    
 
 
     cole0=[cole0,cole1[0]]
@@ -186,6 +220,14 @@ pro calcTwcLwcColE
     colevarLwc=[colevarLwc,cole4[1]]
     colevarbothTwc=[colevarbothTwc,cole5[1]]
     colevarbothLwc=[colevarbothLwc,cole6[1]]
+    cdpVLwcFixedE=[cdpVLwcFixedE,cole7[1]]
+    cdpVTwcFixedE=[cdpVTwcFixedE,cole8[1]]
+    cdpVLwcCor=[cdpVLwcCor,cole9[1]]
+    cdpVTwcCor=[cdpVTwcCor,cole10[1]]
+;    cdpVLwcFixedESD=[cdpVLwcFixedESD,stddev(cole11con)]
+;    cdpVTwcFixedESD=[cdpVTwcFixedESD,stddev(cole12con)]
+;    cdpVLwcCorSD=[cdpVLwcCorSD,stddev(cole13con)]
+;    cdpVTwcCorSD=[cdpVTwcCorSD,stddev(cole14con)]
 
 
     print,(binistarti[i]/(11982.976*2.))*100.
@@ -200,9 +242,9 @@ pro calcTwcLwcColE
 
   ;cole1=1.-cole1
 
-  save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,binintstart,/verbose
-  
-  
+  save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
+    colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
+    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,/verbose
 
 
 
