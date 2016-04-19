@@ -82,30 +82,30 @@ pro colescatterreal
   massmeansorted=cdpmassmean[massmeansort]
   coleliqsorted=coleliq[massmeansort]
   coletotsorted=coletot[massmeansort]
+  coletotsorted2=coletot2[massmeansort]
   
   
   restore,'colesavefile.sav'
   coleB=colecontrollwc
   
-  type='lwc'
+  type='twc2'
   
-  if type eq 'lwc' then begin
-    var1=colecontrollwc
-    var2=colevarbothlwc
+  if type eq 'twc' then begin
+    var1=colevarlwc
+    var2=colevartwc
     ;var3=colevarbothlwc
-  endif else begin
-    var1=colecontroltwc
-    var2=colevarbothtwc
+  endif else if type eq 'twc2' then begin
+    var1=colevarlwc
+    var2=colevarLwc2
     ;var3=colevarbothtwc
-  endelse
+  endif else if type eq 'lwc' then begin
+    var1=colevarcontroltwc
+    var2=colevartwc
+    ;var3=colevarbothtwc
+  endif
   
   
 
-  ;for LWC
-  if strmatch(type,'lwc',/fold_case) eq 1 then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device)
-  
-  ;for TWC
-  if strmatch(type,'twc',/fold_case) eq 1 then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device)
 
   
 
@@ -115,7 +115,7 @@ pro colescatterreal
   hErr=dindgen(n_elements(coleB),start=2.,increment=0)
   yErr=dindgen(n_elements(coleB),start=0,increment=0)
   
-  e5=errorplot(coleBx,var1,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,/overplot)
+  e5=errorplot(coleBx,var1,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,dimensions=[1200,1200])
   e6=errorplot(coleBx,var2,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
   ;e7=errorplot(coleBx,var3,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light coral',symbol=0,/overplot)
 
@@ -133,6 +133,19 @@ pro colescatterreal
 
   p5.xrange=[0,50]
   p5.yrange=[0,1.4]
+  
+  
+  
+  
+  
+  ;for LWC
+  if type eq 'lwc' then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+
+  ;for TWC
+  if type eq 'twc' then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+
+  ;for TWC2
+  if type eq 'twc2' then p4=plot(massmeansorted,coletotsorted2,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   ;p5.
 

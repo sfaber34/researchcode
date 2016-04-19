@@ -723,6 +723,24 @@ endfor
 
 
 
+
+
+
+colETot2=dindgen(n_elements(pmb),start=1,increment=0)
+
+for r=0,n_elements(pmb)-1 do begin
+  if cdpmassmean[r] le 10.05 then colETot2[r]=(-0.0187892454)+0.2023209*cdpmassmean[r]-0.01937650*$
+    cdpmassmean[r]^2.+0.00090900815025*cdpmassmean[r]^3.-2.0036900614417430e-05*cdpmassmean[r]^4.+1.6638675680649695e-07*cdpmassmean[r]^5.
+  if cdpmassmean[r] gt 10.05 and cdpmassmean[r] le 33 then colETot2[r]=0.43729845*cdpmassmean[r]^(0.19240421)+0.11114933
+  if cdpmassmean[r] gt 33 then colETot2[r]=0.0010409079*cdpmassmean[r]+0.93375003
+endfor
+
+
+
+
+
+
+
 colETot=dindgen(n_elements(pmb),start=1,increment=0)
 
 for c=0,n_elements(pmb)-1 do begin
@@ -827,6 +845,7 @@ lwcFixedE=pLiq/(1.*tas*aLiq*lLiqStar)
 
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
+twc2=pTot/(colETot2*tas*aTot*lIceStar)
 twcFixedE=pTot/(1.*tas*aTot*lIceStar)
 
 
@@ -863,7 +882,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
   signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,lwcFixedE:lwcFixedE,$
   cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean,coleliq:coleliq,$
-  twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2}
+  twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2,twc2:twc2,colEtot2:colEtot2}
 
   
 return,g

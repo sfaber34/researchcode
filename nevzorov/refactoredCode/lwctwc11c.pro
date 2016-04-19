@@ -6,10 +6,10 @@ pro lwctwc11c
   plots=2
 
   ;STARTING LEFT VALUE
-  binint=5.
+  binint=2.
 
   ;WIDTH OF BINS
-  binsize=5
+  binsize=.2
 
   ;LIQUID ONLY POINTS OR ALL
   liq=1
@@ -68,6 +68,7 @@ pro lwctwc11c
     trf=trf[liqonly]
     lwcfixede=lwcfixede[liqonly]
     coleliq=coleliq[liqonly]
+    twc2=twc2[liqonly]
   endif
 
 
@@ -156,10 +157,9 @@ pro lwctwc11c
   coletest=[]
   maxx=2.5
 
-    p1=scatterplot(cdpmassmean,coleliq,sym_color='black',symbol='.',dimensions=[1200,1200])
-stop
-    p1=scatterplot(lwcfixede,twc,sym_color='black',symbol='.',dimensions=[1200,1200])
-    p1=scatterplot(lwc,twc,sym_color='red',symbol='.',/overplot)
+    ;p1=scatterplot(cdpmassmean,coleliq,sym_color='black',symbol='.',dimensions=[1200,1200])
+    p1=scatterplot(lwc,twc,sym_color='black',symbol='.',dimensions=[1200,1200])
+    p1=scatterplot(lwc,twc2,sym_color='red',symbol='.',/overplot)
 
     cole=ladfit([zeros,lwc],[zeros,twc])
     p1.TITLE=STRCOMPRESS(string(min(var[bins]))+'-'+string(max(var[bins])),/remove_all)

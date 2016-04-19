@@ -10,7 +10,7 @@ pro calcTwcLwcColE
   binintstart=binint
 
   ;WIDTH OF BINS
-  binsize=2
+  binsize=1
   binsizestart=binsize
 
   ;LIQUID ONLY POINTS OR ALL
@@ -69,7 +69,8 @@ pro calcTwcLwcColE
     cdplwc=cdplwc[liqonly]
     trf=trf[liqonly]
     lwcfixede=lwcfixede[liqonly]
-    twcfixede=twcfixede[liqonly]    
+    twcfixede=twcfixede[liqonly] 
+    twc2=twc2[liqonly]   
   endif
 
 
@@ -115,6 +116,10 @@ pro calcTwcLwcColE
   cole12con=[]
   cole13con=[]
   cole14con=[]
+  colevarLwc2=[]
+  colevarbothTwc2=[]
+  lwctwc=[]
+  lwctwc2=[]
   
 
   starti=0
@@ -186,13 +191,16 @@ pro calcTwcLwcColE
     cole2=ladfit([zeros,twcfixede[bins]],[zeros,lwcFixede[bins]])
     cole3=ladfit([zeros,lwc[bins]],[zeros,twcfixede[bins]])
     cole4=ladfit([zeros,twc[bins]],[zeros,lwcfixede[bins]])
-    cole5=ladfit([zeros,lwc[bins]],[zeros,twc[bins]])
-    cole6=ladfit([zeros,twc[bins]],[zeros,lwc[bins]])
+    cole5=ladfit([zeros,lwcfixede[bins]],[zeros,twc[bins]])
+    cole6=ladfit([zeros,twcfixede[bins]],[zeros,lwc[bins]])
     cole7=ladfit([zeros,cdplwc[bins]],[zeros,lwcfixede[bins]])
     cole8=ladfit([zeros,cdplwc[bins]],[zeros,twcfixede[bins]])
     cole9=ladfit([zeros,cdplwc[bins]],[zeros,lwc[bins]])
     cole10=ladfit([zeros,cdplwc[bins]],[zeros,twc[bins]])
-    
+    cole11=ladfit([zeros,twc2[bins]],[zeros,lwcfixede[bins]])
+    cole12=ladfit([zeros,lwcfixede[bins]],[zeros,twc2[bins]])
+    cole13=ladfit([zeros,lwc[bins]],[zeros,twc[bins]])
+    cole14=ladfit([zeros,lwc[bins]],[zeros,twc2[bins]])
 
     
 ;    for e=0,n_elements(bins)-1 do begin
@@ -224,27 +232,30 @@ pro calcTwcLwcColE
     cdpVTwcFixedE=[cdpVTwcFixedE,cole8[1]]
     cdpVLwcCor=[cdpVLwcCor,cole9[1]]
     cdpVTwcCor=[cdpVTwcCor,cole10[1]]
-;    cdpVLwcFixedESD=[cdpVLwcFixedESD,stddev(cole11con)]
-;    cdpVTwcFixedESD=[cdpVTwcFixedESD,stddev(cole12con)]
-;    cdpVLwcCorSD=[cdpVLwcCorSD,stddev(cole13con)]
-;    cdpVTwcCorSD=[cdpVTwcCorSD,stddev(cole14con)]
+    colevarLwc2=[colevarLwc2,cole11[1]]
+    colevarbothTwc2=[colevarbothTwc2,cole12[1]]
+    lwctwc=[lwctwc,cole13[1]]
+    lwctwc2=[lwctwc2,cole14[1]]
+
 
 
     print,(binistarti[i]/(11982.976*2.))*100.
   endfor
 
-  for i=0,n_elements(cole0)-1 do begin
+  ;for i=0,n_elements(cole0)-1 do begin
 ;          p2=plot([.02,1.2],[cole0[i],1.2*cole1[i]+cole0[i]],/overplot,color=color[i],thick=2)
 ;          perDiff=strcompress(ticks2[i]+'-'+ticks2[i+1]+'='+string(1.-cole1[i],format='(f8.4)'))
 ;          t1=text(i*.11,.94,perDiff,font_size=16,color=color[i])
 ;          print,coleControlTwc
-  endfor
+  ;endfor
 
   ;cole1=1.-cole1
 
   save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
     colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
-    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,/verbose
+    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,colevarLwc2,$
+    colevarbothTwc2,lwctwc,lwctwc2,/verbose
+
 
 
 

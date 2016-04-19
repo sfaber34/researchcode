@@ -34,6 +34,8 @@ pro loop
     coletot=[]
     twcfixede=[]
     cdpdbar2=[]
+    twc2=[]
+    colEtot2=[]
 
     
 
@@ -70,6 +72,8 @@ pro loop
       coletot=[coletot,g.coletot]
       twcfixede=[twcfixede,g.twcfixede]
       cdpdbar2=[cdpdbar2,g.cdpdbar2]
+      twc2=[twc2,g.twc2]
+      colEtot2=[coleTot2,g.coletot2]
 
       
 
@@ -98,7 +102,8 @@ pro loop
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,twcFixedE,colETot,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,colELiq,$
       signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,lwcFixedE,cdpdbar2,$
-      dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,/verbose
+      dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,$
+      twc2,coletot2,/verbose
 
 
 

@@ -60,8 +60,8 @@ pro coleerror
 
   coleBx=dindgen(n_elements(coleB),start=binintstart,increment=binsizestart)
 
-  p5=scatterplot(coleBx,(abs(1.-cdpVTwcFixedE))*100.,sym_size=.7,sym_color='blue',dimensions=[1600,1200])
-  p5=scatterplot(coleBx,(abs(1.-cdpVLwcFixedE))*100.,sym_size=.7,sym_color='red',/overplot)
+  p5=scatterplot(coleBx,(abs(1.-lwctwc))*100.,sym_size=.7,sym_color='blue',dimensions=[1600,1200])
+  p5=scatterplot(coleBx,(abs(1.-lwctwc2))*100.,sym_size=.7,sym_color='red',/overplot)
   p5=plot([0,50],[1,1],color='grey',/overplot,linestyle=2)
 
   p5.xrange=[0,50]
