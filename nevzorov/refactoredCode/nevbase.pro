@@ -741,18 +741,68 @@ endfor
 
 
 
-colETot=dindgen(n_elements(pmb),start=1,increment=0)
+colETot3=dindgen(n_elements(pmb),start=1,increment=0)
 
 for c=0,n_elements(pmb)-1 do begin
   if cdpmassmean[c] le 50. then begin
-    colETot[c]=-0.0576565+0.0324626*cdpmassmean[c]+0.0105399*cdpmassmean[c]^2.-0.00118195*cdpmassmean[c]^3.+5.50338e-05*cdpmassmean[c]^4.$
+    colETot3[c]=-0.0576565+0.0324626*cdpmassmean[c]+0.0105399*cdpmassmean[c]^2.-0.00118195*cdpmassmean[c]^3.+5.50338e-05*cdpmassmean[c]^4.$
       -1.32812e-06*cdpmassmean[c]^5.+1.63224e-08*cdpmassmean[c]^6.-8.08554e-11*cdpmassmean[c]^7.
   endif    
   if cdpmassmean[c] gt 50. and cdpmassmean[c] le 150. then begin
-     colETot[c]=0.907000+0.00164001*cdpmassmean[c]-9.20008e-06*cdpmassmean[c]^2.+1.60003e-08*cdpmassmean[c]^3.  
+     colETot3[c]=0.907000+0.00164001*cdpmassmean[c]-9.20008e-06*cdpmassmean[c]^2.+1.60003e-08*cdpmassmean[c]^3.  
   endif
-  if cdpmassmean[c] gt 150. then colETot[c]=1.
+  if cdpmassmean[c] gt 150. then colETot3[c]=1.
 endfor
+
+
+
+
+
+
+colETot=dindgen(n_elements(pmb),start=1,increment=0)
+
+for c=0,n_elements(pmb)-1 do begin
+  if cdpmassmean[c] le 9.700 then begin
+    colETot[c]=0.0020551916397479886+0.016052370757165590*cdpmassmean[c]+0.011329962438253460*cdpmassmean[c]^2.-0.0011349352917058297*cdpmassmean[c]^3.+3.6106506979327602e-05*cdpmassmean[c]^4.
+  endif
+  if cdpmassmean[c] gt 9.700 and cdpmassmean[c] le 20.694 then begin
+    colETot[c]=-0.31009168818127364+0.13503333847620524*cdpmassmean[c]-0.0068382863937586080*cdpmassmean[c]^2.+0.00018645650254711654*cdpmassmean[c]^3.-2.1789772617353265e-06*cdpmassmean[c]^4.
+  endif
+  if cdpmassmean[c] gt 20.694 and cdpmassmean[c] le 90.537 then begin
+    colETot[c]= 0.26585963508114219+0.046143320738337934*cdpmassmean[c]-0.0013213319889473496*cdpmassmean[c]^2.+2.1204022715437532e-05*cdpmassmean[c]^3.-1.9786383509412531e-07*cdpmassmean[c]^4.+1.0100405858914918e-09*cdpmassmean[c]^5.-2.1940252349292311e-12*cdpmassmean[c]^6.
+  endif
+  if cdpmassmean[c] gt 90.537 and cdpmassmean[c] le 200. then begin
+    colETot[c]=0.95228281382151181+0.00075790250423324323*cdpmassmean[c]-4.8675504560335980e-06*cdpmassmean[c]^2.+1.4260518384212606e-08*cdpmassmean[c]^3.-1.5739567628565970e-11*cdpmassmean[c]^4.
+  endif
+  if cdpmassmean[c] gt 200. then begin
+    colETot[c]=1.
+  endif
+endfor
+
+
+
+
+
+
+;colETot=dindgen(n_elements(pmb),start=1,increment=0)
+;
+;for c=0,n_elements(pmb)-1 do begin
+;  if cdpmassmean[c] le 9.700 then begin
+;    colETot[c]=0.0020551916397479886+0.016052370757165590*cdpmassmean[c]+0.011329962438253460*cdpmassmean[c]^2.-0.0011349352917058297*cdpmassmean[c]^3.+3.6106506979327602e-05*cdpmassmean[c]^4.
+;  endif
+;  if cdpmassmean[c] gt 9.700 and cdpmassmean[c] le 20.694 then begin
+;    colETot[c]=-0.31009168818127364+0.13503333847620524*cdpmassmean[c]-0.0068382863937586080*cdpmassmean[c]^2.+0.00018645650254711654*cdpmassmean[c]^3.-2.1789772617353265e-06*cdpmassmean[c]^4.
+;  endif
+;  if cdpmassmean[c] gt 20.694 and cdpmassmean[c] le 90.537 then begin
+;    colETot[c]=xxxxxxxx+xxxxxxx*cdpmassmean[c]+xxxxxxx*cdpmassmean[c]^2.+xxxxxxx*cdpmassmean[c]^3.+xxxxxxx*cdpmassmean[c]^4.+xxxxxxx*cdpmassmean[c]^5.+xxxxxxx*cdpmassmean[c]^6.
+;  endif
+;  if cdpmassmean[c] gt 90.537 then begin
+;    colETot[c]=1.
+;  endif
+;endfor
+
+
+
 
 
 
@@ -846,6 +896,7 @@ lwcFixedE=pLiq/(1.*tas*aLiq*lLiqStar)
 ;WATER CONTENT TOTAL
 twc=pTot/(colETot*tas*aTot*lIceStar)
 twc2=pTot/(colETot2*tas*aTot*lIceStar)
+twcolde=pTot/(colETot3*tas*aTot*lIceStar)
 twcFixedE=pTot/(1.*tas*aTot*lIceStar)
 
 
@@ -882,7 +933,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   vtwccol:vtwccol,itwccol:itwccol,vtwcref:vtwcref,itwcref:itwcref,aTot:aTot,lIceStar:lIceStar,$
   signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,lwcFixedE:lwcFixedE,$
   cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean,coleliq:coleliq,$
-  twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2,twc2:twc2,colEtot2:colEtot2}
+  twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2,twc2:twc2,colEtot2:colEtot2,coletot3:coletot3,$
+  twcolde:twcolde}
 
   
 return,g
