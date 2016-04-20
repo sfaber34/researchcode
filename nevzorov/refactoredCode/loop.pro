@@ -38,6 +38,8 @@ pro loop
     colEtot2=[]
     colEtot3=[]
     twcolde=[]
+    colELiq3=[]
+    lwcolde=[]
 
     
 
@@ -78,6 +80,8 @@ pro loop
       colEtot2=[coleTot2,g.coletot2]
       colEtot3=[colEtot3,g.colEtot3]
       twcolde=[twcolde,g.twcolde]
+      colELiq3=[colELiq3,g.colELiq3]
+      lwcolde=[lwcolde,g.lwcolde]
 
       
 
@@ -107,7 +111,7 @@ pro loop
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,colELiq,$
       signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,lwcFixedE,cdpdbar2,$
       dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,$
-      twc2,coletot2,colEtot3,twcolde,/verbose
+      twc2,coletot2,colEtot3,twcolde,colELiq3,lwcolde,/verbose
 
 
 

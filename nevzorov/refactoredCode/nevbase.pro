@@ -708,18 +708,51 @@ for m=0, n_elements(pmb)-1 do begin
 endfor
 
 
+colEliq3=dindgen(n_elements(pmb),start=1,increment=0)
+
+for d=0,n_elements(pmb)-1 do begin
+  if cdpmassmean[d] le 15 then colEliq3[d]=(-0.236989)+0.503008*cdpmassmean[d]-0.0878596*$
+    cdpmassmean[d]^2.+0.00801374*cdpmassmean[d]^3.-0.000397548*cdpmassmean[d]^4.+1.01460e-05*cdpmassmean[d]^5.-1.04243e-07*cdpmassmean[d]^6.
+  if cdpmassmean[d] gt 13 and cdpmassmean[d] le 25 then colEliq3[d]=.9697
+  if cdpmassmean[d] gt 25 then begin
+    x1=((cdpMassMean[d]-20.)/90)^2.
+    x2=2.^(1./.26)-1.
+    colEliq3[d]=.98/(1.+x1*x2)^.26
+  endif
+endfor
+
+
+
+
+
+
+
+
+
+
+
 colEliq=dindgen(n_elements(pmb),start=1,increment=0)
 
 for d=0,n_elements(pmb)-1 do begin
-  if cdpmassmean[d] le 15 then colEliq[d]=(-0.236989)+0.503008*cdpmassmean[d]-0.0878596*$
-    cdpmassmean[d]^2.+0.00801374*cdpmassmean[d]^3.-0.000397548*cdpmassmean[d]^4.+1.01460e-05*cdpmassmean[d]^5.-1.04243e-07*cdpmassmean[d]^6.
-  if cdpmassmean[d] gt 13 and cdpmassmean[d] le 25 then colEliq[d]=.9697
-  if cdpmassmean[d] gt 25 then begin
+  if cdpmassmean[d] ge 0.884495 and cdpmassmean[d] lt 4.78668056 then begin
+    colEliq[d]=0.76534878613892943-1.9525313756894320*cdpmassmean[d]+2.3079791209893301*cdpmassmean[d]^2.-1.1748496234649792*cdpmassmean[d]^3.+0.31405602625454776*cdpmassmean[d]^4.-0.042947818677930627*cdpmassmean[d]^5.+0.0023657753736188170*cdpmassmean[d]^6.
+  endif
+  if cdpmassmean[d] ge 4.78668056 and cdpmassmean[d] lt 17.0 then begin
+    colEliq[d]=0.053872488439083099+0.38012190535664558*cdpmassmean[d]-0.073273373767733574*cdpmassmean[d]^2.+0.0082262509968131781*cdpmassmean[d]^3.-0.00056395785577478819*cdpmassmean[d]^4.+2.3254772713698912e-05*cdpmassmean[d]^5.-5.2972488973068721e-07*cdpmassmean[d]^6.+5.1198482675651746e-09*cdpmassmean[d]^7.
+  endif
+  if cdpmassmean[d] ge 17.0 and cdpmassmean[d] lt 25. then begin
+    colEliq[d]=0.91221589+0.0087850597*cdpmassmean[d]-0.00025973702*cdpmassmean[d]^2.
+  endif
+  if cdpmassmean[d] ge 25. then begin
     x1=((cdpMassMean[d]-20.)/90)^2.
     x2=2.^(1./.26)-1.
     colEliq[d]=.98/(1.+x1*x2)^.26
   endif
 endfor
+
+
+
+
 
 
 
@@ -888,6 +921,7 @@ pTot=pTotNoPresCor - ( linPresCorTot[1]*pmb + linPresCorTot[0] )
 
 
 ;WATER CONTENT LIQUID
+lwcolde=pLiq/(colELiq3*tas*aLiq*lLiqStar)
 lwc=pLiq/(colELiq*tas*aLiq*lLiqStar)
 lwcFixedE=pLiq/(1.*tas*aLiq*lLiqStar)
 
@@ -934,7 +968,7 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,lwcFixedE:lwcFixedE,$
   cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean,coleliq:coleliq,$
   twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2,twc2:twc2,colEtot2:colEtot2,coletot3:coletot3,$
-  twcolde:twcolde}
+  twcolde:twcolde,colELiq3:colELiq3,lwcolde:lwcolde}
 
   
 return,g

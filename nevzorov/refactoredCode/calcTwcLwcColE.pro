@@ -10,7 +10,7 @@ pro calcTwcLwcColE
   binintstart=binint
 
   ;WIDTH OF BINS
-  binsize=1
+  binsize=.2
   binsizestart=binsize
 
   ;LIQUID ONLY POINTS OR ALL

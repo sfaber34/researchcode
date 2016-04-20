@@ -85,15 +85,17 @@ pro colescatterreal
   coletotsorted2=coletot2[massmeansort]
   twcoldesorted=twcolde[massmeansort]
   coletotsorted3=coletot3[massmeansort]
+  colelwcsorted3=colELiq3[massmeansort]
+  colelwcsorted=colELiq[massmeansort]
   
   
   restore,'colesavefile.sav'
   coleB=colecontrollwc
   
-  type='twc2'
+  type='twc'
   
   if type eq 'twc' then begin
-    var1=colevarlwc
+    var1=colecontroltwc
     var2=colevartwc
     ;var3=colevarbothlwc
   endif else if type eq 'twc2' then begin
@@ -101,8 +103,8 @@ pro colescatterreal
     var2=colevarLwc2
     ;var3=colevarbothtwc
   endif else if type eq 'lwc' then begin
-    var1=colevarcontroltwc
-    var2=colevartwc
+    var1=colecontrollwc
+    var2=colevarlwc
     ;var3=colevarbothtwc
   endif
   
@@ -147,10 +149,9 @@ pro colescatterreal
   if type eq 'twc' then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   ;for TWC2
-  if type eq 'twc2' then p4=plot(massmeansorted,coletotsorted3,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+  if type eq 'twc2' then p4=plot(massmeansorted,colelwcsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   
-  p4=plot(massmeansorted,coletotsorted,color='red',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
 
   ;p5.
