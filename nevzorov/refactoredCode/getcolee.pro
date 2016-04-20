@@ -1,6 +1,6 @@
 pro getColeE
 
-img=read_png('/Volumes/sfaber1/Research/nevzorov/graphics/coleEChartTotE.png')
+img=read_png('/Volumes/sfaber1/Research/nevzorov/graphics/coleECharttwc.png')
 
 cgcleanup
 
@@ -22,28 +22,32 @@ for i=0,n_elements(img[0,*,0])-1 do begin
 
 endfor
 
-blacky=blacky[where(blacky gt 0.)]
-blackx=blackx[where(blacky gt 0.)]
 
-blackx=(blackx*(5770./(n_elements(blackx)-1.)))*(300./5770.)
+blackx=blackx*(150./2883.)
 
-blacky=blacky/2872.
+blacky=blacky/2901.
+
+
+
 
 print,max(blackx)
 
-stop
-x1=blackx[0:150]
-y1=blacky[0:150]
+
+
+y1gt=where(blacky[0:200] gt 0.)
+
+x1=blackx[y1gt]
+y1=blacky[y1gt]
 
 p1=scatterplot(x1,y1,dimensions=[1600,1200],symbol='.')
 
-fit1=poly_fit(x1,y1,4,yfit)
+fit1=poly_fit(x1,y1,6,yfit)
 p2=plot(x1,yfit,color=color[0],/overplot)
 
+y2gt=where(blacky[201:500] gt 0.)
 
-
-x2=blackx[150:320]
-y2=blacky[150:320]
+x2=blackx[201.+y2gt]
+y2=blacky[201.+y2gt]
 
 p3=scatterplot(x2,y2,dimensions=[1600,1200],symbol='.')
 
@@ -51,10 +55,10 @@ fit2=poly_fit(x2,y2,4,yfit2)
 p4=plot(x2,yfit2,color=color[1],/overplot)
 
 
+y3gt=where(blacky[501:1922] gt 0.)
 
-
-x3=blackx[320:1400]
-y3=blacky[320:1400]
+x3=blackx[501.+y3gt]
+y3=blacky[501.+y3gt]
 
 p4=scatterplot(x3,y3,dimensions=[1600,1200],symbol='.')
 
@@ -63,10 +67,10 @@ p5=plot(x3,yfit3,color=color[0],/overplot)
 
 
 
+y4gt=where(blacky[1923:2883] gt 0.)
 
-
-x4=blackx[1400:4639]
-y4=blacky[1400:4639]
+x4=blackx[1923.+y4gt]
+y4=blacky[1923.+y4gt]
 
 p5=scatterplot(x4,y4,dimensions=[1600,1200],symbol='.')
 

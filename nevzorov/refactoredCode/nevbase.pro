@@ -762,19 +762,19 @@ endfor
 colETot=dindgen(n_elements(pmb),start=1,increment=0)
 
 for c=0,n_elements(pmb)-1 do begin
-  if cdpmassmean[c] le 9.700 then begin
-    colETot[c]=0.0020551916397479886+0.016052370757165590*cdpmassmean[c]+0.011329962438253460*cdpmassmean[c]^2.-0.0011349352917058297*cdpmassmean[c]^3.+3.6106506979327602e-05*cdpmassmean[c]^4.
+  if cdpmassmean[c] le 10.41 then begin
+    colETot[c]=0.0089810744193528080-0.0095860685032675974*cdpmassmean[c]+0.018453599910571938*cdpmassmean[c]^2.-0.00080000274192570942*cdpmassmean[c]^3.-0.00019379821253551199*cdpmassmean[c]^4.+2.3409862748735577e-05*cdpmassmean[c]^5.-7.7800221198742747e-07*cdpmassmean[c]^6.
   endif
-  if cdpmassmean[c] gt 9.700 and cdpmassmean[c] le 20.694 then begin
-    colETot[c]=-0.31009168818127364+0.13503333847620524*cdpmassmean[c]-0.0068382863937586080*cdpmassmean[c]^2.+0.00018645650254711654*cdpmassmean[c]^3.-2.1789772617353265e-06*cdpmassmean[c]^4.
+  if cdpmassmean[c] gt 10.41 and cdpmassmean[c] le 26.014 then begin
+    colETot[c]=-0.31618167337728664+0.14578708937187912*cdpmassmean[c]-0.0070996433610162057*cdpmassmean[c]^2.+0.00016759853006931280*cdpmassmean[c]^3.-1.5651587643716880e-06*cdpmassmean[c]^4.
   endif
-  if cdpmassmean[c] gt 20.694 and cdpmassmean[c] le 90.537 then begin
-    colETot[c]= 0.26585963508114219+0.046143320738337934*cdpmassmean[c]-0.0013213319889473496*cdpmassmean[c]^2.+2.1204022715437532e-05*cdpmassmean[c]^3.-1.9786383509412531e-07*cdpmassmean[c]^4.+1.0100405858914918e-09*cdpmassmean[c]^5.-2.1940252349292311e-12*cdpmassmean[c]^6.
+  if cdpmassmean[c] gt 26.014 and cdpmassmean[c] le 100.000 then begin
+    colETot[c]=0.37017905572429299+0.045383498189039528*cdpmassmean[c]-0.0014994405482866568*cdpmassmean[c]^2.+2.7550006166165986e-05*cdpmassmean[c]^3.-2.8942966512346402e-07*cdpmassmean[c]^4.+1.6276378647650525e-09*cdpmassmean[c]^5.-3.8021012390993675e-12*cdpmassmean[c]^6.
   endif
-  if cdpmassmean[c] gt 90.537 and cdpmassmean[c] le 200. then begin
-    colETot[c]=0.95228281382151181+0.00075790250423324323*cdpmassmean[c]-4.8675504560335980e-06*cdpmassmean[c]^2.+1.4260518384212606e-08*cdpmassmean[c]^3.-1.5739567628565970e-11*cdpmassmean[c]^4.
+  if cdpmassmean[c] gt 100.000 and cdpmassmean[c] le 150. then begin
+    colETot[c]=0.76903533935546875+0.0065395329147577286*cdpmassmean[c]-7.0993726694723591e-05*cdpmassmean[c]^2.+3.4560855510790134e-07*cdpmassmean[c]^3.-6.3046545761835660e-10*cdpmassmean[c]^4. 
   endif
-  if cdpmassmean[c] gt 200. then begin
+  if cdpmassmean[c] gt 150. then begin
     colETot[c]=1.
   endif
 endfor

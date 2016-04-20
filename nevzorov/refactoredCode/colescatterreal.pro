@@ -147,7 +147,7 @@ pro colescatterreal
   if type eq 'twc' then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   ;for TWC2
-  if type eq 'twc2' then p4=plot(massmeansorted,coletotsorted2,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+  if type eq 'twc2' then p4=plot(massmeansorted,coletotsorted3,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   
   p4=plot(massmeansorted,coletotsorted,color='red',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
