@@ -12,7 +12,7 @@ pro colescatterrealMod
   binsize=.3
 
   ;LIQUID ONLY POINTS OR ALL
-  liq=0
+  liq=1
 
 
 
@@ -52,6 +52,30 @@ pro colescatterrealMod
 
 
   restore,'loopdata.sav'
+  
+  liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1))
+  ;liqOnly=where(trf gt -3. and lwc lt 1.1 and lwc gt .05 and twc gt .05)
+
+
+  if liq eq 1 then begin
+    lwc=lwc[liqonly]
+    twc=twc[liqonly]
+    cdpdbar=cdpdbar[liqonly]
+    cdpconc=cdpconc[liqonly]
+    cdpDEff=cdpDEff[liqonly]
+    cdpVolMean=cdpVolMean[liqonly]
+    cdpMassMean=cdpMassMean[liqonly]
+    cdplwc=cdplwc[liqonly]
+    trf=trf[liqonly]
+    lwcfixede=lwcfixede[liqonly]
+    twcfixede=twcfixede[liqonly]
+    twc2=twc2[liqonly]
+    cipmodconc0=cipmodconc0[liqonly]
+    cipmodconc1=cipmodconc1[liqonly]
+    cipmodconc2=cipmodconc2[liqonly]
+    coleliq=coleliq[liqonly]
+    coletot=coletot[liqonly]
+  endif
 
 
 
@@ -90,7 +114,9 @@ pro colescatterrealMod
   
   
   restore,'colesavefile.sav'
-  coleB=colecontrollwc
+  restore,'colesavefileB.sav'
+  coleB=colecontrollwc/colecontroltwc
+  coleC=colecontrollwcB/colecontroltwcB
   
   type='twc2'
   
@@ -115,16 +141,18 @@ pro colescatterrealMod
 
   
 
-  coleBx=dindgen(n_elements(coleB),start=binintstart,increment=binsizestart)
+  coleBx=dindgen(n_elements(coleB),start=binintstart,increment=.1)
+  coleCx=dindgen(n_elements(coleC),start=binintstart,increment=.2)
   hErr=dindgen(n_elements(coleB),start=2.,increment=0)
   yErr=dindgen(n_elements(coleB),start=0,increment=0)
   
-  e5=errorplot(coleBx,var1,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,dimensions=[1200,1200])
-  e6=errorplot(coleBx,var2,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
+  ;e5=errorplot(cdpmassmean,lwc/twc,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,dimensions=[1200,1200])
+  ;e6=errorplot(coleBx,var2,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
   ;e7=errorplot(coleBx,var3,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light coral',symbol=0,/overplot)
 
-  ;p5=scatterplot(coleBx,var1,sym_thick=2,sym_color='black',/overplot,name=type+' Eq. Coll. E')
-  ;p6=scatterplot(coleBx,var2,sym_thick=2,sym_color='blue',/overplot,name=type+' Corrected Eq. Coll. E') 
+  p5=scatterplot(coleBx,coleB,sym_thick=2,sym_color='black',name=type+' Eq. Coll. E',dimensions=[1500,1200])
+  p5=scatterplot(coleCx,ColeC,sym_thick=2,sym_color='red',/overplot,name=type+' Eq. Coll. E')
+  ;p6=scatterplot(coleBx,coleliq/coletot,sym_thick=2,sym_color='blue',/overplot,name=type+' Corrected Eq. Coll. E') 
   ;p7=scatterplot(coleBx,var3,sym_size=.7,sym_color='red',/overplot)
   
   ;l1=legend(target=[p5,p6],shadow=0,/device,font_size=22)
@@ -136,36 +164,36 @@ pro colescatterrealMod
   p5.ytitle='Equivalent/Corrected Equivalent Coll. E.'
 
   p5.xrange=[0,50]
-  p5.yrange=[0,1.4]
+  p5.yrange=[0,3]
   
   
   
   
   
   ;for LWC
-  if type eq 'lwc' then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+  ;if type eq 'lwc' then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   ;for TWC
-  if type eq 'twc' then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+  ;if type eq 'twc' then p3=plot(massmeansorted,coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   ;for TWC2
-  if type eq 'twc2' then p4=plot(massmeansorted,colelwcsorted3,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+  if type eq 'twc2' then p4=plot(massmeansorted,coleliqsorted/coletotsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
   
-  p4=plot(massmeansorted,colelwcsorted,color='red',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
+  ;p4=plot(massmeansorted,colelwcsorted,color='red',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)
 
 
   ;p5.
   
   
-  x=[17.03,20.,22.,25.]
-  y=[.9863,.9848,.979,.9697]
-  
-  fit1=poly_fit(x,y,2,yfit=yfit)
-
-
-  p55=scatterplot(x,y,/overplot)
-  p56=plot(x,yfit,/overplot)
+;  x=[17.03,20.,22.,25.]
+;  y=[.9863,.9848,.979,.9697]
+;  
+;  fit1=poly_fit(x,y,2,yfit=yfit)
+;
+;
+;  p55=scatterplot(x,y,/overplot)
+;  p56=plot(x,yfit,/overplot)
 
   p5.font_size=22
 

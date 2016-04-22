@@ -180,7 +180,41 @@ cdpdbins=loadvar('ACDP_1_NRB', filename=nclPath)
 
 ;Vertical Speed [m/s]
 if cope eq 1 then hivs=loadvar('hivs', filename=nclPath)
-if cope ne 1 then hivs=0
+if cope ne 1 then hivs=!VALUES.F_NAN
+
+
+cipmod=0
+if strmatch(nclpath,'*0710*') eq 0 and strmatch(nclpath,'*0725*')$
+  eq 0 and strmatch(nclpath,'*0727*') eq 0 and strmatch(nclpath,'*0728*')$
+  eq 0 and strmatch(nclpath,'*0729*') eq 0 and strmatch(nclpath,'*0803*')$
+  eq 0 and strmatch(nclpath,'*0807*') eq 0 and strmatch(nclpath,'*0815*') eq 0 then cipmod=1
+
+
+
+;CIP MOD0 CONC [/liter]
+if cope eq 1 and cipmod eq 0 then begin
+  cipmodconc0=loadvar('CONC0_mod_cip_IBR', filename=nclPath)
+endif else begin
+  cipmodconc0=replicate(!VALUES.F_NAN,n_elements(pmb))
+endelse
+
+
+;CIP MOD0 CONC [/liter]
+if cope eq 1 and cipmod eq 0 then begin
+  cipmodconc1=loadvar('CONC1_mod_cip_IBR', filename=nclPath)
+endif else begin
+  cipmodconc1=replicate(!VALUES.F_NAN,n_elements(pmb))
+endelse
+
+
+;CIP MOD0 CONC [/liter]
+if cope eq 1 and cipmod eq 0 then begin
+  cipmodconc2=loadvar('CONC2_mod_cip_IBR', filename=nclPath)
+endif else begin
+  cipmodconc2=replicate(!VALUES.F_NAN,n_elements(pmb))
+endelse
+
+
 
 nonev1=0
 if strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0802*')$
@@ -193,7 +227,7 @@ if strmatch(nclpath,'*0806*') eq 0 and strmatch(nclpath,'*0802*')$
 if cope eq 1 and nonev1 eq 1 then begin
   lwcNev1=loadvar('nevlwc1', filename=nclPath)
 endif else begin
-  lwcNev1=dindgen(n_elements(pmb),increment=0)
+  lwcNev1=replicate(!VALUES.F_NAN,n_elements(pmb))
 endelse  
 
 
@@ -201,7 +235,7 @@ endelse
 if cope eq 1 and nonev1 eq 1 then begin
    lwcNev2=loadvar('nevlwc2', filename=nclPath)
 endif else begin   
-  lwcNev2=dindgen(n_elements(pmb),increment=0)
+  lwcNev2=replicate(!VALUES.F_NAN,n_elements(pmb))
 endelse
 
 
@@ -209,7 +243,7 @@ endelse
 if cope eq 1 and nonev1 eq 1 then begin
   twcNev=loadvar('nevtwc', filename=nclPath)
 endif else begin  
-  twcNev=dindgen(n_elements(pmb),increment=0)
+  twcNev=replicate(!VALUES.F_NAN,n_elements(pmb))
 endelse
 
  
@@ -968,7 +1002,8 @@ g  = {as:as, pmb:pmb, time:time, timeForm:timeForm, avroll:avroll, avpitch:avpit
   signalTot:signalTot,signalLiq:signalLiq,cdpdbins:cdpdbins,lwcFixedE:lwcFixedE,$
   cdpDEff:cdpDEff,cdpVolMean:cdpVolMean,cdpMassMean:cdpMassMean,coleliq:coleliq,$
   twcFixedE:twcFixedE,colETot:colETot,cdpdbar2:cdpdbar2,twc2:twc2,colEtot2:colEtot2,coletot3:coletot3,$
-  twcolde:twcolde,colELiq3:colELiq3,lwcolde:lwcolde}
+  twcolde:twcolde,colELiq3:colELiq3,lwcolde:lwcolde,cipmodconc0:cipmodconc0,cipmodconc1:cipmodconc1,$
+  cipmodconc2:cipmodconc2}
 
   
 return,g

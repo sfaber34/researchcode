@@ -10,7 +10,7 @@ pro calcTwcLwcColE
   binintstart=binint
 
   ;WIDTH OF BINS
-  binsize=.15
+  binsize=.2
   binsizestart=binsize
 
   ;LIQUID ONLY POINTS OR ALL
@@ -55,7 +55,8 @@ pro calcTwcLwcColE
 
   restore,'loopdata.sav'
 
-  liqOnly=where(trf gt -3. and lwc lt 1.24)
+  liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5)
+  ;liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5 and lwc gt 0 and twc gt 0)
 
 
   if liq eq 1 then begin
@@ -70,7 +71,10 @@ pro calcTwcLwcColE
     trf=trf[liqonly]
     lwcfixede=lwcfixede[liqonly]
     twcfixede=twcfixede[liqonly] 
-    twc2=twc2[liqonly]   
+    twc2=twc2[liqonly] 
+    cipmodconc0=cipmodconc0[liqonly] 
+    cipmodconc1=cipmodconc1[liqonly] 
+    cipmodconc2=cipmodconc2[liqonly]  
   endif
 
 
@@ -247,31 +251,31 @@ pro calcTwcLwcColE
     print,(binistarti[i]/(11982.976*2.))*100.
   endfor
 
-;    cole0B=cole0
-;    coleControlTwcB=coleControlTwc
-;    coleControlLwcB=coleControlLwc
-;    colevarTwcB=colevarTwc
-;    colevarLwcB=colevarLwc
-;    colevarbothTwcB=colevarbothTwc
-;    colevarbothLwcB=colevarbothLwc
-;    cdpVLwcFixedEB=cdpVLwcFixedE
-;    cdpVTwcFixedEB=cdpVTwcFixedE
-;    cdpVLwcCorB=cdpVLwcCor
-;    cdpVTwcCorB=cdpVTwcCor
-;    colevarLwc2B=colevarLwc2
-;    colevarbothTwc2B=colevarbothTwc2
-;    lwctwcB=lwctwc
-;    lwctwc2B=lwctwc2
-;
-;  save,filename='colesavefileB.sav',coleControlLwcB,coleControlTwcB,$
-;    colevarLwcB,colevarTwcB,colevarbothLwcB,colevarbothTwcB,binsizestartB,$
-;    binintstartB,cdpVLwcFixedEB,cdpVTwcFixedEB,cdpVLwcCorB,cdpVTwcCorB,colevarLwc2B,$
-;    colevarbothTwc2B,lwctwcB,lwctwc2B,/verbose
+    cole0B=cole0
+    coleControlTwcB=coleControlTwc
+    coleControlLwcB=coleControlLwc
+    colevarTwcB=colevarTwc
+    colevarLwcB=colevarLwc
+    colevarbothTwcB=colevarbothTwc
+    colevarbothLwcB=colevarbothLwc
+    cdpVLwcFixedEB=cdpVLwcFixedE
+    cdpVTwcFixedEB=cdpVTwcFixedE
+    cdpVLwcCorB=cdpVLwcCor
+    cdpVTwcCorB=cdpVTwcCor
+    colevarLwc2B=colevarLwc2
+    colevarbothTwc2B=colevarbothTwc2
+    lwctwcB=lwctwc
+    lwctwc2B=lwctwc2
+
+  save,filename='colesavefileB.sav',coleControlLwcB,coleControlTwcB,$
+    colevarLwcB,colevarTwcB,colevarbothLwcB,colevarbothTwcB,binsizestartB,$
+    binintstartB,cdpVLwcFixedEB,cdpVTwcFixedEB,cdpVLwcCorB,cdpVTwcCorB,colevarLwc2B,$
+    colevarbothTwc2B,lwctwcB,lwctwc2B,/verbose
     
-    save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
-    colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
-    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,colevarLwc2,$
-    colevarbothTwc2,lwctwc,lwctwc2,binRFixedE,binR,/verbose
+;    save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
+;    colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
+;    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,colevarLwc2,$
+;    colevarbothTwc2,lwctwc,lwctwc2,binRFixedE,binR,/verbose
 
 
 

@@ -85,7 +85,7 @@ pro colescatterreal
   
   coleB=colecontrollwc
   
-  type='lwc'
+  type='twc'
   
   if type eq 'twc' then begin
     var1=colevartwc

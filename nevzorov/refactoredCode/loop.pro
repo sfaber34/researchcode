@@ -40,11 +40,15 @@ pro loop
     twcolde=[]
     colELiq3=[]
     lwcolde=[]
+    cipmodconc0=[]
+    cipmodconc1=[]
+    cipmodconc2=[]
 
     
 
 
     flight=['0710','0718','0725','0727','0728','0729','0802','0803','0806','0807','0814','0815']
+    ;flight=['0710','0725','0727','0728','0729','0803','0807','0815']
  
 
     for i=0, n_elements(flight)-1 do begin
@@ -82,6 +86,9 @@ pro loop
       twcolde=[twcolde,g.twcolde]
       colELiq3=[colELiq3,g.colELiq3]
       lwcolde=[lwcolde,g.lwcolde]
+      cipmodconc0=[cipmodconc0,g.cipmodconc0]
+      cipmodconc1=[cipmodconc1,g.cipmodconc1]
+      cipmodconc2=[cipmodconc2,g.cipmodconc2]
 
       
 
@@ -105,13 +112,21 @@ pro loop
     ;liqOnly=where(trf gt -3. and lwc lt .8 and cdpdbar gt 2.)
 
 
+    x=dindgen(n_elements(cipmodconc0))
+    p1=scatterplot(x,cipmodconc0,dimensions=[1400,1200])
+    p2=scatterplot(x,cipmodconc1,sym_color='blue',/overplot)
+    p3=scatterplot(x,cipmodconc2,sym_color='red',/overplot)
+
+
+    stop
     
 
     save,filename='loopdata.sav',lwc,twc,cdpdbar,trf,twcFixedE,colETot,$
       as,pmb,cdplwc,clearairLiq,clearairTot,signalLiq,colELiq,$
       signalTot,cdpconc,ltdiff,tldiff,dbar3m,cdpacc,lwcFixedE,cdpdbar2,$
       dBarBI,cdpSecondM,cdpThirdM,cdpFourthM,cdpDEff,cdpVolMean,cdpMassMean,$
-      twc2,coletot2,colEtot3,twcolde,colELiq3,lwcolde,/verbose
+      twc2,coletot2,colEtot3,twcolde,colELiq3,lwcolde,$
+      cipmodconc0,cipmodconc1,cipmodconc2,/verbose
 
 
 

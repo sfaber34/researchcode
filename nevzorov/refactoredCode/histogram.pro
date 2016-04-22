@@ -25,15 +25,21 @@ pro histogram
 
 
   restore,'loopdata.sav'
-  
-  
+  ;restore,'colesavefile.sav'
+  ;restore,'colesavefileB.sav'
+
   ;LIQUID ONLY POINTS OR ALL
   liq=1
 
-  liqOnly=where(trf gt -3. and lwc lt 1.1 and cdpconc gt 5)
-  ;liqOnly=where(cdpconc gt 5)
- 
 
+
+  k=1
+  ;liqOnly=where(trf gt -3. and lwc lt 1.1 and cdpconc gt 5)
+  ;liqOnly=where(cdpconc gt 5)
+  if k eq 0 then liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5)
+  if k eq 1 then liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5)
+ 
+  print, n_elements(liqonly)
 
   if liq eq 1 then begin
     lwc=lwc[liqonly]
@@ -51,17 +57,17 @@ pro histogram
 
         
     ;STARTING LEFT VALUE
-    binint=4.
+    binint=2.
 
     ;WIDTH OF BINS
-    binsize=1
+    binsize=1.
 
 
 
     ;SET VAR
     var=cdpmassmean
 
-    cgcleanup
+    
 
     if binsize eq 1 then begin
       bincount=60/(binsize*2.)
@@ -81,12 +87,15 @@ pro histogram
 
     ticks=[strcompress(ticks2),' ',' ']
         
-        
-        
+    barc=['blue','red']    
+  
+;    for i=0,1 do begin
+      
+    
     
        
-        h1=histogram(var,min=binint,binsize=binsize)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1200,1200],nbars=1,index=k)
+        h1=histogram(var,min=binint,binsize=1)
+        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1600,1200],nbars=2,index=k,fill_color=barc[k],/overplot)
         
         p1.xrange=[0,n_elements(h1)]
         p1.xmajor=n_elements(h1)/2.+1
@@ -97,5 +106,6 @@ pro histogram
         p1.font_size=22
         p1.xticklen=0
 
-stop
+        stop
+;    endfor
 end
