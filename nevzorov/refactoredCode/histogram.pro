@@ -94,8 +94,9 @@ pro histogram
     
     
        
-        h1=histogram(var,min=binint,binsize=1)
-        p1=barplot(dindgen(n_elements(h1)),h1, histogram=1,dimensions=[1600,1200],nbars=2,index=k,fill_color=barc[k],/overplot)
+        h1=histogram(var,min=binint,binsize=.1)
+        ;p1=barplot(dindgen(n_elements(h1),start=2,increment=.1),h1, histogram=1,dimensions=[1600,1200],nbars=2,index=k,fill_color=barc[k],/overplot)
+        p1=scatterplot(dindgen(n_elements(h1),start=2,increment=.1),h1,dimensions=[1600,1200])
         
         p1.xrange=[0,n_elements(h1)]
         p1.xmajor=n_elements(h1)/2.+1

@@ -53,7 +53,7 @@ pro colescatterrealMod
 
   restore,'loopdata.sav'
   
-  liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1))
+  liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5)
   ;liqOnly=where(trf gt -3. and lwc lt 1.1 and lwc gt .05 and twc gt .05)
 
 
@@ -138,11 +138,12 @@ pro colescatterrealMod
 
 
   
-
+  h1=histogram(cdpmassmean,min=minbin,binsize=.2)
   
+  x=where(h1 lt 10.)
 
-  coleBx=dindgen(n_elements(coleB),start=binintstart,increment=.1)
-  coleCx=dindgen(n_elements(coleC),start=binintstart,increment=.2)
+  coleBx=dindgen(n_elements(coleC),start=binintstart,increment=.2)
+  coleCx=dindgen(n_elements(coleC),start=minbin,increment=.2)
   hErr=dindgen(n_elements(coleB),start=2.,increment=0)
   yErr=dindgen(n_elements(coleB),start=0,increment=0)
   
@@ -150,8 +151,9 @@ pro colescatterrealMod
   ;e6=errorplot(coleBx,var2,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
   ;e7=errorplot(coleBx,var3,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light coral',symbol=0,/overplot)
 
-  p5=scatterplot(coleBx,coleB,sym_thick=2,sym_color='black',name=type+' Eq. Coll. E',dimensions=[1500,1200])
-  p5=scatterplot(coleCx,ColeC,sym_thick=2,sym_color='red',/overplot,name=type+' Eq. Coll. E')
+  p5=scatterplot(coleCx,coleC,sym_thick=2,sym_color='blue',name=type+' Eq. Coll. E',dimensions=[1500,1200])
+  p6=scatterplot(coleCx[x],coleC[x],sym_thick=2,sym_color='steel blue',/overplot)
+  ;p5=scatterplot(coleCx,ColeC,sym_thick=2,sym_color='red',/overplot,name=type+' Eq. Coll. E')
   ;p6=scatterplot(coleBx,coleliq/coletot,sym_thick=2,sym_color='blue',/overplot,name=type+' Corrected Eq. Coll. E') 
   ;p7=scatterplot(coleBx,var3,sym_size=.7,sym_color='red',/overplot)
   
@@ -161,14 +163,16 @@ pro colescatterrealMod
   ;p5=scatterplot(coleBx,colevartwc,sym_size=.7,sym_color='green',/overplot)
   p5=plot([0,50],[1,1],color='grey',/overplot,linestyle=2, thick=2)
   p5.xtitle='VMD um'
-  p5.ytitle='Equivalent/Corrected Equivalent Coll. E.'
+  p5.ytitle='LWC/TWC'
 
   p5.xrange=[0,50]
   p5.yrange=[0,3]
   
   
+  liqonly2=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5)
+
   
-  
+  stop
   
   ;for LWC
   ;if type eq 'lwc' then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)

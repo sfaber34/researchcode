@@ -77,7 +77,7 @@ pro calcTwcLwcColE
     cipmodconc2=cipmodconc2[liqonly]  
   endif
 
-
+  minbin=min(cdpmassmean)
 
 
   ;-------------------------------SET VAR---------------------------------------
@@ -250,32 +250,34 @@ pro calcTwcLwcColE
 
     print,(binistarti[i]/(11982.976*2.))*100.
   endfor
+  
 
-    cole0B=cole0
-    coleControlTwcB=coleControlTwc
-    coleControlLwcB=coleControlLwc
-    colevarTwcB=colevarTwc
-    colevarLwcB=colevarLwc
-    colevarbothTwcB=colevarbothTwc
-    colevarbothLwcB=colevarbothLwc
-    cdpVLwcFixedEB=cdpVLwcFixedE
-    cdpVTwcFixedEB=cdpVTwcFixedE
-    cdpVLwcCorB=cdpVLwcCor
-    cdpVTwcCorB=cdpVTwcCor
-    colevarLwc2B=colevarLwc2
-    colevarbothTwc2B=colevarbothTwc2
-    lwctwcB=lwctwc
-    lwctwc2B=lwctwc2
 
-  save,filename='colesavefileB.sav',coleControlLwcB,coleControlTwcB,$
-    colevarLwcB,colevarTwcB,colevarbothLwcB,colevarbothTwcB,binsizestartB,$
-    binintstartB,cdpVLwcFixedEB,cdpVTwcFixedEB,cdpVLwcCorB,cdpVTwcCorB,colevarLwc2B,$
-    colevarbothTwc2B,lwctwcB,lwctwc2B,/verbose
+;    cole0B=cole0
+;    coleControlTwcB=coleControlTwc
+;    coleControlLwcB=coleControlLwc
+;    colevarTwcB=colevarTwc
+;    colevarLwcB=colevarLwc
+;    colevarbothTwcB=colevarbothTwc
+;    colevarbothLwcB=colevarbothLwc
+;    cdpVLwcFixedEB=cdpVLwcFixedE
+;    cdpVTwcFixedEB=cdpVTwcFixedE
+;    cdpVLwcCorB=cdpVLwcCor
+;    cdpVTwcCorB=cdpVTwcCor
+;    colevarLwc2B=colevarLwc2
+;    colevarbothTwc2B=colevarbothTwc2
+;    lwctwcB=lwctwc
+;    lwctwc2B=lwctwc2
+;
+;  save,filename='colesavefileB.sav',coleControlLwcB,coleControlTwcB,$
+;    colevarLwcB,colevarTwcB,colevarbothLwcB,colevarbothTwcB,binsizestartB,$
+;    binintstartB,cdpVLwcFixedEB,cdpVTwcFixedEB,cdpVLwcCorB,cdpVTwcCorB,colevarLwc2B,$
+;    colevarbothTwc2B,lwctwcB,lwctwc2B,minbin,/verbose
     
-;    save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
-;    colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
-;    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,colevarLwc2,$
-;    colevarbothTwc2,lwctwc,lwctwc2,binRFixedE,binR,/verbose
+    save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
+    colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
+    binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,colevarLwc2,$
+    colevarbothTwc2,lwctwc,lwctwc2,binRFixedE,binR,minbin,/verbose
 
 
 

@@ -5,7 +5,7 @@ pro colescatterreal
   binint=2.
 
   ;WIDTH OF BINS
-  binsize=.3
+  binsize=.2
   
   
 
@@ -85,7 +85,7 @@ pro colescatterreal
   
   coleB=colecontrollwc
   
-  type='twc'
+  type='lwc'
   
   if type eq 'twc' then begin
     var1=colevartwc
@@ -102,13 +102,9 @@ pro colescatterreal
   endif
   
   
+ 
 
-
-  
-
-  
-
-  coleBx=dindgen(n_elements(coleB),start=binintstart,increment=binsizestart)
+  coleBx=dindgen(n_elements(coleB),start=minbin,increment=binsizestart)
 
   hErr=dindgen(n_elements(coleB),start=2.,increment=0)
   yErr=dindgen(n_elements(coleB),start=0,increment=0)
