@@ -10,7 +10,7 @@ pro calcTwcLwcColE
   binintstart=binint
 
   ;WIDTH OF BINS
-  binsize=.2
+  binsize=.15
   binsizestart=binsize
 
   ;LIQUID ONLY POINTS OR ALL
@@ -55,7 +55,7 @@ pro calcTwcLwcColE
 
   restore,'loopdata.sav'
 
-  liqOnly=where(trf gt -3. and lwc lt 1.1 and cdpconc ge 5)
+  liqOnly=where(trf gt -3. and lwc lt 1.24)
 
 
   if liq eq 1 then begin
@@ -120,6 +120,8 @@ pro calcTwcLwcColE
   colevarbothTwc2=[]
   lwctwc=[]
   lwctwc2=[]
+  binRFixedE=[]
+  binR=[]
   
 
   starti=0
@@ -236,25 +238,40 @@ pro calcTwcLwcColE
     colevarbothTwc2=[colevarbothTwc2,cole12[1]]
     lwctwc=[lwctwc,cole13[1]]
     lwctwc2=[lwctwc2,cole14[1]]
+    binRFixedE=[binRFixedE,mean(lwcfixede[bins]/twcfixede[bins])]
+    binR=[binR,mean(lwc[bins]/twc[bins])]
+    
 
 
 
     print,(binistarti[i]/(11982.976*2.))*100.
   endfor
 
-  ;for i=0,n_elements(cole0)-1 do begin
-;          p2=plot([.02,1.2],[cole0[i],1.2*cole1[i]+cole0[i]],/overplot,color=color[i],thick=2)
-;          perDiff=strcompress(ticks2[i]+'-'+ticks2[i+1]+'='+string(1.-cole1[i],format='(f8.4)'))
-;          t1=text(i*.11,.94,perDiff,font_size=16,color=color[i])
-;          print,coleControlTwc
-  ;endfor
-
-  ;cole1=1.-cole1
-
-  save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
+;    cole0B=cole0
+;    coleControlTwcB=coleControlTwc
+;    coleControlLwcB=coleControlLwc
+;    colevarTwcB=colevarTwc
+;    colevarLwcB=colevarLwc
+;    colevarbothTwcB=colevarbothTwc
+;    colevarbothLwcB=colevarbothLwc
+;    cdpVLwcFixedEB=cdpVLwcFixedE
+;    cdpVTwcFixedEB=cdpVTwcFixedE
+;    cdpVLwcCorB=cdpVLwcCor
+;    cdpVTwcCorB=cdpVTwcCor
+;    colevarLwc2B=colevarLwc2
+;    colevarbothTwc2B=colevarbothTwc2
+;    lwctwcB=lwctwc
+;    lwctwc2B=lwctwc2
+;
+;  save,filename='colesavefileB.sav',coleControlLwcB,coleControlTwcB,$
+;    colevarLwcB,colevarTwcB,colevarbothLwcB,colevarbothTwcB,binsizestartB,$
+;    binintstartB,cdpVLwcFixedEB,cdpVTwcFixedEB,cdpVLwcCorB,cdpVTwcCorB,colevarLwc2B,$
+;    colevarbothTwc2B,lwctwcB,lwctwc2B,/verbose
+    
+    save,filename='colesavefile.sav',coleControlLwc,coleControlTwc,$
     colevarLwc,colevarTwc,colevarbothLwc,colevarbothTwc,binsizestart,$
     binintstart,cdpVLwcFixedE,cdpVTwcFixedE,cdpVLwcCor,cdpVTwcCor,colevarLwc2,$
-    colevarbothTwc2,lwctwc,lwctwc2,/verbose
+    colevarbothTwc2,lwctwc,lwctwc2,binRFixedE,binR,/verbose
 
 
 

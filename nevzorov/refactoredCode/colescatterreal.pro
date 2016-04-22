@@ -1,21 +1,13 @@
 pro colescatterreal
 
 
-
-
-  plots=2
-
   ;STARTING LEFT VALUE
   binint=2.
 
   ;WIDTH OF BINS
   binsize=.3
-
-  ;LIQUID ONLY POINTS OR ALL
-  liq=0
-
-
-
+  
+  
 
 
 
@@ -90,14 +82,15 @@ pro colescatterreal
   
   
   restore,'colesavefile.sav'
+  
   coleB=colecontrollwc
   
-  type='twc'
+  type='lwc'
   
   if type eq 'twc' then begin
-    var1=colecontroltwc
-    var2=colevartwc
-    ;var3=colevarbothlwc
+    var1=colevartwc
+    var2=colevarbothtwc
+    var3=colevarbothlwc
   endif else if type eq 'twc2' then begin
     var1=colevarlwc
     var2=colevarLwc2
@@ -105,7 +98,7 @@ pro colescatterreal
   endif else if type eq 'lwc' then begin
     var1=colecontrollwc
     var2=colevarlwc
-    ;var3=colevarbothtwc
+    var3=colevarbothlwc
   endif
   
   
@@ -116,16 +109,17 @@ pro colescatterreal
   
 
   coleBx=dindgen(n_elements(coleB),start=binintstart,increment=binsizestart)
+
   hErr=dindgen(n_elements(coleB),start=2.,increment=0)
   yErr=dindgen(n_elements(coleB),start=0,increment=0)
   
-  e5=errorplot(coleBx,var1,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,dimensions=[1200,1200])
-  e6=errorplot(coleBx,var2,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
+  ;e5=errorplot(coleBx,var1,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light grey',symbol=0,dimensions=[1200,1200])
+  ;e6=errorplot(coleBx,var2,hErr,yErr,errorbar_thick=2,linestyle=6,xaxis=0,errorbar_color='light blue',symbol=0,/overplot)
   ;e7=errorplot(coleBx,var3,hErr,yErr,linestyle=6,xaxis=0,errorbar_color='light coral',symbol=0,/overplot)
 
-  p5=scatterplot(coleBx,var1,sym_thick=2,sym_color='black',/overplot,name=type+' Eq. Coll. E')
-  p6=scatterplot(coleBx,var2,sym_thick=2,sym_color='blue',/overplot,name=type+' Corrected Eq. Coll. E') 
-  ;p7=scatterplot(coleBx,var3,sym_size=.7,sym_color='red',/overplot)
+  p5=scatterplot(coleBx,var1,sym_color='black',symbol='+',dimensions=[1600,1200],name=type+' Eq. Coll. E')
+  p6=scatterplot(coleBx,var2,sym_color='blue',symbol='+',/overplot,name=type+' Corrected Eq. Coll. E') 
+  p7=scatterplot(coleBx,var3,sym_color='red',/overplot,symbol='+')
   
   l1=legend(target=[p5,p6],shadow=0,/device,font_size=22)
   
