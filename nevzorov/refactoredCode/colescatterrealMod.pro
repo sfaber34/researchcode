@@ -165,14 +165,14 @@ pro colescatterrealMod
   p5.xtitle='VMD um'
   p5.ytitle='LWC/TWC'
 
-  p5.xrange=[0,50]
+  p5.xrange=[2,42]
   p5.yrange=[0,3]
   
   
   liqonly2=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 5)
 
   
-  stop
+
   
   ;for LWC
   ;if type eq 'lwc' then p2=plot(massmeansorted,coleliqsorted,color='green',thick=2,linestyle=2,dimensions=[1200,1200],margin=!margins,/device,/overplot)

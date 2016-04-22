@@ -197,7 +197,7 @@ if cope eq 1 and cipmod eq 0 then begin
 endif else begin
   cipmodconc0=replicate(!VALUES.F_NAN,n_elements(pmb))
 endelse
-
+if cipmod eq 1 then print,'-----------', flightDay, '-----------'
 
 ;CIP MOD0 CONC [/liter]
 if cope eq 1 and cipmod eq 0 then begin

@@ -85,7 +85,7 @@ pro colescatterreal
   
   coleB=colecontrollwc
   
-  type='lwc'
+  type='twc2'
   
   if type eq 'twc' then begin
     var1=colevartwc
@@ -94,7 +94,7 @@ pro colescatterreal
   endif else if type eq 'twc2' then begin
     var1=colevarlwc
     var2=colevarLwc2
-    ;var3=colevarbothtwc
+    var3=colevarbothtwc
   endif else if type eq 'lwc' then begin
     var1=colecontrollwc
     var2=colevarlwc

@@ -6,10 +6,10 @@ pro lwctwc11B
   plots=2
 
   ;STARTING LEFT VALUE
-  binint=4.
+  binint=2.
 
   ;WIDTH OF BINS
-  binsize=2
+  binsize=.2
 
   ;LIQUID ONLY POINTS OR ALL
   liq=1
@@ -54,7 +54,7 @@ pro lwctwc11B
   restore,'loopdata.sav'
 
 
-  liqOnly=where(trf gt -3. and lwc gt .01 and lwc lt 1.)
+  liqOnly=where(trf gt -3. and lwc lt 1.1 and (cipmodconc0 lt .5 and finite(cipmodconc0) eq 1) and cdpconc gt 1)
 
   if liq eq 1 then begin
     lwc=lwc[liqonly]
@@ -173,14 +173,14 @@ pro lwctwc11B
           t2=text(.8,.92,eff,font_size=22)
           
           
-          p1=scatterplot(lwc[bins],twc[bins],sym_color='red',symbol='.',/overplot)
+          ;p1=scatterplot(lwc[bins],twc[bins],sym_color='red',symbol='.',/overplot)
           cole2=ladfit([zeros,lwcfixede[bins]],[zeros,twc[bins]])
           
-          cole3=ladfit([zeros,lwc[bins]],[zeros,twcfixede[bins]])
+          ;cole3=ladfit([zeros,lwc[bins]],[zeros,twcfixede[bins]])
           
       
           p2=plot([0,maxx],[cole[0],maxx*cole[1]+cole[0]],/overplot,thick=2,color='black')
-          p2=plot([0,maxx],[cole2[0],maxx*cole2[1]+cole2[0]],/overplot,thick=2,color='red')
+          ;p2=plot([0,maxx],[cole2[0],maxx*cole2[1]+cole2[0]],/overplot,thick=2,color='red')
           p2=plot([0,maxx],[0,maxx],/overplot,color='green',thick=2,linestyle=2)
           
           p1.xtitle='LWC g m!u-3!n'
@@ -191,10 +191,10 @@ pro lwctwc11B
           p2.yrange=[0,maxx]
         
        
-        fixedbotherror=[fixedbotherror,(1.-cole[1])*100.]
-        fixedlwcerror=[fixedlwcerror,(1.-cole2[1])*100.]
-        fixedtwcerror=[fixedtwcerror,(1.-cole3[1])*100.]
-        print,cole[1],'-',cole2[1],'-',cole3[1]
+;        fixedbotherror=[fixedbotherror,(1.-cole[1])*100.]
+;        fixedlwcerror=[fixedlwcerror,(1.-cole2[1])*100.]
+;        fixedtwcerror=[fixedtwcerror,(1.-cole3[1])*100.]
+        ;print,cole[1],'-',cole2[1],'-',cole3[1]
         
 
       endfor
